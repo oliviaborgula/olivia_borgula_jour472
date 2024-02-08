@@ -291,6 +291,9 @@ View(Reporters)
 Reporters %>%
   arrange(desc(Salary))
 #Senior reporter at ProPublica 
+#alternative:
+#Reporters %>%
+#   slice_max(Salary, n = 1)
 
 #2: Make a table for editors, figure out medians
 Editors <- subset(MediaBucks, grepl("?editor", TITLE, ignore.case = TRUE))
