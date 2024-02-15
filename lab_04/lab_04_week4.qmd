@@ -1,0 +1,106 @@
+#Lab_04 {lab_04}
+
+rob wells, 8/14/2021
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### Load libraries and establish settings
+```{r}
+# Turn off scientific notation
+options(scipen=999)
+
+# Load the tidyverse here
+library(tidyverse)
+# Load janitor here
+library(janitor)
+
+
+```
+
+### Load data
+
+In this data set, each row represents a city or town in Maryland with the 2010 and 2020 figures for: 
+
+-  Total population 
+-  White only population
+-  Black or African American only population
+-  Hispanic only population 
+-  Native American only population
+-  Asian only population
+-  Pacific Islander (including native Hawiian) only population
+
+Background on this data from [Social Explorer](https://www.socialexplorer.com/data/ACS2016_5yr/metadata/?ds=ACS16_5yr&table=B02001) 
+```{r}
+# Write code to load the Maryland race by city, place for 2010 - 2020 and call it md_race.
+md_race <- read_csv('/Users/oliviaborgula/Documents/GitHub/olivia_borgula_jour472/lab_03/lab_03.csv')
+# The data is called lab_03.csv, and is in the same folder as lab_03.qmd (this data notebook)
+
+```
+
+## Answer questions
+
+Q1: Name the five cities that had the largest Hispanic population as a percentage of the entire population in 2020 and call it top5_hispanic. Produce a top 5 table for each, selecting the place, 2020 Hispanic, 2020 total and your new calculation.
+
+A1:
+```{r}
+
+# Write your code in this codeblock.
+#first load library for percent
+library(formattable)
+#then calculate percent change for top 5 cities with highest Hispanic pops. and create a new table
+top5_hispanic <- md_race %>%
+  select(place, x2020_hispanic, x2020_total) %>%
+  mutate(pct_total_hispanic = percent(x2020_hispanic/x2020_total)) %>%
+  slice_max(pct_total_hispanic, n = 5)
+View(top5_hispanic)
+#Top 5 cities with largest Hispanic populations: Langley Park CDP, Templeville Town, Marydel Town, Henderson Town, Edmonston Town 
+```
+
+Q2: Compare the top 10 cities with the largest Black population as a percentage of the overall population in 2010 and 2020. Filter for places with more than 20,000 population in 2010. Call your results pct_black. Compare results for 2020 vs 2010. What is different? What surprised you? 
+
+A2:
+
+```{r}
+#write your code here
+#compare top 10 cities with largest Black population as a percentage of the overall population in 2010/2020
+pct_black <- md_race %>%
+  select(place, x2010_black, x2010_total, x2020_black, x2020_total) %>%
+  filter(x2010_total > 20000) %>%
+  mutate(pct_total_black_2010 = percent(x2010_black/x2010_total)) %>%
+  mutate(pct_total_black_2020 = percent(x2020_black/x2020_total)) %>%
+  slice_max(pct_total_black_2020, n = 10) 
+View(pct_black)
+#top 10 cities with largest Black population (in order): Suitland CDP, Milford Mill CDP, Clinton CDP, Lochearn CDP, Randallstown CDP, Landover CDP, South Laurel CDP, Baltimore city, Fort Washington CDP, Waldorf CDP
+#I notice that most of these top 15 are CDPs (census-designated places). The top 10 cities with the largest Black populations stayed mostly the same from 2010 to 2020 in terms of their percentages of the overall population, but Suitland CDP (the city with the highest Black population) dropped from ~92% to ~87%, Fort Washington decreased from ~70% to ~62% and Waldorf CDP increased from ~51% to ~61%. It surprised me that Fort Washington and Waldorf increased/decreased by around 10% each. I'm also surprised that the other 15 didn't change very much, as a lot of data we've looked at has shown dramatic increases/decreases over a decade.
+```
+
+Q3: Find the 15 communities that had the great gains in Hispanic population from 2010 to 2020 as measured by percentage change. Also calculate percentage change for the community's overall growth during the same period. Filter your results for communities with more than 10,000 people as of 2020. Your results will be hisp_growth. Look at your results, craft a one-paragraph story pitch for your editor. 
+
+A3:
+
+```{r}
+hisp_growth <- md_race %>% 
+  select(place, x2010_hispanic, x2020_hispanic, x2010_total, x2020_total) %>%
+  filter(x2020_total > 10000) %>% 
+  mutate(pct_change_hispanic = percent((x2020_hispanic - x2010_hispanic)/x2010_hispanic)) %>% 
+  mutate(pct_change_overall = percent((x2020_total - x2010_total)/x2010_total)) %>%
+  slice_max(pct_change_hispanic, n = 15)
+  View(hisp_growth)
+#top 15 Hispanic communities with greatest gains from 2010 to 2020: North Laurel CDP, Lake Arbor CDP, Brock Hall CDP, Overlea CDP, Linthicum CDP, Ocean Pines CDP, Jessup CDP, Glassmanor CDP, Summerfield CDP, Pasadena CDP, Rossville CDP, Ilchester CDP, Odenton CDP, Aberdeen city, Urbana CDP
+#Story pitch: North Laurel saw an around 1186% increase in the number of Hispanic people the last decade and a nearly 510% increase in total residents. How has this change impacted the city? I would talk to Hispanic community members who moved to the area in the last 10 years as well as residents who have lived in the same area since 2010 or before. Has the city made any changes to accommodate this demographic change? Is there a reason for the sharp increase or is it partly due to the overall rise in residents in the last 10 years? I would talk to local government leaders (Prince George's County council members) and the county executive, along with the residents I mentioned. 
+```
+
+```{r}
+#HOW TO DO DOUBLE MUTATE
+pct_black <- md_race %>%
+  select(place, x2010_black, x2010_total, x2020_black, x2020_total) %>%
+    filter(x2010_total > 20000) %>%
+  mutate(
+    pct_total_black_2010 = percent(x2010_black/x2010_total), 
+    pct_total_black_2020 = percent(x2020_black/x2020_total)) %>%
+  slice_max(pct_total_black_2020, n = 10) 
+View(pct_black)
+```
+

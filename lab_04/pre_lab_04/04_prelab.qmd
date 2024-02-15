@@ -299,5 +299,34 @@ view((97/200) * 100)
 #Nearly 50% of Baltimore City neighborhoods were below the citywide median household income of $49,875 in 2020. 
 ```
 
+```{r}
+baltcity_race %>%
+  select(census_tract, x2020_black, x2020_white) %>%
+  mutate(ratio_w_b = (x2020_black/x2020_white)) %>% 
+  arrange(desc(ratio_w_b)) %>%
+  filter(x2020_white > 0) %>%
+  head()
+
+sum(baltcity_race$x2020_white, na.rm = TRUE)
+#178,996 white people
+```
+
+```{r}
+install.packages("formattable")
+```
+
+
+```{r}
+library(formattable)
+
+baltcity_race %>%
+  select(census_tract, x2020_white, x2020_black) %>%
+  mutate(pct_white = percent(x2020_white/sum(baltcity_race$x2020_white, na.rm = TRUE))) %>% 
+  mutate(pct_black = percent(x2020_black/sum(baltcity_race$x2020_black, na.rm = TRUE))) %>%
+  arrange(desc(pct_white)) %>%
+  head()
+```
+
+
 
 ```
