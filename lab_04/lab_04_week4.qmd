@@ -104,3 +104,14 @@ pct_black <- md_race %>%
 View(pct_black)
 ```
 
+```{r}
+#DISCUSSION POST
+library(ggplot2)
+hisp_growth %>%
+  ggplot(aes(x=place, y=x2020_hispanic))+
+  geom_col(position = "dodge2", fill = "blue")+
+  xlab("Place")+
+  ylab("Number of Hispanic People")
+options(width = 10000)	
+```
+
