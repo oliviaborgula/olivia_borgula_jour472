@@ -1,0 +1,159 @@
+#Lab_05  {lab_05}
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## About this lab
+
+To complete this lab, you need to:
+* run existing code as directed (look for **Task**).
+* modify existing code as directed (look for **Task**).
+* write code in empty codeblocks provided to answer questions included (look for **Q**).
+* write out the answer in the form of a complete sentence in the space given (look for **A**).
+
+When you are finished, commit changes and push to your personal GitHub repo, then submit the URL to this document on ELMS.
+
+## Load libraries and establish settings
+
+You'll need to load two packages for this: the tidyverse and janitor.
+
+**Task** load these two packages.
+
+```{r}
+# Turn off scientific notation
+options(scipen=999)
+```
+
+### Load Life Expectancy Data
+
+You'll need to load :
+
+CDC_Life_Census_Tract_2010_2015.csv
+
+It is included in your lab_05.zip file.
+
+About the data: 
+Life Expectancy at Birth for U.S. States and [Census Tracts, 2010-2015](https://www.cdc.gov/nchs/data-visualization/life-expectancy/index.html) 
+
+It shows estimates of U.S. life expectancy at birth by state and census tract for the period 2010-2015. Estimates were produced for 67,148 census tracts, covering all states and the District of Columbia (D.C.). These estimates come from the National Center for Health Statistics (NCHS), the National Association for Public Health Statistics and Information Systems (NAPHSIS), and the Robert Wood Johnson Foundation (RWJF).
+
+
+**Task** Create a codeblock below this task, then load the data sets and assign them to appropriate variable names. 
+
+## Answer questions
+
+**Q1.** In your lab_05 folder, there is a csv called CDC_Life_Census_Tract_2010_2015.csv.  It contains all of the life expectancy data for the United States.
+
+You are going to examine this data and learn the range of death rates in Baltimore and then in Maryland in general.
+
+Do the following:
+-  Load tidyverse and janitor
+-  Load the data CDC_Life_Census_Tract_2010_2015.csv into a dataframe called us_death. 
+Include the code to show the number of records. Clean the names using Janitor
+-  Filter this according to Maryland into second table called md_death
+-  Filter this according to Baltimore City into a third table called balt_death
+
+**A1.**
+
+```{r}
+#load tidyverse and janitor
+library(tidyverse)
+library(janitor)
+
+#load data into a dataframe
+us_death <- read.csv('/Users/oliviaborgula/Documents/GitHub/olivia_borgula_jour472/lab_05/CDC_Life_Census_Tract_2010_2015.csv') %>% as.data.frame()
+
+#find number of records
+nrow(us_death)
+
+#clean data
+us_death_clean <- na.omit(us_death)
+
+#make a table filtered to only Maryland values
+md_death <- us_death_clean %>%
+  filter(State == "Maryland")
+view(md_death)
+
+#make a table filtered to only Baltimore City values
+balt_death <- md_death %>%
+  filter(County == "Baltimore city, MD")
+view(balt_death)
+```
+
+**Q2.** 
+For this question, load a modified dataset that has the same information but with the Baltimore neighborhoods added. It's called balt_death_census.csv. Call this table balt_death2. 
+Produce a summary of basic statistics on the average life expectancy rate.
+
+Show the neighborhoods with a life expectancy rate below the 1st quartile, arranged in ascending order. 
+
+
+**A2.** 
+```{r}
+#load modified dataset
+balt_death_2 <- read.csv('/Users/oliviaborgula/Documents/GitHub/olivia_borgula_jour472/lab_05/balt_death_census.csv') %>% as.data.frame()
+
+#find average life expectacy
+summary(balt_death_2$life_expectancy)
+#average life expectancy is 73.04 years 
+
+#filter out life expectancy rates below the 1st quartile 
+#value of 1st quartile is 69.58
+balt_death_2 %>%
+  select(neighborhood, life_expectancy) %>%
+  filter(life_expectancy < 69.58) %>%
+  arrange(life_expectancy)
+
+```
+
+**Q3.** Use md_death, the Maryland life expectancy rates.
+Produce summary statistics of the state of Maryland life expectancy rate. 
+Produce a table with the 20 communities with the lowest life expectancy. 
+Produce a table with the 20 communities with the highest life expectancy. 
+
+Then use us_death, and determine the average life expectancy nationwide.
+
+Then write 150-200 words on this document below your code that compares your findings of Baltimore, the state and nation. 
+
+**A3.**
+
+```{r}
+#summary of maryland life expectancy 
+summary(md_death$Life.Expectancy)
+
+#table with the lowest 20 life expectancies 
+low_life_expectancy <- md_death %>%
+  select(County, Life.Expectancy)%>%
+  slice_min(Life.Expectancy, n = 20)
+view(low_life_expectancy)
+
+#table with the highest 20 life expectancies 
+high_life_expectancy <- md_death %>%
+  select(County, Life.Expectancy)%>%
+  slice_max(Life.Expectancy, n = 20)
+view(high_life_expectancy)
+
+#Out of the 20 communities with the lowest life expectancy in Maryland, 19 are in Baltimore City, ranging from 62.6 years to 67.4 years. On the other hand, 18 out of the 20 communities with the highest life expectancies are located in Montgomery County, with the highest being about 96 years. Prince George's County and Baltimore County are also among the top 20 life expectancies in the state. 
+```
+
+**Q4.**
+
+Use balt_death. Use the case_when command in mutate to categorize all Baltimore City Census tracts as being above or below the city's average life expectancy rate. 
+Then produce a short table that summarizes the number of Census tracts above or below the average life expectancy rate. Write two sentences summarizing your findings.
+
+
+```{r}
+#baltimore average life expectancy
+summary(balt_death$Life.Expectancy)
+
+death <- balt_death %>%
+mutate(
+  category = case_when(
+    Life.Expectancy > 73.04 ~ "above",
+    Life.Expectancy < 73.04~ "below"
+  )) %>%
+  select(Census.Tract.Number, Life.Expectancy, category)
+view(death)
+```
+
+
