@@ -1,0 +1,34 @@
+---
+title: Wealth Inequality in Baltimore City and Baltimore County
+author: Olivia Borgula
+date: 02/29/2024
+---
+
+INTRODUCTION
+
+First, load libraries, turn off scientific notation and upload datasets
+```{r}
+#load libraries
+library(tidyverse)
+library(janitor)
+library(formattable)
+
+#turn off scientific notation
+options(scipen=999)
+
+#upload datasets 
+
+```
+
+Summary of median household income data in Baltimore City compared to Baltimore County in 2023 
+```{r}
+
+```
+
+Number of individuals, families and children living below the poverty line in 2023 
+```{r}
+
+```
+
+
+

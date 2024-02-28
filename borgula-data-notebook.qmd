@@ -1,0 +1,57 @@
+---
+title: Wealth Inequality in Baltimore City and Baltimore County
+author: Olivia Borgula
+date: 02/29/2024
+---
+
+INTRODUCTION
+
+First, load libraries, turn off scientific notation and upload datasets
+```{r}
+#load libraries
+library(tidyverse)
+library(janitor)
+library(formattable)
+library(ggthemes)
+
+#turn off scientific notation
+options(scipen=999)
+
+#upload datasets 
+baltcity <- read_csv("/Users/oliviaborgula/Documents/GitHub/olivia_borgula_jour472/data-notebook/baltcity_income_clean.csv")
+poverty_status <- read_csv("/Users/oliviaborgula/Documents/GitHub/olivia_borgula_jour472/data-notebook/2022-census/poverty-status.csv")
+data7 <- read_csv("/Users/oliviaborgula/Documents/GitHub/olivia_borgula_jour472/data-notebook/2022-census/data-7.csv")
+
+View(data7)
+```
+
+Identify median household income data in Baltimore City and in to Baltimore County in 2023 
+```{r}
+summary()
+```
+
+Number of individuals, families and children living below the poverty line in 2023 in each county
+```{r}
+
+```
+
+Determine the demographic makeup of Baltimore city families living below the poverty line
+```{r}
+
+```
+
+Compare each state with the median household income for the entire state
+```{r}
+
+```
+
+Determine percent change in median household income between 2010 and 2020 for Baltimore City and Baltimore County 
+```{r}
+
+```
+
+Create a line graph with median household income in Baltimore City and Baltimore County each year from 2010 to 2020
+```{r}
+
+```
+
