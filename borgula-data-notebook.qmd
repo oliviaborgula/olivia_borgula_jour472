@@ -7,51 +7,125 @@ date: 02/29/2024
 INTRODUCTION
 
 First, load libraries, turn off scientific notation and upload datasets
+
 ```{r}
+#load libraries
 #load libraries
 library(tidyverse)
 library(janitor)
 library(formattable)
 library(ggthemes)
+library(ggplot2)
+library(tidyr)
 
 #turn off scientific notation
 options(scipen=999)
-
-#upload datasets 
-baltcity <- read_csv("/Users/oliviaborgula/Documents/GitHub/olivia_borgula_jour472/data-notebook/baltcity_income_clean.csv")
-poverty_status <- read_csv("/Users/oliviaborgula/Documents/GitHub/olivia_borgula_jour472/data-notebook/2022-census/poverty-status.csv")
-data7 <- read_csv("/Users/oliviaborgula/Documents/GitHub/olivia_borgula_jour472/data-notebook/2022-census/data-7.csv")
-
-View(data7)
 ```
 
-Identify median household income data in Baltimore City and in to Baltimore County in 2023 
+
 ```{r}
-summary()
+#upload datasets from US Census Bureau 
+
+median_income <- read_csv("/Users/oliviaborgula/Documents/GitHub/olivia_borgula_jour472/data-notebook/data/baltcity-baltcounty-md-2022.csv")
+
+medians_2012_2022 <- read_csv("/Users/oliviaborgula/Documents/GitHub/olivia_borgula_jour472/data-notebook/data/medians_2012_2022.csv")
+
+poverty_status <- read_csv("/Users/oliviaborgula/Documents/GitHub/olivia_borgula_jour472/data-notebook/data/poverty-2.csv")
+
+poverty_status_2 <- read_csv("/Users/oliviaborgula/Documents/GitHub/olivia_borgula_jour472/data-notebook/data/poverty-3.csv")
 ```
 
-Number of individuals, families and children living below the poverty line in 2023 in each county
+Identify median household income data in Baltimore City and in to Baltimore County in 2022
+
+```{r}
+#create a pivot table displaying the median household income in each location for 2022
+med_summary <- medians_2012_2022 %>%
+  filter(year %in% c("2022"))
+
+View(med_summary)
+
+#Findings for 2022 median household income:
+#Baltimore City: $55,198
+#Baltimore County: $86,526
+#Maryland: $94,991
+```
+
+What percent of people have poverty status compared to the total population in Maryland, Baltimore City and Baltimore County?
+```{r}
+#Create a pivot table and filter out values from large census dataset
+poverty_pivot <- poverty_status_2 %>%
+  select(`Label (Grouping)`, `Maryland!!Percent below poverty level!!Estimate`, `Baltimore County, Maryland!!Percent below poverty level!!Estimate`, `Baltimore city, Maryland!!Percent below poverty level!!Estimate`)%>%
+  filter(`Label (Grouping)` %in% c("Population for whom poverty status is determined"))
+
+#Re-group columns to make it easier to read
+original_data <- data.frame(
+  "Label (Grouping)" = c("Percent"),
+  "Maryland" = c("10.3%"),
+  "Baltimore County" = c("9.80%"),
+  "Baltimore City" = c("23.00%")
+)
+reshaped_data <- gather(original_data, key = "Location", value = "Percent", -1)
+reshaped_data <- reshaped_data[, -1]
+View(reshaped_data)
+
+#Findings:
+#Maryland: 10.3% of population is poverty status
+#Baltimore County: 9.8% of population is poverty status
+#Baltimore City: 23.0%% of population is poverty status 
+
+```
+
+Visualize this data with bar chart
+```{r}
+#Make a bar chart with new column
+reshaped_data %>%
+  ggplot(aes(x=Location, y= Percent, fill = "pink")) +
+  theme_minimal() +
+  geom_col(position = "dodge")+
+  theme(legend.position = "none") +
+  geom_text(aes(label=Percent), vjust = -.5, size = 2.5) +
+    labs(
+    title="Percent of People Below Poverty Line in Maryland, Baltimore City and Baltimore County",
+    x = "Location",
+    y = "Percent",
+    caption = "Source: U.S. Census Bureau ")
+```
+
+Determine the demographic makeup of people living below the poverty line in 2022 in Baltimore City vs. Baltimore County 
 ```{r}
 
 ```
 
-Determine the demographic makeup of Baltimore city families living below the poverty line
+Find the percent change in median household income from 2012 to 2022 in Baltimore County vs. Baltimore City 
+
 ```{r}
+#MAKE TABLE
+#First make a pivot table to more easily identify values
+decade_values <- medians_2012_2022 %>% 
+  filter(year %in% c("2022", "2012")) 
+
+#Find percent change for Baltimore City between 2012 and 2022
+percent((55198 - 39241)/39241)
+
+#Find percent change for Baltimore County between 2012 and 2022
+percent((86526 - 62444)/62444)
 
 ```
 
-Compare each state with the median household income for the entire state
+Visualize the median household income in Baltimore City and Baltimore County over that same time period 
 ```{r}
+ggplot(medians_2012_2022, aes(x=year)) +
+  geom_line(aes(y=balt_city), color = "blue", show.legend = TRUE) +
+  geom_line(aes(y=balt_county), color = "green")+
+  geom_line(aes(y=maryland), color = "red")+
+  labs(title = "Median Household Income from 2012-2022", 
+       caption = "Source: U.S. Census Bureau",
+       y="Income",
+       x="Year")
 
+medians_long <- gather(medians_2012_2022, key = regions, value = count, 
+                       c("year", "maryland", "balt_city", "balt_county"))
+
+ggplot(medians_long, aes(x = "year", y = "count", group = "regions", color = "regions")) + 
+  geom_line()
 ```
-
-Determine percent change in median household income between 2010 and 2020 for Baltimore City and Baltimore County 
-```{r}
-
-```
-
-Create a line graph with median household income in Baltimore City and Baltimore County each year from 2010 to 2020
-```{r}
-
-```
-
