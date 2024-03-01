@@ -4,7 +4,8 @@ author: Olivia Borgula
 date: 02/29/2024
 ---
 
-INTRODUCTION
+**INTRODUCTION**
+Baltimore County and Baltimore City are considered separate jurisdictions despite once being the same. While Baltimore City was once majority white in the 1960s, white flight out of the city and into what is now Baltimore County left the city with economic instability. But gentrification starting in the 2010s has led to an increase in white people in Baltimore City. How has this impacted wealth inequality in the two areas? 
 
 First, load libraries, turn off scientific notation and upload datasets
 ```{r}
@@ -20,11 +21,9 @@ options(scipen=999)
 
 medians_2012_2022 <- read_csv("/Users/oliviaborgula/Documents/GitHub/olivia_borgula_jour472/data-notebook/data/medians_2012_2022.csv")
 
-poverty_status_2 <- read_csv("/Users/oliviaborgula/Documents/GitHub/olivia_borgula_jour472/data-notebook/data/poverty-3.csv")
+poverty_status_2 <- read_csv("/Users/oliviaborgula/Documents/GitHub/olivia_borgula_jour472/poverty_33.csv")
 
-poverty_race <- read_csv("/Users/oliviaborgula/Documents/GitHub/olivia_borgula_jour472/poverty_race.csv")
-
-poverty_race_5 <- read_csv("/Users/oliviaborgula/Documents/GitHub/olivia_borgula_jour472/poverty_race_5.csv")
+poverty_race <- read_csv("/Users/oliviaborgula/Documents/GitHub/olivia_borgula_jour472/poverty_race_7.csv")
 ```
 
 **Part 1**
@@ -48,14 +47,15 @@ Find the percent change in median household income from 2012 to 2022 in Baltimor
 ```{r}
 #First make a pivot table to more easily identify values
 decade_values <- medians_2012_2022 %>% 
-  filter(year %in% c("2022", "2012")) 
-View(decade_values)
+  filter(year %in% c("2022", "2012"))
 
 #Find percent change for Baltimore City between 2012 and 2022
 percent((55198 - 39241)/39241)
 
 #Find percent change for Baltimore County between 2012 and 2022
 percent((86526 - 62444)/62444)
+
+#Percent change
 
 ```
 
@@ -116,13 +116,16 @@ reshaped_pct %>%
     caption = "Source: U.S. Census Bureau"
   )
 ```
-Make a pivot table displaying number of people below the poverty line by race
+Add a column showing the percentage below the poverty line compared to total population in 2022 by race for each place 
 ```{r}
-poverty_race_5 <- poverty_race_5 %>%
-  mutate(pct_poverty = (md_poverty/md_total))
+poverty_race[is.na(poverty_race)] <- 0
 
+poverty_race <- poverty_race %>%
+  mutate(pct_md = percent(md_poverty/md_total))%>%
+  mutate(pct_baltcounty = percent(baltcounty_poverty/baltcounty_total))%>%
+  mutate(pct_baltcity = percent(baltcity_poverty/baltcounty_total))
+  
 ```
 
-```{r}
-```
-
+**Conclusion**
+Baltimore County's median household income has been consistently higher than Baltimore City's median household income in the 10 years from 2012 to 2022. While Baltimore County's median household income has been comparable to the state of Maryland, Baltimore City is significantly less than both values. In 2022, Baltimore County had a median household income of $86,526 and Maryland had a median household income of $94,991. Baltimore City, on the other hand, had a median household income of $55,198. Baltimore City also had a higher proportion of people below the poverty line compared to Maryland and Baltimore County, with individuals who identify as Black or African American constituting the largest percent of people below the poverty line by race. Around 37% of Black or African American people are below the poverty line, according to data from the U.S. Census Bureau. In Baltimore County and Maryland, however, those who listed two or more other races or those who identified as Hispanic or Latino, were the highest percent of people below the poverty line by race, respectively.
