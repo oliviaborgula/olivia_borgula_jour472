@@ -22,20 +22,17 @@ library(tidyr)
 options(scipen=999)
 ```
 
-
 ```{r}
 #upload datasets from US Census Bureau 
 
-median_income <- read_csv("/Users/oliviaborgula/Documents/GitHub/olivia_borgula_jour472/data-notebook/data/baltcity-baltcounty-md-2022.csv")
-
 medians_2012_2022 <- read_csv("/Users/oliviaborgula/Documents/GitHub/olivia_borgula_jour472/data-notebook/data/medians_2012_2022.csv")
-
-poverty_status <- read_csv("/Users/oliviaborgula/Documents/GitHub/olivia_borgula_jour472/data-notebook/data/poverty-2.csv")
 
 poverty_status_2 <- read_csv("/Users/oliviaborgula/Documents/GitHub/olivia_borgula_jour472/data-notebook/data/poverty-3.csv")
 ```
 
-Identify median household income data in Baltimore City and in to Baltimore County in 2022
+**Part 1**
+
+What was the median household income in Baltimore City, Baltimore County and Maryland in 2022?
 
 ```{r}
 #create a pivot table displaying the median household income in each location for 2022
@@ -50,23 +47,33 @@ View(med_summary)
 #Maryland: $94,991
 ```
 
-What percent of people have poverty status compared to the total population in Maryland, Baltimore City and Baltimore County?
+**Part 2** 
+How many people have poverty status (are below the poverty line) in Baltimore City, Baltimore County and Maryland?
+
 ```{r}
 #Create a pivot table and filter out values from large census dataset
-poverty_pivot <- poverty_status_2 %>%
-  select(`Label (Grouping)`, `Maryland!!Percent below poverty level!!Estimate`, `Baltimore County, Maryland!!Percent below poverty level!!Estimate`, `Baltimore city, Maryland!!Percent below poverty level!!Estimate`)%>%
+poverty_number <- poverty_status_2 %>%
+  select(`Label (Grouping)`, `Maryland!!Below poverty level!!Estimate`, `Baltimore County, Maryland!!Below poverty level!!Estimate`, `Baltimore city, Maryland!!Below poverty level!!Estimate`)%>%
   filter(`Label (Grouping)` %in% c("Population for whom poverty status is determined"))
+View(poverty_number)
 
-#Re-group columns to make it easier to read
-original_data <- data.frame(
-  "Label (Grouping)" = c("Percent"),
-  "Maryland" = c("10.3%"),
-  "Baltimore County" = c("9.80%"),
-  "Baltimore City" = c("23.00%")
-)
-reshaped_data <- gather(original_data, key = "Location", value = "Percent", -1)
-reshaped_data <- reshaped_data[, -1]
-View(reshaped_data)
+#Findings:
+#Maryland: 618,372 people
+#Baltimore County: 81,052 people
+#Baltimore City: 127,135 people
+
+```
+
+**Part 3** 
+What percent of people have poverty status compared to the total population in Maryland, Baltimore City and Baltimore County?
+
+```{r}
+
+reshaped_poverty <- poverty_pivot %>%
+  select
+
+
+
 
 #Findings:
 #Maryland: 10.3% of population is poverty status
@@ -75,11 +82,13 @@ View(reshaped_data)
 
 ```
 
+**Part 4** 
 Visualize this data with bar chart
+
 ```{r}
 #Make a bar chart with new column
 reshaped_data %>%
-  ggplot(aes(x=Location, y= Percent, fill = "pink")) +
+  ggplot(aes(x=Location, y= Percent, fill = "blue")) +
   theme_minimal() +
   geom_col(position = "dodge")+
   theme(legend.position = "none") +
@@ -91,12 +100,13 @@ reshaped_data %>%
     caption = "Source: U.S. Census Bureau ")
 ```
 
-Determine the demographic makeup of people living below the poverty line in 2022 in Baltimore City vs. Baltimore County 
+Determine the demographic makeup of people living below the poverty line in 2022 in Baltimore City vs. Baltimore County
+
 ```{r}
 
 ```
 
-Find the percent change in median household income from 2012 to 2022 in Baltimore County vs. Baltimore City 
+Find the percent change in median household income from 2012 to 2022 in Baltimore County vs. Baltimore City
 
 ```{r}
 #MAKE TABLE
@@ -112,7 +122,8 @@ percent((86526 - 62444)/62444)
 
 ```
 
-Visualize the median household income in Baltimore City and Baltimore County over that same time period 
+Visualize the median household income in Baltimore City and Baltimore County over that same time period
+
 ```{r}
 ggplot(medians_2012_2022, aes(x=year)) +
   geom_line(aes(y=balt_city), color = "blue", show.legend = TRUE) +
@@ -122,10 +133,4 @@ ggplot(medians_2012_2022, aes(x=year)) +
        caption = "Source: U.S. Census Bureau",
        y="Income",
        x="Year")
-
-medians_long <- gather(medians_2012_2022, key = regions, value = count, 
-                       c("year", "maryland", "balt_city", "balt_county"))
-
-ggplot(medians_long, aes(x = "year", y = "count", group = "regions", color = "regions")) + 
-  geom_line()
 ```
