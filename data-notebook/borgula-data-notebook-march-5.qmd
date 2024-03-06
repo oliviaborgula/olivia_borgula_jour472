@@ -4,6 +4,19 @@ author: Olivia Borgula
 date: 02/29/2024
 ---
 
+#rsw comments - Olivia - You had a very nice conclusion to this notebook. The layout of this notebook was easy to follow. There were a few problems, however.
+#1: file paths to the data directed me to your hard drive. 
+Your code failed at the first chunk because it was directing R to grab data from your laptop. Make your file paths so anyone downloading your notebook at data from github can do it from a single folder.
+
+#2: no explanation of the data. where did this data come from? what are the definitions of the columns? I have no idea where you got these files. And therefore I can't assess whether this is a good project or not.
+
+#3: Failure to clean your data. The column headings were a problem for poverty_status and that caused subsequent code failures. Clean your data using janitor::clean_names. These column headings are an unnecessary nightmare
+
+
+So your notebook failed to run. See my comments #rsw below and fix this for the next step in the process. 
+
+
+
 **INTRODUCTION**
 Baltimore County and Baltimore City are considered separate jurisdictions despite once being the same. While Baltimore City was once majority white in the 1960s, white flight out of the city and into what is now Baltimore County left the city with economic instability. But gentrification starting in the 2010s has led to an increase in white people in Baltimore City. How has this impacted wealth inequality in the two areas? 
 
@@ -19,11 +32,17 @@ options(scipen=999)
 
 #upload datasets 
 
-medians_2012_2022 <- read_csv("/Users/oliviaborgula/Documents/GitHub/olivia_borgula_jour472/data-notebook/data/medians_2012_2022.csv")
+medians_2012_2022 <- read_csv("data/medians_2012_2022.csv")%>%
+  clean_names()
 
-poverty_status_2 <- read_csv("/Users/oliviaborgula/Documents/GitHub/olivia_borgula_jour472/poverty_33.csv")
+poverty_status_2 <- read_csv("data/poverty_status_2.csv")%>%
+  clean_names()
 
-poverty_race <- read_csv("/Users/oliviaborgula/Documents/GitHub/olivia_borgula_jour472/poverty_race_7.csv")
+poverty_race <- read_csv("data/poverty_race_7.csv")%>%
+  clean_names()
+
+poverty_race <- read_csv("data/poverty_race_7.csv")%>%
+  clean_names()
 ```
 
 **Part 1**
@@ -47,10 +66,19 @@ Find the percent change in median household income from 2012 to 2022 in Baltimor
 ```{r}
 #First make a pivot table to more easily identify values
 decade_values <- medians_2012_2022 %>% 
-  filter(year %in% c("2022", "2012"))
+  filter(year %in% c("2022"))
+  decade_values_clean <- gather(decade_values, key = "Location", value = "Estimate", -1)%>%
+  mutate(Percent = ((55198 - 39241)/39241))%>%
+  mutate(pct_change_baltcounty = ((86526 - 62444)/62444))
+  
+
+
+#rsw - add this calculation to the table using mutate
 
 #Find percent change for Baltimore City between 2012 and 2022
 percent((55198 - 39241)/39241)
+
+#rsw - add this calculation to the table using mutate
 
 #Find percent change for Baltimore County between 2012 and 2022
 percent((86526 - 62444)/62444)
@@ -61,6 +89,8 @@ percent((86526 - 62444)/62444)
 
 
 Visualize the median household income in Baltimore City and Baltimore County over that same time period
+
+#rsw - nice looking chart but it's misssing your byline and date
 
 ```{r}
 ggplot(medians_2012_2022, aes(x=year)) +
@@ -74,6 +104,7 @@ ggplot(medians_2012_2022, aes(x=year)) +
 ```
 
 How many people have poverty status (are below the poverty line) in Baltimore City, Baltimore County and Maryland?
+
 ```{r}
 #Create a pivot table and filter out values from large census dataset
 poverty_number <- poverty_status_2 %>%
@@ -81,25 +112,41 @@ poverty_number <- poverty_status_2 %>%
   filter(`Label (Grouping)` %in% c("Population for whom poverty status is determined"))
 View(poverty_number)
 
+
+#rsw what does this mean? spell it out... "below poverty line of XXXX"
+
 #Findings:
-#Maryland: 618,372 people
+#Maryland: 618,372 people 
 #Baltimore County: 81,052 people
 #Baltimore City: 127,135 people
 ```
 
 Make a pivot table with the percent of people below the poverty line in 2022 compared to their total population for each location
+
+#rsw this code failed: Error in select(., `Label (Grouping)`, `Maryland!!Percent below poverty level!!Estimate`,  :
+
 ```{r}
 poverty_pct <- poverty_status_2 %>%
-  select(`Label (Grouping)`, `Maryland!!Percent below poverty level!!Estimate`, `Baltimore city, Maryland!!Percent below poverty level!!Estimate`, `Baltimore County, Maryland!!Percent below poverty level!!Estimate`)%>%
-  filter(`Label (Grouping)` %in% c("Population for whom poverty status is determined"))
+  select(label_grouping, maryland_percent_below_poverty_level_estimate, baltimore_city_maryland_percent_below_poverty_level_estimate, baltimore_county_maryland_percent_below_poverty_level_estimate)%>%
+  filter(label_grouping %in% c("Population for whom poverty status is determined"))
 View(poverty_pct)
 ```
 
 Reorder columns and rows to make it easier to create bar graph
+
+
 ```{r}
 # Reshape the data
 reshaped_pct <- gather(poverty_pct, key = "Location", value = "Percent", -1)
 reshaped_pct <- reshaped_pct[, -1]
+reshaped_pct <- reshaped_pct %>%
+  mutate(
+    new_names = case_when(
+      Location == "maryland_percent_below_poverty_level_estimate" ~ "Maryland",
+      Location == "baltimore_city_maryland_percent_below_poverty_level_estimate" ~ "Baltimore City",
+      Location == "baltimore_county_maryland_percent_below_poverty_level_estimate" ~ "Baltimore County"
+    )
+  )
 View(reshaped_pct)
 ```
 
@@ -107,7 +154,7 @@ Visualize this data
 ```{r}
 reshaped_pct %>%
   ggplot() +
-  geom_col(aes(x = Location, y = Percent)) +
+  geom_col(aes(x = new_names, y = Percent)) +
   theme_minimal() +
   labs(
     title = "Percent of Population Below Poverty Line in Baltimore City, Baltimore County, and Maryland",
@@ -118,6 +165,7 @@ reshaped_pct %>%
 ```
 Add a column showing the percentage below the poverty line compared to total population in 2022 by race for each place 
 ```{r}
+#rsw - this was clever.
 poverty_race[is.na(poverty_race)] <- 0
 
 poverty_race <- poverty_race %>%
@@ -126,6 +174,8 @@ poverty_race <- poverty_race %>%
   mutate(pct_baltcity = percent(baltcity_poverty/baltcounty_total))
   
 ```
+
+#rsw - very good conclusion
 
 **Conclusion**
 Baltimore County's median household income has been consistently higher than Baltimore City's median household income in the 10 years from 2012 to 2022. While Baltimore County's median household income has been comparable to the state of Maryland, Baltimore City is significantly less than both values. In 2022, Baltimore County had a median household income of $86,526 and Maryland had a median household income of $94,991. Baltimore City, on the other hand, had a median household income of $55,198. Baltimore City also had a higher proportion of people below the poverty line compared to Maryland and Baltimore County, with individuals who identify as Black or African American constituting the largest percent of people below the poverty line by race. Around 37% of Black or African American people are below the poverty line, according to data from the U.S. Census Bureau. In Baltimore County and Maryland, however, those who listed two or more other races or those who identified as Hispanic or Latino, were the highest percent of people below the poverty line by race, respectively.
