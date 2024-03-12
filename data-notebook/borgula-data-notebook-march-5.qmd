@@ -4,46 +4,62 @@ author: Olivia Borgula
 date: 02/29/2024
 ---
 
-#rsw comments - Olivia - You had a very nice conclusion to this notebook. The layout of this notebook was easy to follow. There were a few problems, however.
-#1: file paths to the data directed me to your hard drive. 
-Your code failed at the first chunk because it was directing R to grab data from your laptop. Make your file paths so anyone downloading your notebook at data from github can do it from a single folder.
-
-#2: no explanation of the data. where did this data come from? what are the definitions of the columns? I have no idea where you got these files. And therefore I can't assess whether this is a good project or not.
-
-#3: Failure to clean your data. The column headings were a problem for poverty_status and that caused subsequent code failures. Clean your data using janitor::clean_names. These column headings are an unnecessary nightmare
-
-
-So your notebook failed to run. See my comments #rsw below and fix this for the next step in the process. 
-
-
-
 **INTRODUCTION**
-Baltimore County and Baltimore City are considered separate jurisdictions despite once being the same. While Baltimore City was once majority white in the 1960s, white flight out of the city and into what is now Baltimore County left the city with economic instability. But gentrification starting in the 2010s has led to an increase in white people in Baltimore City. How has this impacted wealth inequality in the two areas? 
+Baltimore County and Baltimore City are considered separate jurisdictions despite once being the same. While Baltimore City was once majority white in the 1960s, white flight out of the city and into what is now Baltimore County left the city with economic instability. But gentrification starting in the 2010s has led to an increase in property values and rent in Baltimore City. How has this impacted wealth inequality in the two areas? 
 
-First, load libraries, turn off scientific notation and upload datasets
+**DATA**
+All datasets were uploaded from the U.S Census Bureau. See list below with more detailed descriptions and links to original data source. 
+
+1. 2022 median household income in Baltimore County, Baltimore City and Maryland. Contains information about median household income for each location
+
+First, load libraries, turn off scientific notation
 ```{r}
 #load libraries
 library(tidyverse)
 library(janitor)
 library(formattable)
+library(dplyr)
+library(tidycensus)
 
 #turn off scientific notation
 options(scipen=999)
+```
 
+```{r}
 #upload datasets 
+
+#2022 median household income
+median_2022 <- read_csv("data/median_2022.csv")%>%
+  clean_names()
 
 medians_2012_2022 <- read_csv("data/medians_2012_2022.csv")%>%
   clean_names()
-
-poverty_status_2 <- read_csv("data/poverty_status_2.csv")%>%
-  clean_names()
-
-poverty_race <- read_csv("data/poverty_race_7.csv")%>%
-  clean_names()
-
-poverty_race <- read_csv("data/poverty_race_7.csv")%>%
-  clean_names()
 ```
+
+```{r}
+census_data <- load_variables(year = 2022,
+                              dataset = "acs1",
+                              cache = TRUE) %>%
+  clean_names() 
+
+```
+
+```{r}
+years <- c(2012:2019, 2021:2022)
+census_data_list <- lapply(years, function(year) {
+  load_variables(year = year, dataset = "acs1", cache = TRUE) %>%
+    clean_names()
+})
+census_data <- bind_rows(census_data_list, .id = "year")
+
+```
+
+
+```{r}
+median_22 <- filter(census_data, str_detect(name, "S1903"))
+```
+
+
 
 **Part 1**
 
@@ -71,7 +87,6 @@ decade_values <- medians_2012_2022 %>%
   mutate(Percent = ((55198 - 39241)/39241))%>%
   mutate(pct_change_baltcounty = ((86526 - 62444)/62444))
   
-
 
 #rsw - add this calculation to the table using mutate
 
@@ -103,27 +118,38 @@ ggplot(medians_2012_2022, aes(x=year)) +
        x="Year")
 ```
 
-How many people have poverty status (are below the poverty line) in Baltimore City, Baltimore County and Maryland?
 
+Upload data for people living below the poverty line
+
+**DATA**
+#1: data from the U.S. Census Bureau with columns showing the total population in Maryland, Baltimore County and Baltimore City; the number of people in Maryland, Baltimore County and Baltimroe City below the poverty line; and the percent of people below the poverty line in Maryland, Baltimore County and Baltimore City as a proportion of their respective populations. 
+
+#2: data from the U.S. 
 ```{r}
-#Create a pivot table and filter out values from large census dataset
-poverty_number <- poverty_status_2 %>%
-  select(`Label (Grouping)`, `Maryland!!Below poverty level!!Estimate`, `Baltimore County, Maryland!!Below poverty level!!Estimate`, `Baltimore city, Maryland!!Below poverty level!!Estimate`)%>%
-  filter(`Label (Grouping)` %in% c("Population for whom poverty status is determined"))
-View(poverty_number)
+#1
+poverty_status <- read_csv("data/poverty_status_2.csv")%>%
+  clean_names()
 
-
-#rsw what does this mean? spell it out... "below poverty line of XXXX"
-
-#Findings:
-#Maryland: 618,372 people 
-#Baltimore County: 81,052 people
-#Baltimore City: 127,135 people
+poverty_race <- read_csv("data/poverty_race_7.csv")%>%
+  clean_names()
 ```
 
-Make a pivot table with the percent of people below the poverty line in 2022 compared to their total population for each location
 
-#rsw this code failed: Error in select(., `Label (Grouping)`, `Maryland!!Percent below poverty level!!Estimate`,  :
+**How many people have poverty status (are below the poverty line) in Baltimore City, Baltimore County and Maryland?**
+
+```{r}
+#add column for percent
+poverty_status_2 <- poverty_status_2%>%
+  select(label_grouping, maryland_total_estimate, maryland_below_poverty_level_estimate, baltimore_county_maryland_total_estimate, baltimore_county_maryland_below_poverty_level_estimate, baltimore_city_maryland_total_estimate, baltimore_city_maryland_below_poverty_level_estimate)%>%
+  mutate(md_pct = maryland_below_poverty_level_estimate/maryland_total_estimate)%>%
+  mutate(baltcounty_pct = baltimore_county_maryland_below_poverty_level_estimate/baltimore_county_maryland_total_estimate)%>%
+  mutate(baltcity_pct = baltimore_city_maryland_below_poverty_level_estimate/baltimore_city_maryland_total_estimate)
+
+
+```
+
+
+Make a pivot table with the percent of people below the poverty line in 2022 compared to their total population for each location
 
 ```{r}
 poverty_pct <- poverty_status_2 %>%
@@ -133,7 +159,6 @@ View(poverty_pct)
 ```
 
 Reorder columns and rows to make it easier to create bar graph
-
 
 ```{r}
 # Reshape the data
@@ -163,6 +188,7 @@ reshaped_pct %>%
     caption = "Source: U.S. Census Bureau"
   )
 ```
+
 Add a column showing the percentage below the poverty line compared to total population in 2022 by race for each place 
 ```{r}
 #rsw - this was clever.

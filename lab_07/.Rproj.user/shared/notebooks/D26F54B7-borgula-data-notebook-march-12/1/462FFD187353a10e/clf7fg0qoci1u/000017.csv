@@ -1,0 +1,6 @@
+"0","#upload datasets "
+"0",""
+"0","median_2022 <- read_csv(""datanotebook/data/median_2022.csv"")%>%"
+"0","  clean_names()"
+"2","Error: 'datanotebook/data/median_2022.csv' does not exist in current working directory ('/Users/oliviaborgula/Documents/GitHub/olivia_borgula_jour472').
+"
