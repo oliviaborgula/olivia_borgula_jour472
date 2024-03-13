@@ -6,7 +6,7 @@ date: 02/12/2024
 **INTRODUCTION**
 Baltimore County and Baltimore City are considered separate jurisdictions despite once being the same. While Baltimore City was once majority white in the 1960s, white flight out of the city and into what is now Baltimore County left the city with economic instability. But gentrification starting in the 2010s has led to an increase in property values and rent in Baltimore City. How has this impacted wealth inequality in the two areas? 
 
-Questions I will ask: 
+**QUESTIONS**
 1. What was the median household income in 2022 in Maryland, Baltimore City and Baltimore County? How do they compare?
 2. What was the percent change in median household income from 2012 to 2022 in Baltimore County vs. Baltimore City?
 3. How does the median household income compare in each locations between 2012 and 2022? 
@@ -17,11 +17,16 @@ Questions I will ask:
 **DATA**
 All datasets were uploaded from the U.S Census Bureau. See list below with more detailed descriptions and links to original data sources. 
 
-*medians_2012_2022 --> 2012-2022 median household income in Baltimore County, Baltimore City and Maryland. There are columns for year, Maryland, Baltimore City and Baltimore County. The year column contains each year from 2012-2022 and each location column contains data about the median household income in their respective jurisdiction for that year. The data is from the ACS 1-year estimate, which publishes data for areas with populations with 65,000 or more, because it's the most current data and I'm only comparing three large areas rather than lots of smaller communities.*
+*medians_2012_2022 --> 2012-2022 median household income in Baltimore County, Baltimore City and Maryland. There are columns for year, Maryland, Baltimore City and Baltimore County. The year column contains each year from 2012-2022 and each location column contains data about the median household income in their respective jurisdiction for that year. The data is from the ACS 1-year estimate, which publishes data for areas with populations with 65,000 or more, because it's the most current data and I'm only comparing three large areas rather than lots of smaller communities.* 
+
+Link: https://data.census.gov/table/ACSST1Y2022.S1903?q=american%20community%20survey&t=Income%20and%20Poverty&g=040XX00US24_050XX00US24005,24510&y=2022 
+*Note: for the above link, I had to select the years from the sidebar and use the "hide" feature to only select for certain values and exclude others - this gave me one dataset with all years and median household income estimates*
 
 *poverty_status_2 --> dataset contains 10 columns: one indicating labels, and 9 containing information about total population, total population below the poverty line and percent of population below the poverty line for Marlyand, Baltimore County and Baltimore City. Within the labels column, there is a row with total estimate and then estimates based on race, sex, age, educational attainment, employment status, work experience and individuals below different poverty line ratios*
 
-*poverty_race --> dataset contains the number of people below the poverty line by race in Maryland, Baltimore County and Baltimore City in 2022 as well as total population estimates for each three locations*
+Link: https://data.census.gov/table/ACSST1Y2022.S1701?q=american%20community%20survey&t=Income%20and%20Poverty&g=040XX00US24_050XX00US24005,24510&y=2022
+*Note: I also had to filter out certain values to get the ones in my dataset but did not span multiple years*
+
 
 First, load libraries, turn off scientific notation
 ```{r}
@@ -40,20 +45,18 @@ Upload first set of datasets for meidan household income in 2022 and 2012-2022
 ```{r}
 #upload datasets 
 
-median_2022 <- read_csv("data/median_2022.csv")%>%
+median_2022 <- read_csv("data-notebook/data/median_2022.csv")%>%
   clean_names()
 
-medians_2012_2022 <- read_csv("data/medians_2012_2022.csv")%>%
+medians_2012_2022 <- read_csv("data-notebook/data/medians_2012_2022.csv")%>%
   clean_names()
 ```
 
 *What was the median household income in Baltimore City, Baltimore County and Maryland in 2022?*
 ```{r}
-#create a pivot table displaying the median household income in each location for 2022
+#create a pivot table from medians_2012_2022 dataset displaying the median household income in each location for 2022
 med_summary <- medians_2012_2022 %>%
   filter(year %in% c("2022"))
-
-View(med_summary)
 
 #Findings for 2022 median household income:
 #Baltimore City: $55,198
@@ -62,34 +65,44 @@ View(med_summary)
 ```
 
 *What was the percent change in median household income from 2012 to 2022 in Baltimore County vs. Baltimore City?*
-
+#FIX ADORN TOTALS PART
 ```{r}
-#First make a pivot table to more easily identify values
+#Make another pivot table from medians_2012_2022 showing median household income in 2022 and 2012
 decade_values <- medians_2012_2022 %>% 
   filter(year %in% c("2022", "2012"))
-  decade_values_clean <- gather(decade_values, key = "Location", value = "Estimate", -1)%>%
-    adorn_totals("row")%>%
+
+#calculate percent change 
+decade_values <- decade_values %>%
+  arrange(year) %>%
+  mutate(pct_bcity = percent(55198 - 39241)/39241)%>%
+  mutate(pct_bco = percent(86526 - 62444)/62444)%>%
+  mutate(pct_md = percent(94991 - 71122)/71122)
+
+#Findings for percent change in median household income between 2012 in Maryland, Baltimore County and Baltimore City:
+#Baltimore City: 40.7% increase
+#Baltimore County: 38.6% increase
+#Maryland: 33.6% increase
 ```
 
 *How does the median household income compare in each locations between 2012 and 2022?*
 ```{r}
 ggplot(medians_2012_2022, aes(x=year)) +
-  geom_line(aes(y=balt_city), color = "blue", show.legend = TRUE) +
-  geom_line(aes(y=balt_county), color = "green")+
-  geom_line(aes(y=maryland), color = "red")+
-  labs(title = "Median Household Income from 2012-2022", 
+  geom_line(aes(y=balt_city), color = "darkblue", show.legend = TRUE) +
+  geom_line(aes(y=balt_county), color = "darkgreen")+
+  geom_line(aes(y=maryland), color = "darkred")+
+  labs(title = "Median Household Income in Maryland, Baltimore County and Baltimore City from 2012-2022", 
        caption = "Source: U.S. Census Bureau. Graph by Olivia Borgula, 3/12/24",
        y="Income",
        x="Year")
+
+#Findings:
+#Median household income has generally increased in each location from 2012-2022. Baltimore City's median household income remains significantly below Maryland's and Baltimore City's, even it increased. 
 ```
 
 Upload second set of datasets for information about poverty status
 ```{r}
-poverty_status <- read_csv("data/poverty_status_2.csv")%>%
+poverty_status_2 <- read_csv("data-notebook/data/poverty_status_2.csv")%>%
   clean_names()
-
-#poverty_race <- read_csv("data/poverty_race_7.csv")%>%
-  #clean_names()
 ```
 
 Add columns for Maryland, Baltimore County and Baltimore City percent of population below poverty line as numeric values instead of character values
@@ -102,11 +115,18 @@ poverty_status <- poverty_status_2 %>%
   )
 ```
 
-*How many people were below the poverty line as a proportion to the area's total population in Maryland, Baltimore County and Baltimore City?*
+*How many people were below the poverty line as a proportion to the area's total population in Maryland, Baltimore County and Baltimore City in 2022?*
+
+*NOTE: the Census Bureau uses a set of money income thresholds that vary by family size and composition to determine who is in poverty. If a family's total income is less than the family's threshold, then that family and every individual in it is considered in poverty*
 ```{r}
 poverty_pct <- poverty_status %>%
   select(label_grouping, md_pct_below_poverty, bco_pct_below_poverty, bcity_pct_below_poverty)%>%
   filter(label_grouping %in% c("Population for whom poverty status is determined"))
+
+#Findings:
+#Maryland: 9.6% of the population was below the poverty line 
+#Baltimore County: 11.4% of the population was below the poverty line 
+#Baltimore City: 18.5% of the population was below the poverty line
 ```
 
 Reorder columns and rows to make it easier to create bar graph
@@ -137,14 +157,59 @@ reshaped_pct %>%
     caption = "Source: U.S. Census Bureau. Graph by Olivia Borgula, 3/12/24"
   )
 
-#Baltimore City has the largest proportion of their population living below the poverty line, with 18.5% living below the poverty line in 2022 compared to 11.4% in Baltimore County and 
+#Findings:
+#Baltimore City has the largest proportion of their population living below the poverty line, with 18.5% living below the poverty line in 2022 compared to 11.4% in Baltimore County and 9.6% in the state of Maryland
 ```
 
 *Which race has the highest number of people below the poverty line as a proportion to the race's total population in Maryland, Baltimore County and Baltimore City?*
-```{r}
 
+Make a new table that only contains values with total amount of people below the poverty line and subsections for each race below the poverty line in Maryland, Baltimore County and Baltimore City by filtering out rows that don't pertain to race or the total number below poverty line 
+```{r}
+#filter values in new table and get rid of percent columns that are non-numeric values
+rows_to_delete <- c(2:14, 25:69)
+poverty_race <- poverty_status %>%
+  filter(!(row_number() %in% rows_to_delete))%>%
+  arrange(desc(bcity_pct_below_poverty))
+
+#Baltimore City: individuals identifying as "some other race alone" made up the largest proportion of people living under the poverty line. Asian alone was second, with 22.5% and Hispanic or Latino origin (of any race) was third with 21.4% below the poverty line.
+
+#Baltimore County: 
+poverty_race <- poverty_race%>%
+  arrange(desc(bco_pct_below_poverty))
+#individuals identifying as "some other race alone" were also the largest proportion of people living under the poverty line at 30%. Hispanic or Latino origin (of any race) was second with 23.2% below the poverty line and people with two or more races were third with 15.7%.
+
+#Maryland:
+poverty_race <- poverty_race%>%
+  arrange(desc(md_pct_below_poverty))
+#individuals identifying as "some other race alone" were the largest proportion of people living under the poverty line at 15.1%. American Indian and Alaska Natives were second with 13.9% below the poverty line and Black or African American people were third with 13.2% below the poverty line.
 ```
 
 
-**Conclusion**
-Baltimore County's median household income has been consistently higher than Baltimore City's median household income in the 10 years from 2012 to 2022. While Baltimore County's median household income has been comparable to the state of Maryland, Baltimore City is significantly less than both values. In 2022, Baltimore County had a median household income of $86,526 and Maryland had a median household income of $94,991. Baltimore City, on the other hand, had a median household income of $55,198. Baltimore City also had a higher proportion of people below the poverty line compared to Maryland and Baltimore County, with individuals who identify as Black or African American constituting the largest percent of people below the poverty line by race. Around 37% of Black or African American people are below the poverty line, according to data from the U.S. Census Bureau. In Baltimore County and Maryland, however, those who listed two or more other races or those who identified as Hispanic or Latino, were the highest percent of people below the poverty line by race, respectively.
+**REPORTING MEMO**
+Baltimore City’s median household income was been significantly less than Baltimore County’s — which is comparable to the statewide value — between 2012 and 2022. 
+
+In 2022, Baltimore County had a median household income of $86,526 and Maryland had a value of $94,991. Baltimore City, on the other hand, totaled $55,198 during that same year. 
+
+Median household income divides the population into two equally sized groups. Half the population have an income above the median and the other half have an income below. This measure is often considered more representative of a population’s demographics because it’s not as easily skewed by extreme values. 
+
+While Baltimore City and Baltimore County used to be considered the same county, they split in the mid-1800s following the adoption of the Maryland constitution of 1851. White flight out of Baltimore City and urban neglect have contributed to worsened economic conditions, according to The Takeaway. 
+
+Baltimore City has also seen a higher proportion of people living below the poverty line compared to Maryland and Baltimore County, which individuals who identify as Black or African American constituting the largest percent of people below the poverty line by race. 
+
+Individuals identifying as "some other race alone" made up the largest proportion of people living under the poverty line in Baltimore City. Asian alone was second, with 22.5% and Hispanic or Latino origin was third with 21.4% below the poverty line. In Baltimore County, those identifying as "some other race alone" were also the largest proportion of people living under the poverty line at 30%. Hispanic or Latino origin was second with 23.2% below the poverty line and people with two or more races were third with 15.7%. In Maryland, "some other race alone" was also the highest, but American Indian and Alaska Native people and Black or African American residents took the number two and three spot. 
+
+In the same 2012-2022 timeframe, all three areas saw a steady increase in median household income, which is on par with a decades-long trend of rising median household income in the Baltimore regions and in Maryland, according to a report from Baltimore City. 
+
+Gentrification of Baltimore City beginning in the 2000s could have contributed to the rise in median household income, according to the report. Neighborhoods surrounding the Inner Harbor in Central Baltimore and East downtown Baltimore have particularly experienced the impacts of new housing, increased commercial spaces and an increase in tourism. 
+
+While some argue gentrification has revitalized Baltimore City, some activists have pointed to its displacement of people living in the area without addressing the underlying causes of poverty and economic instability.
+
+**STORY PITCH**
+Baltimore City faces significantly more economic challenges compared to its neighboring Baltimore County. Because it’s designated as its own county, this has direct impacts on education funding — since in Maryland school districts are determined by county lines — and on housing prices, job opportunities and crime. I specifically want to find out how gentrification in the past 10 years has impacted Baltimore City. While gentrification has increased, especially in areas such as the Inner Harbor in Central Baltimore and East downtown Baltimore, the city continues to have a higher proportion of people living below the poverty line and a lower median household income. I would talk to business owners from different parts of Baltimore City who have been there for years to see how their customers and business has shifted since the early 2000s. I would also talk to people who have lived in Baltimore City for years to see how they’ve seen housing prices and cost-of-living change, as well as people who recently moved into gentrified areas to see their perspective of Baltimore City. I could also speak with Baltimore City and Baltimore County leadership, either through their respective city or county councils, county executives or, on a state-wide level, Maryland General Assembly legislators.  
+
+**TWEETS**
+#1:
+Baltimore City's median household income remains significantly lower than Baltimore County's — which was more comparable to the statewide value from 2012-2022, according to U.S. Census Bureau data. 
+
+#2: 
+Baltimore City has the largest proportion of their population living below the poverty line, with 18.5% living below the poverty line in 2022 compared to 11.4% in Baltimore County and 9.6% in the state of Maryland, according to U.S. Census Bureau data.

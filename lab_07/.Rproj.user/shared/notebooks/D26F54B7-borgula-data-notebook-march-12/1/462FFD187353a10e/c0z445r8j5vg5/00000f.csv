@@ -1,6 +1,0 @@
-"0","poverty_pct <- poverty_status %>%"
-"0","  select(label_grouping, md_pct_below_poverty, bco_pct_below_poverty, bcity_pct_below_poverty)%>%"
-"0","  filter(label_grouping %in% c(""Population for whom poverty status is determined""))"
-"2","Error in poverty_status %>% select(label_grouping, md_pct_below_poverty,  : 
-  could not find function ""%>%""
-"

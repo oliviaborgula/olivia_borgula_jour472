@@ -1,0 +1,8 @@
+"0","ggplot(medians_2012_2022, aes(x=year)) +"
+"0","  geom_line(aes(y=balt_city), color = ""darkblue"", show.legend = TRUE) +"
+"0","  geom_line(aes(y=balt_county), color = ""darkgreen"")+"
+"0","  geom_line(aes(y=maryland), color = ""darkred"")+"
+"0","  labs(title = ""Median Household Income in Maryland, Baltimore County and Baltimore City from 2012-2022"", "
+"0","       caption = ""Source: U.S. Census Bureau. Graph by Olivia Borgula, 3/12/24"","
+"0","       y=""Income"","
+"0","       x=""Year"")"

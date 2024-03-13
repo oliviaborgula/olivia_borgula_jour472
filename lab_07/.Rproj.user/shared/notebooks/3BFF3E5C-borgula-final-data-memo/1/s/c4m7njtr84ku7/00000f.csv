@@ -1,0 +1,12 @@
+"0","poverty_status <- poverty_status_2 %>%"
+"0","  mutate("
+"0","    bco_pct_below_poverty = as.numeric(str_replace(baltimore_county_maryland_percent_below_poverty_level_estimate, ""%"", """")),"
+"0","    bcity_pct_below_poverty = as.numeric(str_replace(baltimore_city_maryland_percent_below_poverty_level_estimate, ""%"", """")),"
+"0","    md_pct_below_poverty = as.numeric(str_replace(maryland_percent_below_poverty_level_estimate, ""%"", """"))"
+"0","  )"
+"2","Warning: [38;5;232mThere were 3 warnings in `mutate()`.
+The first warning was:[39m
+[38;5;232m[36mℹ[38;5;232m In argument: `bco_pct_below_poverty = as.numeric(...)`.[39m
+Caused by warning:
+[33m![39m NAs introduced by coercion
+[38;5;232m[36mℹ[38;5;232m Run ]8;;ide:run:dplyr::last_dplyr_warnings()dplyr::last_dplyr_warnings()]8;; to see the 2 remaining warnings.[39m"

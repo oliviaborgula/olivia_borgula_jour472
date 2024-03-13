@@ -1,26 +1,26 @@
 {
     "id": "683B5CBC",
-    "path": "~/Documents/GitHub/olivia_borgula_jour472/borgula-data-notebook-march-12.qmd",
+    "path": "~/Documents/GitHub/olivia_borgula_jour472/borgula-final-data-memo.qmd",
     "project_path": null,
     "type": "quarto_markdown",
-    "hash": "0",
+    "hash": "202570397",
     "contents": "",
-    "dirty": true,
+    "dirty": false,
     "created": 1710284959475.0,
     "source_on_save": false,
-    "relative_order": 2,
+    "relative_order": 1,
     "properties": {
         "source_window_id": "",
         "Source": "Source",
-        "cursorPosition": "44,0",
-        "scrollLine": "31"
+        "cursorPosition": "12,20",
+        "scrollLine": "20"
     },
     "folds": "",
-    "lastKnownWriteTime": 1710275654,
+    "lastKnownWriteTime": 1710294699,
     "encoding": "UTF-8",
     "collab_server": "",
     "source_window": "",
-    "last_content_update": 1710285553544,
+    "last_content_update": 1710294699247,
     "read_only": false,
     "read_only_alternatives": []
 }

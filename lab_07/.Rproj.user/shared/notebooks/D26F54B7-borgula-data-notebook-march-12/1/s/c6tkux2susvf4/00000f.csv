@@ -1,0 +1,8 @@
+"0","#create a pivot table from medians_2012_2022 dataset displaying the median household income in each location for 2022"
+"0","med_summary <- medians_2012_2022 %>%"
+"0","  filter(year %in% c(""2022""))"
+"0",""
+"0","#Findings for 2022 median household income:"
+"0","#Baltimore City: $55,198"
+"0","#Baltimore County: $86,526"
+"0","#Maryland: $94,991"
