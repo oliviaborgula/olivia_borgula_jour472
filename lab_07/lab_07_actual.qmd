@@ -11,6 +11,15 @@ When you are finished, commit changes and push to your personal GitHub repo, the
 
 ## Load libraries and establish settings
 **Task**: Make a code block and load janitor and the tidyverse
+```{r}
+#load libraries
+library(janitor)
+library(tidyverse)
+
+#turn off scientific notation
+options(scipen=999)
+```
+
 
 ## Load data
 
@@ -24,14 +33,84 @@ There are four tables in the data folder.
 * state_crosswalk.csv is a simple dataframe with two columns listing the state and its abbreviation.  You may need to use this for the second question.
 
 **Task**: Create a codeblock and load the four dataframes using appropriate names below.
+```{r}
+#load the four dataframes
+arcos <- read_csv("data/arcos.csv")%>%
+  clean_names()
+
+county_population_2014 <- read_csv("data/county_population_2014.csv")%>%
+  clean_names()
+
+state_crosswalk <- read_csv("data/state_crosswalk.csv")%>%
+  clean_names()
+
+state_population_2014 <- read_csv("data/state_population_2014.csv")%>%
+  clean_names()
+```
+
 
 ## Questions
 **Task** Create codeblocks in the space below and answer the questions. 
 
 **Q1** Which county or city received the most total opioid pills per person? Add up all the pills between 2006 and 2014 when doing this calculation. How many total pills, and what was the per person rate?
 
+```{r}
+#top city/county by opiod pills per person and total pills
+arcos_county <- arcos %>%
+  group_by(countyfips,buyer_county,buyer_state) %>%
+  summarise(
+    total_pills = sum(total_pills)
+  ) %>%
+  inner_join(county_population_2014, by=c("countyfips"="geoid")) %>%
+  mutate(pills_per_person = total_pills/total_population_2014) %>%
+  arrange(desc(pills_per_person))
+arcos_county
+#Norton City, Virginia received the most total opiod pills per person, at about 2628.9340. It had 10,555,170 total pills
+```
+
+
 **Q2_New** 
 Which U.S. state saw the highest percentage increase in opiod pills from 2006 to 2014? 
+
+```{r}
+#Produce two tables, one for 2006 and one for 2014. In the 2006 table, rename the total to total_2006. In the 2014 table, rename the total to total_2014. 
+
+#find which state saw highest percentage increase in opiod pills between 2016-2014
+total_2006 <- arcos %>%
+  filter(year == "2006") 
+
+total_2014 <- arcos %>%
+  filter(year == "2014") 
+
+#Join the tables into a new table, arcos_combo
+arcos_combo <- total_2006 %>%
+  inner_join(total_2014, by= "countyfips") 
+
+#Your table must have the full name of the states. Join with the state crosswalk table
+arcos_combo_sidewalk <- arcos_combo %>%
+  inner_join(state_crosswalk, by= c("buyer_state.x"="state_abb"))
+
+#2006 and 2014 pill totals
+arcos_combo_sidewalk_totals <- arcos_combo_sidewalk %>% 
+  select(state_name, total_pills.x, total_pills.y) %>%
+  mutate(total_2014 = sum(total_pills.y)) %>% 
+  mutate(total_2006 = sum(total_pills.x))
+
+#Calculate percentage change between 2006 and 2014
+arcos_combo_sidewalk_totals2 <- arcos_combo_sidewalk_totals %>% 
+  mutate(pct_change = (total_pills.y - total_pills.x)/total_pills.x*100)
+
+#Create one table with the top 5 states by percentage increase 
+arcos_combo_sidewalk_totals2 %>% 
+  slice_max(pct_change, n=5)
+#Missouri, Alaska, Texas, Virginia, South Dakota
+
+#Create a second table with the 5 states with the lowest percentage increase
+arcos_combo_sidewalk_totals2 %>% 
+  slice_min(pct_change, n=5)
+#Texas, North Dakota, New York, Colorado, Illinois
+```
+
 
 --Produce two tables, one for 2006 and one for 2014. In the 2006 table, rename the total to total_2006. In the 2014 table, rename the total to total_2014. 
 --Join the tables into a new table, arcos_combo
@@ -40,8 +119,8 @@ Which U.S. state saw the highest percentage increase in opiod pills from 2006 to
 --Create one table with the top 5 states by percentage increase 
 --Create a second table with the 5 states with the lowest percentage increase.
 
---Write a sentence that could be dropped in as the lede of a news story from the finding in question two. 
-
+--Write a sentence that could be dropped in as the lede of a news story from the finding in question two.
 
 **Q3** Which U.S. state had the highest number of opioid pills per person for pills shipped in 2014? How many total pills, and what was the per person rate? How did that compare to Washington, D.C.?
+
 
