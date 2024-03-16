@@ -70,6 +70,12 @@ arcos_county
 
 
 **Q2_New** 
+--Produce two tables, one for 2006 and one for 2014. In the 2006 table, rename the total to total_2006. In the 2014 table, rename the total to total_2014. 
+--Join the tables into a new table, arcos_combo
+--Your table must have the full name of the states. Join with the state crosswalk table
+--Calculate the percentage change between 2006 and 2014
+--Create one table with the top 5 states by percentage increase 
+--Create a second table with the 5 states with the lowest percentage increase.
 Which U.S. state saw the highest percentage increase in opiod pills from 2006 to 2014? 
 
 ```{r}
@@ -111,15 +117,8 @@ arcos_combo_sidewalk_totals2 %>%
 #Texas, North Dakota, New York, Colorado, Illinois
 ```
 
-
---Produce two tables, one for 2006 and one for 2014. In the 2006 table, rename the total to total_2006. In the 2014 table, rename the total to total_2014. 
---Join the tables into a new table, arcos_combo
---Your table must have the full name of the states. Join with the state crosswalk table
---Calculate the percentage change between 2006 and 2014
---Create one table with the top 5 states by percentage increase 
---Create a second table with the 5 states with the lowest percentage increase.
-
 --Write a sentence that could be dropped in as the lede of a news story from the finding in question two.
+#Missouri saw the highest increase in number opioid pills from 2006 to 2014, according to county opioid data.
 
 **Q3** Which U.S. state had the highest number of opioid pills per person for pills shipped in 2014? How many total pills, and what was the per person rate? How did that compare to Washington, D.C.?
 
