@@ -1,0 +1,23 @@
+"0","#upload data"
+"0","fatal_shootings <- read_csv(""data/fatal-police-shootings.csv"")%>%"
+"0","  clean_names()"
+"2","[1mRows: [22m[34m9473[39m [1mColumns: [22m[34m19[39m"
+"2","[36m──[39m [1mColumn specification[22m [36m────────────────────────────────────────────────────────────────────────────[39m
+[1mDelimiter:[22m "",""
+[31mchr[39m  (12): threat_type, flee_status, armed_with, city, county, state, location_precision, name, ...
+[32mdbl[39m   (4): id, latitude, longitude, age
+[33mlgl[39m   (2): was_mental_illness_related, body_camera
+[34mdate[39m  (1): date"
+"2","
+[36mℹ[39m Use `spec()` to retrieve the full column specification for this data.
+[36mℹ[39m Specify the column types or set `show_col_types = FALSE` to quiet this message."
+"0","agencies <- read_csv(""data/fatal-police-shootings-agencies.csv"")%>%"
+"0","  clean_names()"
+"2","[1mRows: [22m[34m3516[39m [1mColumns: [22m[34m6[39m"
+"2","[36m──[39m [1mColumn specification[22m [36m────────────────────────────────────────────────────────────────────────────[39m
+[1mDelimiter:[22m "",""
+[31mchr[39m (4): name, type, state, oricodes
+[32mdbl[39m (2): id, total_shootings"
+"2","
+[36mℹ[39m Use `spec()` to retrieve the full column specification for this data.
+[36mℹ[39m Specify the column types or set `show_col_types = FALSE` to quiet this message."

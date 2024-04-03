@@ -1,0 +1,5 @@
+"0",""
+"0","ggplot() +"
+"0","  geom_sf(data=pg_county,fill=""white"") +"
+"0","  geom_sf(data=attendance_locations, aes(color=attend_rate_pct),size=2) "
+"0",""

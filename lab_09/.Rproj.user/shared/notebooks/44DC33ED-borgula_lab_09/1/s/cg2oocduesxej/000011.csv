@@ -1,0 +1,4 @@
+"0",""
+"0","income_to_attendance <- attendance_locations %>%"
+"0","  st_join(pg_tract_income) "
+"0",""

@@ -1,0 +1,6 @@
+"0",""
+"0",""
+"0","ggplot() +"
+"0","  geom_sf(data=pg_tract_income, aes(fill=median_household_income)) +"
+"0","  geom_sf(data=attendance_locations, aes(color=attend_rate_pct),size=2) "
+"0",""

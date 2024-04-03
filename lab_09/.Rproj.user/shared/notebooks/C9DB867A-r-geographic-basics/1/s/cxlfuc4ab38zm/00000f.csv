@@ -1,0 +1,4 @@
+"0","attendance_locations <- attendance %>%"
+"0","  inner_join(pg_elementary_school_locations) %>%"
+"0","  st_as_sf()"
+"2","Joining with `by = join_by(county, school_name)`"

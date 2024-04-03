@@ -1,0 +1,9 @@
+"0",""
+"0","leaflet() %>%"
+"0","  addProviderTiles(providers$CartoDB.Positron) %>%"
+"0","  addPolygons(data=pg_county) %>%"
+"0","  addCircles(data=pg_elementary_school_locations)"
+"2","Warning: sf layer has inconsistent datum (+proj=longlat +datum=NAD83 +no_defs).
+Need '+proj=longlat +datum=WGS84'"
+"2","Warning: sf layer has inconsistent datum (+proj=longlat +datum=NAD83 +no_defs).
+Need '+proj=longlat +datum=WGS84'"
