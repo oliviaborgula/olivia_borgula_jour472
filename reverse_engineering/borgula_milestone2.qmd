@@ -85,19 +85,49 @@ black_women_unarmed <- black_women%>%
 #add up number
 nrow(black_women_unarmed)
 
-#filter by home
-women_homes <- women_shootings%>%
-  filter()
 ```
 
 **Since 2015, Black women have accounted for less than 1 percent of the overall fatal shootings in cases where race was known. But within this small subset, Black women, who are 13 percent of the female population, account for 20 percent of the women shot and killed and 28 percent of the unarmed deaths**
 
+**first part of graf: Black women have accounted for less than 1 percent of the overall fatal shootings in cases where race was known**
+
 ```{r}
-#percent of black women out of total 
+#get datasets for Black women who were fatally shot and total number of people who were fatally shot and exclude rows that have an "NA" value for race ("...where race was known")
 total_rows_black_women <- sum(!is.na(black_women$race))
 total_rows_shootings <- sum(!is.na(filtered_shootings$race))
 
-# Calculate the percentage
+#calculate the percent 
 percent(total_rows_black_women / total_rows_shootings)
+
+#Black women account for 0.91 percent of the overall fatal shootings in cases where race was known, or less than 1 percent. 
+```
+
+**second part of graf: Black women account for 20 percent of the women shot and killed and 28 percent of the unarmed deaths**
+```{r}
+#find number of rows in dataframe for Black women and female shootings dataframe with rows removed that contain "N/A" for race (assuming "where race was known" also applies to these sentences)
+total_rows_black_women <- sum(!is.na(black_women$race))
+total_rows_female <- sum(!is.na(women_shootings$race))
+
+#calculate the percent
+percent(total_rows_black_women / total_rows_female)
+
+#Black women account for 19.83 percent of the women shot, or close to 20 percent - this figure is slightly off likely due to updates in the dataframe in the four years since the article was published
+
+```
+
+**third part of graf: Black women account for 28 percent of the unarmed deaths**
+```{r}
+#filter for unarmed females
+female_unarmed <- filtered_shootings %>%
+  filter(armed_with == "unarmed", gender == "female")
+
+#Find number of rows excluding those with "N/A" for race (black_women_unarmed doesn't have any "N/A" values for race, but adding based on mindset that wapo reporters are working with regularly updated data)
+total_rows_black_women_unarmed <- sum(!is.na(black_women_unarmed$race))
+total_rows_female_unarmed <- sum(!is.na(female_unarmed$race))
+
+#find percent change
+percent(total_rows_black_women_unarmed / total_rows_female_unarmed)
+
+#Black women account for 28 percent of the unarmed deaths
 ```
 

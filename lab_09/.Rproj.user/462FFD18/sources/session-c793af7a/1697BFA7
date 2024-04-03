@@ -3,7 +3,7 @@
     "path": "~/Documents/GitHub/olivia_borgula_jour472/reverse_engineering/borgula_milestone2.qmd",
     "project_path": null,
     "type": "quarto_markdown",
-    "hash": "14260432",
+    "hash": "2480491610",
     "contents": "",
     "dirty": false,
     "created": 1712088693671.0,
@@ -12,15 +12,15 @@
     "properties": {
         "source_window_id": "",
         "Source": "Source",
-        "cursorPosition": "100,54",
-        "scrollLine": "90"
+        "cursorPosition": "130,57",
+        "scrollLine": "115"
     },
     "folds": "",
-    "lastKnownWriteTime": 1712115331,
+    "lastKnownWriteTime": 1712176827,
     "encoding": "UTF-8",
     "collab_server": "",
     "source_window": "",
-    "last_content_update": 1712115331574,
+    "last_content_update": 1712176827786,
     "read_only": false,
     "read_only_alternatives": []
 }
