@@ -1,0 +1,7 @@
+"0",""
+"0","#248 women were fatally shot (see above note about discrepancies)"
+"0",""
+"0","#filter to Black women and count number"
+"0","black_women <- women_shootings %>% "
+"0","  filter(race == ""B"")"
+"0","count(race_women_shootings)"

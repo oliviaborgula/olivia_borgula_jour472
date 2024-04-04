@@ -1,0 +1,42 @@
+---
+names: Olivia Borgula and Lizzy Alspach
+date: 4/4/2024
+---
+**INTRODUCTION**
+This project will reverse engineer findings by The Washington Post's story, headlined "Nearly 250 women fatally shot by police since 2015." The link is here: https://www.washingtonpost.com/graphics/2020/investigations/police-shootings-women/ 
+
+
+This story describes the disparity in people fatally shot by police in regards to sex and within sex, race. We will replicate the following findings described in paragraphs in The Post’s story: 
+
+Q1: “Since The Washington Post began tracking fatal shootings by police in 2015, officers have fatally shot 247 women out of the more than 5,600 people killed overall.”
+
+Q2: “Of the 247 women fatally shot, 48 were Black and seven of those were unarmed. At least 89 of the women were at their homes or residences where they sometimes stayed. And 12 of those women killed at home were shot by officers who were there to conduct a search or make an arrest.”
+
+Q3: “Since 2015, Black women have accounted for less than 1 percent of the overall fatal shootings in cases where race was known. But within this small subset, Black women, who are 13 percent of the female population, account for 20 percent of the women shot and killed and 28 percent of the unarmed deaths.”
+
+Q4: “About 31 percent, or 77, of the 247 women fatally shot by police since 2015 had mental health issues, compared to 22 percent of the 5,362 men killed.”
+
+**SETUP**
+Load libraries and turn off scientific notation
+```{r}
+#load libraries
+library(tidyverse)
+library(janitor)
+library(formattable)
+library(dplyr)
+
+#turn off scientific notation
+options(scipen=999)
+```
+
+Upload data
+```{r}
+#upload data
+shootings <- read_csv("data/fatal-police-shootings.csv")%>%
+  clean_names()
+
+agencies <- read_csv("data/fatal-police-shootings-agencies.csv")%>%
+  clean_names()
+```
+
+

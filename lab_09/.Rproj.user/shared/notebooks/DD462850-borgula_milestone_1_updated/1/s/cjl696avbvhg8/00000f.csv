@@ -1,0 +1,2 @@
+"0","filtered_shootings <- shootings %>%"
+"0","  filter(date <= as.Date(""2020-09-03""))"

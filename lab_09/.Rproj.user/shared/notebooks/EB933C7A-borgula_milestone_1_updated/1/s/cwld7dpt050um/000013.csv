@@ -1,0 +1,5 @@
+"0","#upload data"
+"0","shootings <- read_csv(""data/fatal-police-shootings.csv"")%>%"
+"0","  clean_names()"
+"2","Error: 'data/fatal-police-shootings.csv' does not exist in current working directory ('/Users/oliviaborgula/Documents/GitHub/olivia_borgula_jour472').
+"

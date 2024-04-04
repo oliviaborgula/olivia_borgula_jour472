@@ -34,58 +34,62 @@ library(dplyr)
 
 ```{r}
 #upload data
-fatal_shootings <- read_csv("data/fatal-police-shootings.csv")%>%
+shootings <- read_csv("data/fatal-police-shootings.csv")%>%
   clean_names()
 
 agencies <- read_csv("data/fatal-police-shootings-agencies.csv")%>%
   clean_names()
 ```
 
-**Q1: “Since The Washington Post began tracking fatal shootings by police in 2015, officers have fatally shot 247 women out of the more than 5,600 people killed overall.”**
+```{r}
+#filter for specific times that happened before sept. 4, 2020, when the story was published
+filtered_shootings <- shootings %>%
+  filter(date <= as.Date("2020-09-03"))
+```
+
+**Q1: Since The Washington Post began tracking fatal shootings by police in 2015, officers have fatally shot 247 women out of the more than 5,600 people killed overall**
 
 ```{r}
-#Sample data frame with a date column
-shootings_clean_x2015_x2020 <- data.frame(date = c("2022-01-15", "2022-02-20", "2022-03-25", "2019-05-10", "2020-08-30", "2015-12-20"))
-
-#Convert date column to Date object
-updated_shootings <- fatal_shootings%>%
-  mutate(date = as.Date(date))
-
-# Filter data for the specified date range 
-filtered_shootings <- updated_shootings %>%
-  filter(date <= as.Date("2020-09-04"))
-
-#add up the total number of people shot
-nrow(filtered_shootings)
-
-#filter for women 
+#filter for women
 women_shootings <- filtered_shootings%>%
   filter(gender == "female")
 
-#add up total number of women shot 
+#add up total number of women shot
 nrow(women_shootings)
+#248 women
 
+#add up total number of people shot
+nrow(filtered_shootings)
+#5,612 shootings
 
+#there were 248 women killed out of the more than 5,600 overall. The disparity in our results vs. the Washington Post's analysis is due to updates to the database in the last four years. Likely, more information was released about a women who was shot after publication, which changed the database 
 ```
 
 
-**“Of the 247 women fatally shot, 48 were Black and seven of those were unarmed. At least 89 of the women were at their homes or residences where they sometimes stayed. And 12 of those women killed at home were shot by officers who were there to conduct a search or make an arrest.”**
+**Q2: Of the 247 women fatally shot, 48 were Black and seven of those were unarmed. At least 89 of the women were at their homes or residences where they sometimes stayed. And 12 of those women killed at home were shot by officers who were there to conduct a search or make an arrest.**
+
+**First, let's find this: “Of the 247 women fatally shot, 48 were Black and seven of those were unarmed."
+*48 of the 247 women shot were Black.*
 ```{r}
-#filter by race and whether they were armed 
-black_women <- women_shootings%>%
+#filter by race
+race_women_shootings <- women_shootings %>% 
   filter(race == "B")
 
-#add up total number of women shot 
-nrow(black_women)
+count(race_women_shootings)
 
-#filter by unarmed
-black_women_unarmed <- black_women%>%
+#print(race_women_shootings)
+```
+
+*7 Black women were unarmed.*
+```{r}
+#out of the black women, find how many were unarmed
+black_women_unarmed <- race_women_shootings %>% 
   filter(armed_with == "unarmed")
 
-#add up number
-nrow(black_women_unarmed)
-
+count(black_women_unarmed)
 ```
+
+The findings about women being at home are impossible to replicate, seeing as the dataframes do not have columns specifically about the location of the victim and their addresses are not released. 
 
 **Since 2015, Black women have accounted for less than 1 percent of the overall fatal shootings in cases where race was known. But within this small subset, Black women, who are 13 percent of the female population, account for 20 percent of the women shot and killed and 28 percent of the unarmed deaths**
 
@@ -115,7 +119,14 @@ percent(total_rows_black_women / total_rows_female)
 
 ```
 
-**third part of graf: Black women account for 28 percent of the unarmed deaths**
+**third part of graf: Black women are 13 percent of the female population**
+```{r}
+#for this part, reporters likely did not do the same level of data analysis as other sections since basic Census Bureau data like this is easily accessible online. They could find the information through this page:
+
+```
+
+
+**fourth part of graf: Black women account for 28 percent of the unarmed deaths**
 ```{r}
 #filter for unarmed females
 female_unarmed <- filtered_shootings %>%
@@ -130,4 +141,5 @@ percent(total_rows_black_women_unarmed / total_rows_female_unarmed)
 
 #Black women account for 28 percent of the unarmed deaths
 ```
+
 

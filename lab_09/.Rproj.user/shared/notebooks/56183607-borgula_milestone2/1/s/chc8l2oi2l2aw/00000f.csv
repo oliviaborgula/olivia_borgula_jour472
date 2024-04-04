@@ -1,3 +1,0 @@
-"0","#filter by race and whether they were armed "
-"0","women_shootings%>%"
-"0","  filter(race == ""B"")"
