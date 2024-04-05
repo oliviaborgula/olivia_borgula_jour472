@@ -2,7 +2,7 @@
 "0","#48 of the women shot were Black "
 "0",""
 "0","#filter to show only unarmed Black women "
-"0","black_women_unarmed <- race_women_shootings %>% "
+"0","black_women_unarmed <- black_women %>% "
 "0","  filter(armed_with == ""unarmed"")"
 "0",""
 "0","count(black_women_unarmed)"

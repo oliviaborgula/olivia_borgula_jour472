@@ -42,7 +42,7 @@ agencies <- read_csv("data/fatal-police-shootings-agencies.csv")%>%
 Filter out data past Sept. 4, 2020, when the article was published
 ```{r}
 filtered_shootings <- shootings %>%
-  filter(date <= as.Date("2020-09-03"))
+  filter(date <= as.Date("2020-09-04"))
 ```
 
 **Q1: Since The Washington Post began tracking fatal shootings by police in 2015, officers have fatally shot 247 women out of the more than 5,600 people killed overall**
@@ -58,7 +58,7 @@ nrow(women_shootings)
 
 #add up total number of people shot
 nrow(filtered_shootings)
-#5,612 shootings
+#5,614 shootings
 
 #there were 248 women killed out of the more than 5,600 overall. The disparity in our results vs. the Washington Post's analysis is due to updates to the database in the last four years. Likely, more information was released about a women who was shot after publication, which changed the database 
 ```
@@ -79,7 +79,7 @@ count(race_women_shootings)
 #48 of the women shot were Black 
 
 #filter to show only unarmed Black women 
-black_women_unarmed <- race_women_shootings %>% 
+black_women_unarmed <- black_women %>% 
   filter(armed_with == "unarmed")
 
 count(black_women_unarmed)

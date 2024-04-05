@@ -12,6 +12,18 @@ When you are finished, commit changes and push to your personal GitHub repo, the
 ## Load libraries and establish settings
 **Task**: Load janitor and the tidyverse and sf
 
+```{r}
+#load libraries
+library(tidyverse)
+library(janitor)
+library(sf)
+library(formattable)
+
+#turn off scientific notation
+options(scipen=999)
+```
+
+
 ## Load data
 
 You have been given two spatial dataframes and one regular dataframe to load.  The dataframes are:
@@ -22,6 +34,13 @@ You have been given two spatial dataframes and one regular dataframe to load.  T
 
 **Task** Load the data
 
+```{r}
+baltimore_homicides <- read_rds("data/baltimore_homicides.rds") 
+baltimore_tract <- read_rds("data/baltimore_tract_shapefiles.rds")
+baltimore_tract_demo <- read_rds("data/baltimore_tract_demographics.rds")
+```
+
+
 ## Questions
 
 **Q1** Are homicides that occur in majority white Census tracts in Baltimore solved at a higher rate than homicides in non-majority white Baltimore census tracts?
@@ -31,5 +50,42 @@ You have been given two spatial dataframes and one regular dataframe to load.  T
 * Output at least one map visualization pertinent to your finding. 
 
 **A1** 
+
+```{r}
+#assign each tract to over or under 50% white (majority white)
+
+majority_white_tracts <- baltimore_tract_demo %>%
+  mutate(pct_white = white_pop / total_pop) %>%
+  select(geoid, name, pct_white) %>%
+  mutate(neighborhood_type = case_when(
+    pct_white > .50 ~ "majority_white",
+    TRUE ~ "not_majority_white"
+  ))
+
+#join classified neighborhood file to spatial data
+majority_white_tracts <- majority_white_tracts %>%
+  inner_join(baltimore_tract) %>%
+  st_as_sf()
+
+#assign shootings to tracts with a spatial join 
+shootings_by_neighborhood <- baltimore_homicides %>%
+  st_join(majority_white_tracts) %>%
+  as_tibble()
+
+#find percent of unsolved homicides in white vs. non-white neighborhoods
+case_status_by_neighborhood <- shootings_by_neighborhood %>%
+  group_by(neighborhood_type, disposition) %>%
+  count() %>%
+  pivot_wider(names_from = disposition, values_from = n) %>%
+  mutate(total_shootings = closed_by_arrest + closed_without_arrest + open_no_arrest) %>%
+  mutate(unsolved = open_no_arrest + closed_without_arrest) %>%
+  mutate(pct_unsolved = percent(unsolved/total_shootings))
+
+
+#create a map 
+ggplot() +
+  geom_sf(data=baltimore_tract_shapefiles) +
+  geom_sf(data=baltimore_homicides)
+```
 
 
