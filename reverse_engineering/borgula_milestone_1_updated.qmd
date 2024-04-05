@@ -16,8 +16,7 @@ Q3: “Since 2015, Black women have accounted for less than 1 percent of the ove
 
 Q4: “About 31 percent, or 77, of the 247 women fatally shot by police since 2015 had mental health issues, compared to 22 percent of the 5,362 men killed.”
 
-**SETUP** 
-Load libraries and turn off scientific notation
+**SETUP** Load libraries and turn off scientific notation
 
 ```{r}
 #load libraries
@@ -31,6 +30,7 @@ options(scipen=999)
 ```
 
 Upload data
+
 ```{r}
 shootings <- read_csv("data/fatal-police-shootings.csv")%>%
   clean_names()
@@ -40,9 +40,14 @@ agencies <- read_csv("data/fatal-police-shootings-agencies.csv")%>%
 ```
 
 Filter out data past Sept. 4, 2020, when the article was published
+
 ```{r}
+#filter for specific times that happened before sept. 4, 2020, when the story was published
 filtered_shootings <- shootings %>%
   filter(date <= as.Date("2020-09-04"))
+
+count(filtered_shootings)
+#shows next part of the question, with more than 5,600 deaths
 ```
 
 **Q1: Since The Washington Post began tracking fatal shootings by police in 2015, officers have fatally shot 247 women out of the more than 5,600 people killed overall**
@@ -91,7 +96,7 @@ The findings about women being at home/offices conducting homesearches are impos
 
 **Since 2015, Black women have accounted for less than 1 percent of the overall fatal shootings in cases where race was known. But within this small subset, Black women, who are 13 percent of the female population, account for 20 percent of the women shot and killed and 28 percent of the unarmed deaths**
 
-first part of graf: Black women have accounted for less than 1 percent of the overall fatal shootings in cases where race was known**
+first part of graf: Black women have accounted for less than 1 percent of the overall fatal shootings in cases where race was known\*\*
 
 ```{r}
 #get datasets for Black women who were fatally shot and total number of people who were fatally shot and exclude rows that have an "NA" value for race ("...where race was known")
@@ -101,10 +106,11 @@ total_rows_shootings <- sum(!is.na(filtered_shootings$race))
 #calculate the percent 
 percent(total_rows_black_women / total_rows_shootings)
 
-#Black women account for 0.91 percent of the overall fatal shootings in cases where race was known, or less than 1 percent. 
+#Black women account for 0.86% of the overall fatal shootings in cases where race was known, or less than 1 percent. We don't know if this too far from 1%, but is the value we received.
 ```
 
 second part of graf: Black women account for 20 percent of the women shot and killed and 28 percent of the unarmed deaths
+
 ```{r}
 #find number of rows in dataframe for Black women and female shootings dataframe with rows removed that contain "N/A" for race (assuming "where race was known" also applies to these sentences)
 total_rows_black_women <- sum(!is.na(black_women$race))
@@ -113,15 +119,17 @@ total_rows_female <- sum(!is.na(women_shootings$race))
 #calculate the percent
 percent(total_rows_black_women / total_rows_female)
 
-#Black women account for 19.83 percent of the women shot, or close to 20 percent - this figure is slightly off likely due to updates in the dataframe in the four years since the article was published
+#Black women account for 19.35% of the women shot, or close to 20 percent - this figure is slightly off likely due to updates in the dataframe in the four years since the article was published. We're unsure as to why the number is lower, but it's unclear if the number changed since the investigation was published.
 ```
 
 third part of graf: Black women are 13 percent of the female population
+
 ```{r}
 #for this part, reporters likely did not do the same level of data analysis as other sections since basic Census Bureau data like this is easily accessible online. They could find the information through this page: https://www.census.gov/data/tables/2023/dec/2020-census-demographic-profile.html#data
 ```
 
 fourth part of graf: Black women account for 28 percent of the unarmed deaths
+
 ```{r}
 #filter for unarmed females
 female_unarmed <- filtered_shootings %>%
@@ -134,6 +142,11 @@ total_rows_female_unarmed <- sum(!is.na(female_unarmed$race))
 #find percent change
 percent(total_rows_black_women_unarmed / total_rows_female_unarmed)
 
-#Black women account for 28 percent of the unarmed deaths
+#Black women accounted for 26.92% of unarmed deaths. This isn't the exact 28% figure, but we're unsure if this is a result of our syntax or just a database update since the time of publication.
 ```
 
+**Q4: About 31 percent, or 77, of the 247 women fatally shot by police since 2015 had mental health issues, compared to 22 percent of the 5,362 men killed.**
+
+```{r}
+
+```
