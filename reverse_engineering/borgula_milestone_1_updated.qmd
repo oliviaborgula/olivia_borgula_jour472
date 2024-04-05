@@ -79,7 +79,7 @@ count(women_shootings)
 #filter to Black women and count number
 black_women <- women_shootings %>% 
   filter(race == "B")
-count(race_women_shootings)
+count(black_women)
 
 #48 of the women shot were Black 
 
@@ -92,7 +92,7 @@ count(black_women_unarmed)
 #7 Black women who were shot were unarmed
 ```
 
-The findings about women being at home/offices conducting homesearches are impossible to replicate, seeing as the dataframes do not have columns specifically about the location of the victim and their addresses are not released, likely due to confidentiality reasons
+The findings about women being at home/offices conducting home searches are impossible to replicate, seeing as the dataframes do not have columns specifically about the location of the victim and their addresses are not released, likely due to confidentiality reasons
 
 **Since 2015, Black women have accounted for less than 1 percent of the overall fatal shootings in cases where race was known. But within this small subset, Black women, who are 13 percent of the female population, account for 20 percent of the women shot and killed and 28 percent of the unarmed deaths**
 
@@ -147,6 +147,34 @@ percent(total_rows_black_women_unarmed / total_rows_female_unarmed)
 
 **Q4: About 31 percent, or 77, of the 247 women fatally shot by police since 2015 had mental health issues, compared to 22 percent of the 5,362 men killed.**
 
+first part of graf: about 31 percent, or 77, of the 247 women fatally shot by police since 2015 had mental health issues
 ```{r}
+mental_health_women <- women_shootings %>% 
+  filter(was_mental_illness_related == "TRUE")
 
+count(mental_health_women)
+
+#83 women had mental health issues 
+
+total_women_mental_health <- sum(!is.na(mental_health_women))
+total_women_shot <- sum(!is.na(women_shootings))
+
+percent(total_women_mental_health / total_women_shot)
+
+#This is slightly more than what it was previously, seeing as there are now 83 women recorded with mental health issues and 248 women recorded fatalities. Now, it's at about 33.48%.
+
+#Since this database has been continuously updated since the publication of this investigation in 2020, there are likely to have been about six more women who were discovered to have mental health issues. 
 ```
+
+second part of graf: 22 percent of the 5,362 men killed had mental health issues
+```{r}
+#make a dataframe for men
+men_shot <- filtered_shootings %>% 
+  filter(gender == "male")
+
+count(men_shot)
+#this count will also be off, because from this time it appears The Post discovered that there was actually one more man who was murdered before this investigation was published
+
+#make a dataframe for men with mental health issues
+men_mental_health <- men_shot %>% 
+  filter(was_mental_illness_related == "True")

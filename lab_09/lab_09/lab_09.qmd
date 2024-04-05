@@ -30,16 +30,15 @@ You have been given two spatial dataframes and one regular dataframe to load.  T
 
 * baltimore_homicides.rds | spatial | location and details about each Baltimore homicide between 2007 and 2017, including information about the status (open, closed with arrest, closed without arrest) and the exact location. Details on the data: https://github.com/washingtonpost/data-homicides
 * baltimore_tract_shapefiles.rds | spatial | polygons of each census tract in Baltimore
-* baltimore_tract_demographics.rds | regular | the total population and white population of each baltimore Census tract in 2017.
+* baltimore_tract_demo.rds | regular | the total population and white population of each baltimore Census tract in 2017.
 
 **Task** Load the data
 
 ```{r}
-baltimore_homicides <- read_rds("data/baltimore_homicides.rds") 
-baltimore_tract <- read_rds("data/baltimore_tract_shapefiles.rds")
-baltimore_tract_demo <- read_rds("data/baltimore_tract_demographics.rds")
+baltimore_homicides <- read_rds("data/baltimore_homicides.rds")
+baltimore_tract_demo <- read_rds("data/baltimore_tract_demo.rds")
+baltimore_tract_shapefiles <- read_rds("data/baltimore_tract_shapefiles.rds")
 ```
-
 
 ## Questions
 
@@ -52,40 +51,66 @@ baltimore_tract_demo <- read_rds("data/baltimore_tract_demographics.rds")
 **A1** 
 
 ```{r}
-#assign each tract to over or under 50% white (majority white)
-
-majority_white_tracts <- baltimore_tract_demo %>%
-  mutate(pct_white = white_pop / total_pop) %>%
+#assign each tract as either over or under 50% white (majority white)
+majority_white <- baltimore_tract_demo %>%
+  mutate(pct_white = white_pop/total_pop) %>%
   select(geoid, name, pct_white) %>%
   mutate(neighborhood_type = case_when(
     pct_white > .50 ~ "majority_white",
     TRUE ~ "not_majority_white"
   ))
+```
 
-#join classified neighborhood file to spatial data
-majority_white_tracts <- majority_white_tracts %>%
-  inner_join(baltimore_tract) %>%
+```{r}
+#join majority_white data with Baltimore tract shapefiles and convert to spatial object 
+majority_white <- majority_white %>%
+  inner_join(baltimore_tract_shapefiles) %>%
   st_as_sf()
+```
 
-#assign shootings to tracts with a spatial join 
-shootings_by_neighborhood <- baltimore_homicides %>%
-  st_join(majority_white_tracts) %>%
+```{r}
+#assign each shooting to a tract with a spatial join
+neighborhood_shootings <- baltimore_homicides %>%
+  st_join(majority_white) %>%
   as_tibble()
+```
 
-#find percent of unsolved homicides in white vs. non-white neighborhoods
-case_status_by_neighborhood <- shootings_by_neighborhood %>%
+```{r}
+#find percent of unsolved homicides in white and non-white neighborhoods
+case_status_neighborhoods <- neighborhood_shootings %>%
   group_by(neighborhood_type, disposition) %>%
   count() %>%
   pivot_wider(names_from = disposition, values_from = n) %>%
+  clean_names() %>%
   mutate(total_shootings = closed_by_arrest + closed_without_arrest + open_no_arrest) %>%
   mutate(unsolved = open_no_arrest + closed_without_arrest) %>%
-  mutate(pct_unsolved = percent(unsolved/total_shootings))
+  mutate(pct_unsolved = percent(unsolved / total_shootings))
 
+#table:
+view(case_status_neighborhoods)
 
-#create a map 
-ggplot() +
-  geom_sf(data=baltimore_tract_shapefiles) +
-  geom_sf(data=baltimore_homicides)
+#majority white percent unsolved: 46.44%
+#non-majority white percent unsolved: 66.23%
+
+#calculate how many times higher the unsolved homicide rate is in non-majority white neighborhoods compared to majority white neighborhoods
+.6623 / .4644
+
+#1.43 times higher 
 ```
 
+```{r}
+#visualize this data 
+ggplot() +
+  geom_sf(data=baltimore_tract_shapefiles) +
+  geom_sf(data=baltimore_homicides, color="navy")
+```
+
+**Paragraphs**
+```{r}
+#Homicides in majority white neighborhoods were solved at a higher rate than ones that occurred in non-majority white areas between 2007 and 2017. 
+
+#About 44.4% of cases were unsolved in majority white neighborhoods compared to 66.2% in non-majority white neighborhoods — meaning cases were unsolved at a rate of about 1.43 times higher in non-majority white neighborhoods, according to a data analysis. 
+
+#Out of 1,825 total unsolved homicides in that time frame, 111 occurred in majority white neighborhoods compared to 1,714 in non-majority white neighborhoods. 
+```
 
