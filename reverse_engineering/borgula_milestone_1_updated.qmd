@@ -105,26 +105,26 @@ total_rows_shootings <- sum(!is.na(filtered_shootings$race))
 percent(total_rows_bw / total_rows_shootings)
 
 
-#Black women account for 0.86% of the overall fatal shootings in cases where race was known, or less than 1 percent. 
+#Black women account for just under than 1 percent of the overall fatal shootings, which is slightly off due to updates in the dataset 
 ```
 
 second part of graf: Black women account for 20 percent of the women shot and killed and 28 percent of the unarmed deaths
 
 ```{r}
 #find number of rows in dataframe for Black women and female shootings dataframe with rows removed that contain "N/A" for race (assuming "where race was known" also applies to these sentences)
-total_rows_black_women <- sum(!is.na(black_women$race))
+total_rows_black_women <- sum(!is.na(race_women_shootings$race))
 total_rows_female <- sum(!is.na(women_shootings$race))
 
 #calculate the percent
 percent(total_rows_black_women / total_rows_female)
 
-#Black women account for 19.35% of the women shot, or close to 20 percent - this figure is slightly off likely due to updates in the dataframe in the four years since the article was published. We're unsure as to why the number is lower, but it's unclear if the number changed since the investigation was published.
+#Black women account for a little more than 19 percent of the women shot, or close to 20 percent - this figure is slightly off likely due to updates in the dataframe in the four years since the article was published. 
 ```
 
 third part of graf: Black women are 13 percent of the female population
 
 ```{r}
-#for this part, reporters likely did not do the same level of data analysis as other sections since basic Census Bureau data like this is easily accessible online. They could find the information through this page: https://www.census.gov/quickfacts/fact/table/US/LFE046222 - they likely would have used a slightly more specific table showing only 2020 data, but this is the closest we can find in 2024. 
+#for this part, reporters likely did not do the same level of data analysis as other sections since basic Census Bureau data like this is easily accessible online. They could find the information through this page, which shows the number of females in the US population. Under "Race and Hispanic Origin", it lists Black or African American as about 13%: https://www.census.gov/quickfacts/fact/table/US/LFE046222 - they likely would have used a slightly more specific table showing only 2020 data, but this is the closest we can find in 2024. 
 ```
 
 fourth part of graf: Black women account for 28 percent of the unarmed deaths
@@ -141,7 +141,7 @@ total_rows_female_unarmed <- sum(!is.na(female_unarmed$race))
 #find percent change
 percent(total_rows_black_women_unarmed / total_rows_female_unarmed)
 
-#Black women accounted for 26.92% of unarmed deaths. This isn't the exact 28% figure, but we're unsure if this is a result of our syntax or just a database update since the time of publication.
+#Black women accounted for close to 28% of unarmed deaths. This isn't the exact figure likely due to a database update since the time of publication.
 ```
 
 **Q4: About 31 percent, or 77, of the 247 women fatally shot by police since 2015 had mental health issues, compared to 22 percent of the 5,362 men killed.**
@@ -165,15 +165,6 @@ percent(total_women_mental_health / total_women_shot)
 #Since this database has been continuously updated since the publication of this investigation in 2020, there are likely to have been about six more women who were discovered to have mental health issues. 
 ```
 
-```{r}
-#have to make a dataframe for just men
-men_shot <- filtered_shootings %>% 
-  filter(gender == "male")
-
-count(men_shot)
-#this count will also be off, because from this time it appears The Post discovered that there was actually one more man who was murdered before this investigation was published
-```
-
 
 second part of graf: second part of graf: 22 percent of the 5,362 men killed had mental health issues
 ```{r}
@@ -186,9 +177,7 @@ count(men_shot)
 
 #make a dataframe for men with mental health issues
 men_mental_health <- men_shot %>% 
-  filter(was_mental_illness_related == "True")
-
-count(men_mental_health)
+  filter(was_mental_illness_related == "TRUE")
 
 #calculate the percent total
 total_men_mental_health <- sum(!is.na(men_mental_health))
@@ -196,7 +185,7 @@ men_shot_total <- sum(!is.na(men_shot))
 
 percent(total_men_mental_health / men_shot_total)
 
-#this total is also a little off, seeing as there have been more men discovered to have mental health issues since this investigation has been published. Instead of 22%, we see 23.25%. 
+#this total is also a little off, seeing as there have been more men discovered to have mental health issues since this investigation has been published, so we get that just over 23% had mental health issues.
 
 ```
 
