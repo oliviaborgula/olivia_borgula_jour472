@@ -92,11 +92,15 @@ count(black_women_unarmed)
 #7 Black women who were shot were unarmed
 ```
 
-The findings about women being at home/offices conducting home searches are impossible to replicate, seeing as the dataframes do not have columns specifically about the location of the victim and their addresses are not released, likely due to confidentiality reasons
+We don't have sufficient data accessible to us to replicate the findings about women being at home and officers conducting home searches:
 
-**Since 2015, Black women have accounted for less than 1 percent of the overall fatal shootings in cases where race was known. But within this small subset, Black women, who are 13 percent of the female population, account for 20 percent of the women shot and killed and 28 percent of the unarmed deaths**
+"At least 89 of the women were at their homes or residences where they sometimes stayed. And 12 of those women killed at home were shot by officers who were there to conduct a search or make an arrest."
 
-first part of graf: Black women have accounted for less than 1 percent of the overall fatal shootings in cases where race was known\*\*
+While the database contains latitude and longitude coordinates about where the women were killed, the Washington Post GitHub for this database does not contain any information or data about the women's home addresses. 
+
+**Q3: Since 2015, Black women have accounted for less than 1 percent of the overall fatal shootings in cases where race was known. But within this small subset, Black women, who are 13 percent of the female population, account for 20 percent of the women shot and killed and 28 percent of the unarmed deaths**
+
+first part of graf: Black women have accounted for less than 1 percent of the overall fatal shootings in cases where race was known
 
 ```{r}
 #get datasets for Black women who were fatally shot and total number of people who were fatally shot and exclude rows that have an "NA" value for race ("...where race was known")
@@ -125,7 +129,7 @@ percent(total_rows_black_women / total_rows_female)
 third part of graf: Black women are 13 percent of the female population
 
 ```{r}
-#for this part, reporters likely did not do the same level of data analysis as other sections since basic Census Bureau data like this is easily accessible online. They could find the information through this page: https://www.census.gov/data/tables/2023/dec/2020-census-demographic-profile.html#data
+#for this part, reporters likely did not do the same level of data analysis as other sections since basic Census Bureau data like this is easily accessible online. They could find the information through this page: https://www.census.gov/quickfacts/fact/table/US/LFE046222 - they likely would have used a slightly more specific table showing only 2020 data, but this is the closest we can find in 2024. 
 ```
 
 fourth part of graf: Black women account for 28 percent of the unarmed deaths
@@ -146,7 +150,6 @@ percent(total_rows_black_women_unarmed / total_rows_female_unarmed)
 ```
 
 **Q4: About 31 percent, or 77, of the 247 women fatally shot by police since 2015 had mental health issues, compared to 22 percent of the 5,362 men killed.**
-<<<<<<< HEAD
 
 first part of graf: about 31 percent, or 77, of the 247 women fatally shot by police since 2015 had mental health issues
 ```{r}
@@ -165,7 +168,9 @@ percent(total_women_mental_health / total_women_shot)
 #This is slightly more than what it was previously, seeing as there are now 83 women recorded with mental health issues and 248 women recorded fatalities. Now, it's at about 33.48%.
 
 #Since this database has been continuously updated since the publication of this investigation in 2020, there are likely to have been about six more women who were discovered to have mental health issues. 
-=======
+```
+
+second part of graf: second part of graf: 22 percent of the 5,362 men killed had mental health issues
 ```{r}
 #make a dataframe just for men
 men_shot <- filtered_shootings %>% 
@@ -187,18 +192,35 @@ men_shot_total <- sum(!is.na(men_shot))
 percent(total_men_mental_health / men_shot_total)
 
 #this total is also a little off, seeing as there have been more men discovered to have mental health issues since this investigation has been published. Instead of 22%, we see 23.25%. 
->>>>>>> 56260f4967ceb87a3c11b655042bb9d96dbecde7
 ```
 
-second part of graf: 22 percent of the 5,362 men killed had mental health issues
-```{r}
-#make a dataframe for men
-men_shot <- filtered_shootings %>% 
-  filter(gender == "male")
+**MEMO**
+Out of the nearly 250 women who have been fatally shot by police from 2015 to 2020, Black women and females with mental health issues were killed at a disproportionately high rate. 
 
-count(men_shot)
-#this count will also be off, because from this time it appears The Post discovered that there was actually one more man who was murdered before this investigation was published
+While Black women are 13 percent of the female population, they account for 20 percent of the women shot and killed and 28 percent of the unarmed deaths. 
 
-#make a dataframe for men with mental health issues
-men_mental_health <- men_shot %>% 
-  filter(was_mental_illness_related == "True")
+About 31 percent of women fatally shot had mental health issues, compared to 22 percent of the 5,362 men killed from 2015 to 2020. More than a third of all women who were fatally shot were killed in their homes or residences where they sometimes stayed. 
+
+The reporters brought this story to life primarily through graphic presentation and thorough storytelling. As soon as users open the story, the interactivity of the story’s site allows readers to scroll through a graphic representing the number of women who were fatally shot through dots. Large blocks of texts are separated by captivating photography and graphs breaking down demographic information. 
+
+The story is also rooted in rich reporting, with reporters interviewing families of people who police fatally shot, criminal justice experts, sociologists and anti-violence activists. Reporters don’t treat the women in the stories as statistics, they write about who they were before they died and their impact on the community. 
+
+The reporters approached the story by using data to give a comprehensive overview of women who were fatally shot by police, a topic that previously had not been frequently quantified in mainstream news outlets. This was effective because they used a database to get a baseline understanding of how many women were shot, then went further and examined how factors such as race and mental health were represented in the data. 
+
+They communicated these findings in simple language and did not bog down paragraphs with figures. Reporters frequently used modifiers such as “about,” “nearly” and “just over” to make data more digestible to readers. Not only that, but reporters did not solely use statistics from their data analysis. As discussed in many journalism courses, it’s best to find digestible ways to describe numbers and findings, such as “more than doubled.” These reporters did a nice job of ensuring figures were understandable, and they also complemented their figures with graphics, which made it even more comprehensive. 
+
+Reporters could have improved this by adding even more interactive features and graphs. While the story already uses a lot of these techniques, I liked how stories such as the AP’s lethal force investigation allowed users to interact more directly with graphs within the article rather than just at the beginning of the story. 
+
+Reporters specified exactly how they performed data analysis whenever possible. For figures about Black women being killed at a higher rate than other races, they clarify that the figures are only when data for race is present. They made it easy for readers to see their work by linking their public GitHub page and police shootings database. 
+
+There’s also a methodology section at the bottom of the article that gives a general overview of how data was analyzed. It specifies that Census data is from five-year ACS estimates and that The Post labeled people as the gender they identified as even if it differs from their biological sex. It also links to a more comprehensive methodology report on another page. 
+
+The datasets used for this piece are a part of The Post’s larger police shootings database, which contains updated data about all people killed by police since 2015. Data journalists did extensive work to prepare and clean this dataset. They obtained data by manually culling local news reports, collecting information from social media and law enforcement websites and monitoring independent databases such as Fatal Encounters and the Killed by Police project. 
+
+Reporters then had to compile vast amounts of information from various sources, which they did manually and by using OCRs and other tools to extract information from PDFs. They then had to standardize the data by cleaning column names and manually inserting data into the correct place. 
+
+They also had to develop tools that would efficiently update the database when reporters uncovered new information about the person or the shooting. But the frequent updates made it more difficult for us to replicate the reporter’s findings, because updated information led to  discrepancies between our figures and the ones in the article.
+
+And while language such as “about” and “nearly” makes the story more digestible for readers, it was more difficult from a data journalists’ perspective because we didn’t have exact figures to compare our results to.  
+
+

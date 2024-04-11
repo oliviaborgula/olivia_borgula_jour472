@@ -59,8 +59,9 @@ To get that for the Census, you need to [apply for an API key with the Census Bu
 In the code block below, replace YOUR KEY HERE with your key you get by email.  It's a long string of letters and numbers, like this: 549950d36c22ff16455fe196bbbd01d63cf. Don't use this one. It won't work. Use your own. 
 
 ```{r}
-census_api_key("dfcb820a29176622bc44d5c66b77d03b5675937d", install=TRUE, overwrite = TRUE)
-readRenviron("~/.Renviron")
+census_api_key("PUT YOUR OWN KEY HERE!!!", install=TRUE, overwrite = TRUE)
+
+
 ```
 
 The two main functions in tidycensus are `get_decennial`, which retrieves data from the 2000 and 2010 Censuses (and soon the 2020 Census), and `get_acs`, which pulls data from the American Community Survey, a between-Censuses annual survey that provides estimates, not hard counts, but asks more detailed questions. 
@@ -106,8 +107,6 @@ total_pop_2020 <- get_decennial(geography="state", variables="P1_001N", year=202
   arrange(desc(value))
 
 total_pop_2020
-
-#california is the biggest state by population
 ```
 
 Let's also clean those funky column names, rename `value` and `name` to what they actually represent, and get rid of the geoid and variable column.
@@ -230,24 +229,12 @@ Which US state has the largest male population.
 What is the state and what is the percentage? Post the state, the population AND the code you wrote to produce it on ELMS. Use the American Community Survey for this.
 
 ```{r}
-#find which US state has the largest male population
 male <- get_acs(geography = "state",
-              variables = c(male_population = "B01001_002"),
+              variables = c(male_population = "B01001_002", "B01001_001"),
               year = 2020) %>%
-  rename(state = NAME)%>%
   arrange(desc(estimate))
 
-male
+md
 
-#California - 19,562,882 people
-
-#find what state has a highest proportion of males 
-male_pct <- male %>%
-  inner_join(total_pop_2020, by ="state")%>%
-  mutate(pct_state = percent(estimate / total_population))%>%
-  arrange(desc(pct_state))
-
-#Alaska has the highest percentage of males in its population, with 52.45 percent of the population being male
-
+#B01001 SEX BY AGE
 ```
-
