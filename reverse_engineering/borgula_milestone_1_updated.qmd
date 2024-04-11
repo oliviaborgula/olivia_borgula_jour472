@@ -1,3 +1,9 @@
+```{r}
+#turn off scientific notation
+options(scipen=999)
+
+```
+
 ---
 names: Olivia Borgula and Lizzy Alspach
 date: 4/4/2024
@@ -24,9 +30,6 @@ library(tidyverse)
 library(janitor)
 library(formattable)
 library(dplyr)
-
-#turn off scientific notation
-options(scipen=999)
 ```
 
 Upload data
@@ -57,13 +60,8 @@ count(filtered_shootings)
 women_shootings <- filtered_shootings%>%
   filter(gender == "female")
 
-#add up total number of women shot
-nrow(women_shootings)
-#248 women
-
-#add up total number of people shot
-nrow(filtered_shootings)
-#5,614 shootings
+#count total women shot
+count(women_shootings)
 
 #there were 248 women killed out of the more than 5,600 overall. The disparity in our results vs. the Washington Post's analysis is due to updates to the database in the last four years. Likely, more information was released about a women who was shot after publication, which changed the database 
 ```
@@ -71,20 +69,16 @@ nrow(filtered_shootings)
 **Q2: Of the 247 women fatally shot, 48 were Black and seven of those were unarmed. At least 89 of the women were at their homes or residences where they sometimes stayed. And 12 of those women killed at home were shot by officers who were there to conduct a search or make an arrest.**
 
 ```{r}
-#find number of women shot
-count(women_shootings)
-
-#248 women were fatally shot (see above note about discrepancies)
-
-#filter to Black women and count number
-black_women <- women_shootings %>% 
+#filter by race
+race_women_shootings <- women_shootings %>% 
   filter(race == "B")
-count(black_women)
+
+count(race_women_shootings)
 
 #48 of the women shot were Black 
 
-#filter to show only unarmed Black women 
-black_women_unarmed <- black_women %>% 
+#out of the black women, find how many were unarmed
+black_women_unarmed <- race_women_shootings %>% 
   filter(armed_with == "unarmed")
 
 count(black_women_unarmed)
@@ -104,13 +98,14 @@ first part of graf: Black women have accounted for less than 1 percent of the ov
 
 ```{r}
 #get datasets for Black women who were fatally shot and total number of people who were fatally shot and exclude rows that have an "NA" value for race ("...where race was known")
-total_rows_black_women <- sum(!is.na(black_women$race))
+total_rows_bw <- sum(!is.na(race_women_shootings$race))
 total_rows_shootings <- sum(!is.na(filtered_shootings$race))
 
 #calculate the percent 
-percent(total_rows_black_women / total_rows_shootings)
+percent(total_rows_bw / total_rows_shootings)
 
-#Black women account for 0.86% of the overall fatal shootings in cases where race was known, or less than 1 percent. We don't know if this too far from 1%, but is the value we received.
+
+#Black women account for 0.86% of the overall fatal shootings in cases where race was known, or less than 1 percent. 
 ```
 
 second part of graf: Black women account for 20 percent of the women shot and killed and 28 percent of the unarmed deaths
@@ -165,10 +160,20 @@ total_women_shot <- sum(!is.na(women_shootings))
 
 percent(total_women_mental_health / total_women_shot)
 
-#This is slightly more than what it was previously, seeing as there are now 83 women recorded with mental health issues and 248 women recorded fatalities. Now, it's at about 33.48%.
+#This is slightly more than what it was previously, seeing as there are now 83 women recorded with mental health issues and 248 women recorded fatalities. Now, it's at just over 33 percent.
 
 #Since this database has been continuously updated since the publication of this investigation in 2020, there are likely to have been about six more women who were discovered to have mental health issues. 
 ```
+
+```{r}
+#have to make a dataframe for just men
+men_shot <- filtered_shootings %>% 
+  filter(gender == "male")
+
+count(men_shot)
+#this count will also be off, because from this time it appears The Post discovered that there was actually one more man who was murdered before this investigation was published
+```
+
 
 second part of graf: second part of graf: 22 percent of the 5,362 men killed had mental health issues
 ```{r}
@@ -177,7 +182,7 @@ men_shot <- filtered_shootings %>%
   filter(gender == "male")
 
 count(men_shot)
-#this count will also be off, because from this time it appears The Post discovered that there was actually one more man who was murdered before this investigation was published
+#this count will also be off, because from this time it appears The Post discovered that there were more men who were murdered in the timeframe but only discovered after this investigation was published
 
 #make a dataframe for men with mental health issues
 men_mental_health <- men_shot %>% 
@@ -192,6 +197,7 @@ men_shot_total <- sum(!is.na(men_shot))
 percent(total_men_mental_health / men_shot_total)
 
 #this total is also a little off, seeing as there have been more men discovered to have mental health issues since this investigation has been published. Instead of 22%, we see 23.25%. 
+
 ```
 
 **MEMO**
