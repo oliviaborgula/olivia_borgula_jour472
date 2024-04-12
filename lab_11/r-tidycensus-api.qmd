@@ -294,7 +294,7 @@ male <- get_acs(geography = "state",
               year = 2020) %>%
   arrange(desc(estimate))
 
-male
+#California has the largest population based purely on the amount of males in the state with 19,562,882
 
 male_pct <- male %>% 
   rename(state = NAME) %>% 
@@ -309,5 +309,5 @@ male_pct_pop <- male_pct_pop %>%
   ) %>% 
   arrange(desc(pct_male))
 
-#Alaska has the largest male population in the US with 52.4% of the population being male
+#Alaska has the largest proportion of males in their population out of all US states with 52.4% of the population being male
 ```
