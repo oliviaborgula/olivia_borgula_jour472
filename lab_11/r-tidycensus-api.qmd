@@ -90,7 +90,8 @@ It won't work.
 Use your own.
 
 ```{r}
-census_api_key("000d604c5cf0be9433b56cc61f82e559d0b26f0d", install=TRUE, overwrite = TRUE)
+census_api_key("dfcb820a29176622bc44d5c66b77d03b5675937d", install=TRUE, overwrite = TRUE)
+readRenviron("~/.Renviron")
 
 
 ```
