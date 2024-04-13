@@ -29,12 +29,7 @@ There are three main goals of this lab:
 ```{r}
 library(tidyverse)
 library(janitor)
-
-###
-# tidycensus
-###
-
-# library(tidycensus)
+library(tidycensus)
 
 ```
 
@@ -45,7 +40,8 @@ library(janitor)
 Use the U.S. census access token you created for this week's lab.  You can store it by editing the block below to replace 'YOUR KEY HERE' with your actual key, a long string of letters and numbers. If you need to sign up for another one, you can do so here:  [apply for an API key with the Census Bureau](https://api.census.gov/data/key_signup.html). 
 
 ```{r}
-census_api_key("YOUR KEY HERE", install=TRUE)
+census_api_key("dfcb820a29176622bc44d5c66b77d03b5675937d", install=TRUE, overwrite = TRUE)
+readRenviron("~/.Renviron")
 ```
 
 
@@ -66,7 +62,7 @@ Sample question: which state saw the largest growth in Hispanic population betwe
 # Load ACS variables
 ###
 
-acs_vars <- load_variables("acs5")
+acs_vars <- load_variables(dataset = "acs5", year = 2020)
 
 ###
 # Get median household income for Maryland 2020
@@ -84,5 +80,107 @@ md <- get_acs(geography = "county",
 
 **Task** Develop two different *interesting* questions that you can answer with the data. Run them by your professor before getting started on answering, to ensure they're sufficiently interesting and possible with the data. 
 
-**Task** Write code to answer the questions.  Write up a sentence with each of your findings. Produce at least one visualization to support one of your findings. 
+
+**Which state has had the largest increase in Spanish-speaking residents in the last 10 years? Which state hs the largest increase in Spanish-speaking residents that reported speaking English "less than very well"?**
+```{r}
+#get data from census for all Spanish-speaking residents in last 10 years
+x2010_spanish <- get_acs(geography = "state",
+              variables = c(total_spanish_2010 = "B16001_003"),
+              year = 2010) 
+
+x2020_spanish <- get_acs(geography = "state",
+              variables = c(total_spanish_2020 = "B16001_003"),
+              year = 2020) 
+
+#join these columns 
+total_spanish <- x2010_spanish %>%
+  inner_join(x2020_spanish, by="GEOID")
+
+#perform calculations
+total_spanish <- total_spanish %>%
+  mutate(pct_change = percent(estimate.y - estimate.x)/estimate.x)%>%
+  arrange(desc(pct_change))
+
+#North Dakota saw the largest increase in Spanish-speaking residents, with a 62.5% increase from 2010 to 2020. 8,183 residents were Spanish-speaking in 2010 compared to 13,295 in 2020.
+
+#The above calculation is for all Spanish-speaking residents. I now want to look at which state had the highest increase in Spanish-speaking residents who reported speaking English "less than very well" from 2010 to 2020. 
+
+#get data from census for all Spanish-speaking residents in last 10 years
+x2010_engl_fluency <- get_acs(geography = "state",
+              variables = c(engl_fluency_2010 = "B16001_005"),
+              year = 2010) 
+
+x2020_engl_fluency <- get_acs(geography = "state",
+              variables = c(engl_fluency_2020 = "B16001_005"),
+              year = 2020) 
+
+#join these columns 
+total_engl_fluency <- x2010_engl_fluency %>%
+  inner_join(x2020_engl_fluency, by="GEOID")
+
+#perform calculations
+total_engl_fluency <- total_engl_fluency %>%
+  mutate(pct_change = percent(estimate.y - estimate.x)/estimate.x)%>%
+  arrange(desc(pct_change))
+
+#Again, North Dakota was the state with the largest increase of 116.7%. 1787 people reported sepaking English "less than very well" in 2010 compared with 3873 in 2020.  
+
+```
+
+**Which state has had the largest increase in residents living below the poverty line in the last 10 years ? **
+
+```{r}
+#get data from census for poverty status of US residents in last 10 years. This data is telling us how many people in the given area have been determined to be poverty status
+x2010_poverty_status <- get_acs(geography = "state",
+              variables = c(poverty_status_2010 = "B06012_001"),
+              year = 2010) 
+
+x2020_poverty_status <- get_acs(geography = "state",
+              variables = c(poverty_status_2020 = "B06012_001"),
+              year = 2020)
+
+#join these columns 
+total_pv_status <- x2010_poverty_status %>%
+  inner_join(x2020_poverty_status, by="GEOID")
+
+#perform calculations - I'm not using formattable here because that converts the values into characters and makes it difficult to visualize
+total_pv_status <- total_pv_status %>%
+  mutate(pct_change = (estimate.y - estimate.x) / estimate.x * 100)%>%
+  arrange(desc(pct_change))
+
+#The District of Columbia has seen the largest increase in residents living below the poverty line, with a 21.4% rise from 2010 to 2020. There were 551,331 people living in poverty in 2010 compared to 669,089 living in poverty in 2020.
+
+```
+
+
+**Task** Write code to answer the questions.  Write up a sentence with each of your findings. Produce at least one visualization to support one of your findings.
+
+**Sentence with each of my findings**
+```{r}
+#North Dakota saw the largest increase in Spanish-speaking residents out of all US states, with a 62.5% increase from 2010 to 2020 as well as a 116.7% increase in Spanish-speakng residents who reported speaking English "less than very well" in the same time period. 
+
+#The District of Columbia has seen the largest increase in residents living below the poverty line out of all US states, with a 21.4% rise from 2010 to 2020. 
+
+```
+
+**Data visualization**
+```{r}
+#make new dataset with just the top 10 states with highest increase in residents in poverty from 2010 to 2020
+top_10_pv_status <- total_pv_status %>%
+  slice_head(n = 10)
+
+#visualize it 
+ggplot(top_10_pv_status, aes(x = reorder(NAME.x, pct_change), y = pct_change)) +
+  geom_bar(stat = "identity", fill = "darkblue", color = "black") +
+  labs(
+    title = "Change in Poverty Status of US Residents from 2010 to 2020",
+    x = "State",
+    y = "Percentage Change",
+    caption = "Data source: American Community Survey"
+  ) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  coord_flip()
+```
+
 
