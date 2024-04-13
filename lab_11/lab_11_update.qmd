@@ -30,6 +30,7 @@ There are three main goals of this lab:
 library(tidyverse)
 library(janitor)
 library(tidycensus)
+library(formattable)
 
 ```
 
