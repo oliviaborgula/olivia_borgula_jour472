@@ -174,7 +174,7 @@ top_10_pv_status <- total_pv_status %>%
 ggplot(top_10_pv_status, aes(x = reorder(NAME.x, pct_change), y = pct_change)) +
   geom_bar(stat = "identity", fill = "darkblue", color = "black") +
   labs(
-    title = "Change in Poverty Status of US Residents from 2010 to 2020",
+    title = "Top 10 States with Largest Increase in Residents in Poverty from 2010 to 2020",
     x = "State",
     y = "Percentage Change",
     caption = "Data source: American Community Survey"
