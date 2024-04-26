@@ -1,0 +1,139 @@
+---
+title: "Olivia Borgula Data Analysis Project"
+date: 4/25/24
+format: html
+editor: visual
+---
+**NOTE**
+I'm submitting this milestone at 11:30 pm on 4/25, but plan to make the following additions tomorrow afternoon:
+- finishing cleaning and uploading data for 2024 voting numbers by voting precinct in Baltimore City 
+- uploading a dataset I found after cleaning that has one column for neighborhood and one column for voting precinct numbers, which I will then join with other data tables for further analysis 
+
+
+**INTRODUCTION**
+This data analysis project will examine how incarceration, wealth and race intersect and play a role in voter registration in Baltimore City — an especially newsworthy topic ahead of elections season this November. Specifically, I will ask these five questions to guide my findings:
+
+1. In the top 10 areas with the highest incarceration rates, how many people registered to vote in the 2020 election? What about in the 10 areas with the lowest incarceration rate?
+
+2. In each of the top 10 areas with the lowest voter turnout, how many people were incarcerated? How does that compare to areas of high voter turnout?
+
+3. How many people registered to vote in the 2020 election in the top five areas in Baltimore City with the highest median household income? What about in the five lowest areas?
+
+4. What race in Baltimore City had the largest disparity in number of registered voters and number of reported voting in the 2020 election? Which had the lowest?
+
+5. How have voter registration rates for people in highly-incarcerated areas changed in the past four years? 
+
+**THE DATA**
+The core data sets include: 
+1. x2020_precinct_voters — voter registration counts in 2020 by voting precinct in Baltimore City via the city's voting information page
+
+2. demo_voting_x2020 — voter demographic information by voting precinct in 2020 in Baltimore City via the Maryland Department of Planning
+
+3. incarceration_wealth — a data set formed by a join of two datasets. One is baltcity_income, given to us in past labs and containing information about the median household income, and balt_incarceration, a data table scraped from a Prison Policy Initiative website with information about the incarceration rate in different neighborhoods in 2020. 
+
+**SET UP**
+
+```{r}
+#libraries and settings
+library(tidyverse)
+library(janitor)
+library(formattable)
+library(dplyr)
+library(rvest)
+library(tidyverse)
+library(tidycensus)
+
+#turn off scientific notation
+options(scipen=999)
+```
+
+```{r}
+#upload census key
+census_api_key("dfcb820a29176622bc44d5c66b77d03b5675937d", install=TRUE, overwrite = TRUE)
+readRenviron("~/.Renviron")
+```
+
+```{r}
+#upload cvs and start cleaning data 
+#voting data by voting precinct in baltimore city in 2024 
+x2024_precinct_voters <- read_csv("data/tabula-2024-precinct-voter-counts.csv")
+#remove blank rows
+x2024_precinct_voters <- x2024_precinct_voters[complete.cases(x2024_precinct_voters), ]
+
+#voting data by voting precinct in baltimore city in August 2020 
+x2020_precinct_voters <- read_csv("data/cleaned_precinct_x2020.csv")
+#remove blank rows
+x2020_precinct_voters <- x2020_precinct_voters[complete.cases(x2020_precinct_voters), ]
+  
+
+#income in baltimore city
+baltcity_income <- read_csv("data/baltcity_income.csv")%>%
+  clean_names()
+
+#voting presidential voter registration counts by counties in maryland
+x2020_county_voting <- read_csv("data/county_voter_x2020_clean.csv")
+x2020_county_voting <- x2020_county_voting[, -c(2, 4, 13)]
+
+```
+
+**Q1: In the top 10 areas with the highest incarceration rates, how many people registered to vote in the 2020 election? What about in the 10 areas with the lowest incarceration rate?**
+
+Part 1: in the top 10 areas with the highest incarceration rates, how many people registered to vote in the 2020 election?
+
+```{r}
+#webscrape data table from prison policy initiative website 
+balt_incarceration <- "https://www.prisonpolicy.org/origin/md/2020/baltimore_csa.html"
+balt_incarceration <- balt_incarceration %>% 
+  read_html() %>% 
+  html_table()
+
+balt_incarceration <- balt_incarceration[[1]]%>%
+  clean_names()%>%
+  rename(neighborhood = 1, num_prison = 2, x2020_census_pop = 3, x2020_total_pop = 4, rate_per_x100000 = 5)
+
+balt_incarceration <- balt_incarceration %>%
+  mutate(rate_per_x100000 = as.numeric(gsub(",", "", rate_per_x100000)))%>%
+    arrange(desc(rate_per_x100000))
+
+#top ten table
+top_balt_incarcerated <- balt_incarceration %>%
+  select(neighborhood, rate_per_x100000)%>%
+  slice_max(rate_per_x100000, n = 10)
+```
+
+Part 2: what about the top ten areas with the lowest?
+```{r}
+#bottom ten table of incarceration rates
+bottom_balt_incarcerated <- balt_incarceration %>%
+  select(neighborhood, rate_per_x100000)%>%
+  slice_min(rate_per_x100000, n = 10)
+```
+
+**Q2: In each of the top 10 areas with the lowest voter turnout, how many people were incarcerated? How does that compare to areas of high voter turnout?**
+
+```{r}
+
+```
+
+
+**Q3: How many people registered to vote in the 2020 election in the top five areas in Baltimore City with the highest median household income? What about in the five lowest areas?**
+
+```{r}
+#join baltcity_income and balt_incarceration
+incarceration_wealth <- baltcity_income %>%
+  inner_join(balt_incarceration, by="neighborhood")
+
+incarceration_wealth
+
+```
+
+
+**Q4: What race in Baltimore City had the largest disparity in number of registered voters and number of reported voting in the 2020 election? Which had the lowest? **
+
+```{r}
+
+```
+
+**Q5: How have voter registration rates for people in highly-incarcerated areas changed in the past four years?**
+For this I plan to do data visualization 
+
