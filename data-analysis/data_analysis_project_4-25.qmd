@@ -8,6 +8,7 @@ editor: visual
 I'm submitting this milestone at 11:30 pm on 4/25, but plan to make the following additions tomorrow evening:
 - finishing cleaning and uploading data for 2024 voting numbers by voting precinct in Baltimore City 
 - uploading a dataset I found after cleaning that has one column for neighborhood and one column for voting precinct numbers, which I will then join with other data tables for further analysis 
+- upload and clean the demo_voting_x2020 data
 
 
 **INTRODUCTION**
