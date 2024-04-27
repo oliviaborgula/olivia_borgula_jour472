@@ -76,10 +76,6 @@ x2020_precinct_voters <- x2020_precinct_voters[complete.cases(x2020_precinct_vot
 baltcity_income <- read_csv("data/baltcity_income.csv")%>%
   clean_names()
 
-#voting presidential voter registration counts by counties in maryland
-x2020_county_voting <- read_csv("data/county_voter_x2020_clean.csv")
-x2020_county_voting <- x2020_county_voting[, -c(2, 4, 13)]
-
 ```
 
 **Q1: In the top 10 areas with the highest incarceration rates, how many people registered to vote in the 2020 election? What about in the 10 areas with the lowest incarceration rate?**
