@@ -135,11 +135,10 @@ avg_zip <- read_csv("data/avg_zip.csv")
 avg_zip <- avg_zip%>%
   select(zip, avg_pct_reg)%>%
   slice(-21)
-
 ```
 
 baltcity_income
-Note: I will probably reupload data for median income by zip code rather than csa since the rest of 
+Note: I will reupload data for median income by zip code rather than csa since the rest of the data is by zip code 
 ```{r}
 #income in baltimore city
 baltcity_income <- read_csv("data/baltcity_income.csv")%>%
