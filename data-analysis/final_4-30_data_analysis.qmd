@@ -116,7 +116,7 @@ demo_precinct <- inner_join(nopolitics_demo_voting_x2020, x2020_precinct_voters,
 
 #add column for percent of whole 
 demo_precinct <- demo_precinct%>%
-  mutate(pct_reg = percent(total_reg / total_population))
+  mutate(pct_reg = (total_reg / total_population)*100)
 
 #join this with zip code data by precinct
 zip_demo_precinct <- inner_join(demo_precinct, precinct_addresses_x2020, by = "precinct")%>%
@@ -132,6 +132,15 @@ Aggregate each zip code,
 #sum(total_population) / sum(total_reg) for each zip code 
 
 #still working on this - it will likely change the rest of my code
+reg_incarceration <- data.frame(
+  A = c(21201, 21202, ),
+  B = c(48.20317, 59.59368, 57.88503)
+)
+
+# Calculate the average of column B for each unique value in column A
+averages_reg_incarceration <- reg_incarceration %>%
+  group_by(A) %>%
+  summarise(avg_B = mean(B))
 ```
 
 baltcity_income
