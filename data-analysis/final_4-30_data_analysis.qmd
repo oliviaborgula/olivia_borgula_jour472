@@ -7,7 +7,7 @@ editor: visual
 ---
 
 **NOTE**
-Once I do an aggregate of all the zip codes, the rest of my code will change, so I'm focusing that for now. Once I do, it will not take very much time to answer all my questions. For now there's not much I've done to answer them. The biggest thing I'm working on right now is making sure my big table that I joined is accurate.
+Once I do an aggregate of all the zip codes, the rest of my code will change, so I'm focusing that for now. Once I do, it will not take very much time to answer all my questions. For now there's not much I've done to answer them. The biggest thing I'm working on right now is making sure my big table that I joined is accurate. I understand a lot of my questions still need work, but I'm actively working on it right now.
 
 **INTRODUCTION** This data analysis project will examine how incarceration, wealth and race intersect and play a role in voter registration in Baltimore City — an especially newsworthy topic ahead of elections season this November. Specifically, I will ask these five questions to guide my findings:
 
@@ -219,15 +219,15 @@ demo_registration_race <- inner_join(demo_voting_x2020_politics, x2020_precinct_
 ```{r}
 #i plan to upload all the datasets from 2021 and 2022 and plot the month/year on the x axis and the sum of the number of registered voters on the y axis
 
-x2020_precinct_voters%>%
-sum(total_reg)
+x2020_precinct_voters$total_reg <- as.numeric(x2020_precinct_voters$total_reg)%>%
+sum(x2020_precinct_voters$total_reg)
+sum(x2024_precinct_voters$total_reg)
 
 precinct_addresses_x2020 %>%
   ggplot() +
   geom_bar(aes(x=reorder(year, n), weight=n)) +
   coord_flip() + 
   theme_minimal() + 
-  theme_economist() +
   labs(
     title= "voter registration from 2020 to 2024 in Baltimore City ",
     x = "month",
