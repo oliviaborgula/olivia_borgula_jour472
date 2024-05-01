@@ -133,8 +133,8 @@ Aggregate each zip code,
 
 #still working on this - it will likely change the rest of my code
 reg_incarceration <- data.frame(
-  A = c(21201, 21202, ),
-  B = c(48.20317, 59.59368, 57.88503)
+  A = c(21201, 21202, 21205),
+  B = c(48.20317, 57.88503, 34.10758, )
 )
 
 # Calculate the average of column B for each unique value in column A
