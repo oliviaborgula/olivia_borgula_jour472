@@ -159,6 +159,13 @@ zip_csa <- zip_csa%>%
 ```
 
 x2024_precinct_voters
+```{r}
+#voting data by voting precinct in baltimore city in 2024 
+x2024_precinct_voters <- read_csv("data/tabula-2024-precinct-voter-counts.csv")
+#remove blank rows
+x2024_precinct_voters <- x2024_precinct_voters[complete.cases(x2024_precinct_voters), ]
+```
+
 
 **Q1: Which 10 communities in Baltimore had the least amount of registered voters in August 2020? Which 10 had the most?**
 ```{r}
