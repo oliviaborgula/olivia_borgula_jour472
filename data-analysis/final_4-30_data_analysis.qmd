@@ -126,21 +126,16 @@ zip_demo_precinct <- inner_join(demo_precinct, precinct_addresses_x2020, by = "p
 reg_incarceration <- inner_join(zip_demo_precinct, incarceration_x2020, by = "zip") 
 ```
 
-Aggregate each zip code,
+Aggregate each zip code
+for now, i did the calculations in excel. I am still working on writing code that will do this for me
 ```{r}
-#Aggregate each zip code
-#sum(total_population) / sum(total_reg) for each zip code 
+#upload data for the aggregate/average of each zip code voter registration
+avg_zip <- read_csv("data/avg_zip.csv")
 
-#still working on this - it will likely change the rest of my code
-reg_incarceration <- data.frame(
-  A = c(21201, 21202, 21205),
-  B = c(48.20317, 57.88503, 34.10758, )
-)
+avg_zip <- avg_zip%>%
+  select(zip, avg_pct_reg)%>%
+  slice(-21)
 
-# Calculate the average of column B for each unique value in column A
-averages_reg_incarceration <- reg_incarceration %>%
-  group_by(A) %>%
-  summarise(avg_B = mean(B))
 ```
 
 baltcity_income
