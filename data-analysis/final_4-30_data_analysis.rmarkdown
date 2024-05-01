@@ -6,6 +6,7 @@ format: html
 editor: visual
 ---
 
+
 **NOTE**
 Once I do an aggregate of all the zip codes, the rest of my code will change, so I'm focusing that for now. Once I do, it will not take very much time to answer all my questions. For now there's not much I've done to answer them. The biggest thing I'm working on right now is making sure my big table that I joined is accurate.
 
@@ -42,6 +43,7 @@ https://boe.baltimorecity.gov/registration-figures
 I use all these datasets in some form for nearly every question. 
 
 **SET UP**
+
 ```{r}
 #libraries and settings
 library(tidyverse)
@@ -54,9 +56,11 @@ library(rvest)
 options(scipen=999)
 ```
 
+
 **UPLOAD/CLEAN DATA**
 
 demo_voting_x2020_politics
+
 ```{r}
 #voting by demographic 2020
 demo_voting_x2020_politics <- read_csv("data/demo_voting_x2020_finalll.csv", locale=locale(encoding="latin1"))%>%
@@ -70,8 +74,10 @@ nopolitics_demo_voting_x2020 <- demo_voting_x2020_politics %>%
   select(precinct, total_population)
 ```
 
+
 x2020_precinct_voters
 I don't need political party data for any of my questions, so I'll get rid of it for this project
+
 ```{r}
 #voting data by voting precinct in baltimore city in August 2020 
 x2020_precinct_voters <- read_csv("data/cleaned_precinct_x2020.csv")
@@ -83,7 +89,9 @@ x2020_precinct_voters <- x2020_precinct_voters[-111, ]%>%
   select(precinct, total_reg)
 ```
 
+
 precinct_addresses
+
 ```{r}
 #table with information about precinct numbers, zip codes and addresses
 precinct_addresses_x2020 <- read_csv("data/zip_precinct_x2020_cleaned.csv")%>%
@@ -92,7 +100,9 @@ precinct_addresses_x2020 <- precinct_addresses_x2020%>%
   rename(precinct = ward_and_precincts)
 ```
 
+
 incarceration_x2020
+
 ```{r}
 #webscrape data table from prison policy initiative website 
 incarceration_x2020 <- "https://www.prisonpolicy.org/origin/md/2020/zipcode.html"
@@ -109,7 +119,9 @@ incarceration_x2020 <- incarceration_x2020 %>%
   filter(city == "Baltimore")
 ```
 
+
 Join above four datasets 
+
 ```{r}
 #join nopolitics_demo_voting_x2020 with x2020_precinct_voters by precinct
 demo_precinct <- inner_join(nopolitics_demo_voting_x2020, x2020_precinct_voters, by = "precinct")
@@ -126,7 +138,9 @@ zip_demo_precinct <- inner_join(demo_precinct, precinct_addresses_x2020, by = "p
 reg_incarceration <- inner_join(zip_demo_precinct, incarceration_x2020, by = "zip") 
 ```
 
+
 Aggregate each zip code,
+
 ```{r}
 #Aggregate each zip code
 #sum(total_population) / sum(total_reg) for each zip code 
@@ -143,8 +157,10 @@ averages_reg_incarceration <- reg_incarceration %>%
   summarise(avg_B = mean(B))
 ```
 
+
 baltcity_income
 Note: I will probably reupload data for median income by zip code rather than csa since the rest of 
+
 ```{r}
 #income in baltimore city
 baltcity_income <- read_csv("data/baltcity_income.csv")%>%
@@ -154,7 +170,9 @@ baltcity_income <- baltcity_income%>%
   rename(csa = neighborhood)
 ```
 
+
 zip_csa
+
 ```{r}
 #table with information about zip code and csa
 zip_csa <- read_csv("data/csa_zip.csv")%>%
@@ -168,7 +186,9 @@ zip_csa <- zip_csa%>%
   rename(csa = csa2010, zip = zip2010)
 ```
 
+
 x2024_precinct_voters
+
 ```{r}
 #voting data by voting precinct in baltimore city in 2024 
 x2024_precinct_voters <- read_csv("data/tabula-2024-precinct-voter-counts.csv")
@@ -177,7 +197,9 @@ x2024_precinct_voters <- x2024_precinct_voters[complete.cases(x2024_precinct_vot
 ```
 
 
+
 **Q1: Which 10 communities in Baltimore had the least amount of registered voters in August 2020? Which 10 had the most?**
+
 ```{r}
 reg_bottom_10 <- zip_demo_precinct%>%
   slice_min(pct_reg, n = 10)
@@ -186,7 +208,9 @@ reg_top_10 <- zip_demo_precinct%>%
   slice_max(pct_reg, n = 10)
 ```
 
+
 **Q2: What was the rate of incarceration in the top 10 areas with the lowest voter turnout? What about in the top 10 areas with the highest voter turnout?**
+
 ```{r}
 incarcerated_reg_bottom_10 <- reg_incarceration%>%
   slice_min(pct_reg, n = 10)
@@ -195,7 +219,9 @@ incarceration_reg_top_10 <- reg_incarceration%>%
   slice_max(pct_reg, n = 10)
 ```
 
+
 **Q3: How many people registered to vote in the August 2020 in the top 10 areas in Baltimore City with the highest median household income? What about in the 10 lowest areas?**
+
 ```{r}
 #join table with csa table
 csa_reg_incarceration <- inner_join(reg_incarceration, zip_csa, by = "zip")
@@ -206,7 +232,9 @@ csa_reg_incarceration <- inner_join(reg_incarceration, zip_csa, by = "zip")
 income_csa_reg_incarceration <- inner_join(csa_reg_incarceration, baltcity_income, by = "csa")
 ```
 
+
 **Q4: Which race in Baltimore had the least amount of registered voters in August 2020 as a share of their voting precinct population numbers?**
+
 
 ```{r}
 #join demographic table and voter registration table
@@ -215,7 +243,9 @@ demo_registration_race <- inner_join(demo_voting_x2020_politics, x2020_precinct_
 
 ```
 
+
 **Q5: How has voter registration data changed in the past four years?**
+
 ```{r}
 #i plan to upload all the datasets from 2021 and 2022 and plot the month/year on the x axis and the sum of the number of registered voters on the y axis
 
@@ -234,6 +264,7 @@ precinct_addresses_x2020 %>%
     y = "number of registered voters",
     caption = "Source: Baltimore City")
 ```
+
 
 
 **Most interesting I've learned so far**
