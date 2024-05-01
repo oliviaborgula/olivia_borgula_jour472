@@ -144,6 +144,7 @@ averages_reg_incarceration <- reg_incarceration %>%
 ```
 
 baltcity_income
+Note: I will probably reupload data for median income by zip code rather than csa since the rest of 
 ```{r}
 #income in baltimore city
 baltcity_income <- read_csv("data/baltcity_income.csv")%>%
@@ -208,8 +209,28 @@ income_csa_reg_incarceration <- inner_join(csa_reg_incarceration, baltcity_incom
 **Q4: Which race in Baltimore had the least amount of registered voters in August 2020 as a share of their voting precinct population numbers?**
 
 ```{r}
-#
+#join demographic table and voter registration table
+demo_registration_race <- inner_join(demo_voting_x2020_politics, x2020_precinct_voters, by = "precinct")%>%
+  select(precinct, total_population, adjusted_white_alone, black_or_african_american_alone, american_indian_and_alaska_native_alone, asian_alone_e, native_hawiian_other_pacific_islander_alone, adjusted_some_other_race_alone_e, adjusted_two_or_more_races, adjusted_hispanic_or_latino_of_any_race, zip)
+
 ```
+
+**Q5: How has voter registration data changed in the past four years?**
+```{r}
+#i plan to upload all the datasets from 2021 and 2022 
+years %>%
+  ggplot() +
+  geom_bar(aes(x=reorder(year, n), weight=n)) +
+  coord_flip() + 
+  theme_minimal() + 
+  theme_economist() +
+  labs(
+    title= "voter registration from 2020 to 2024 in Baltimore City "
+    x = "month",
+    y = "number of registered voters",
+    caption = "Source: Baltimore City")
+```
+
 
 **Most interesting I've learned so far**
 The most interesting finding I've learned so far was that zip codes in areas such as Inner Harbor/Federal Hill and Fells Point, both high-income areas, didn't have the highest voter registration compared to other parts of the city. While there seemed to be some correlation between median household income and amount of registered voters as a proportion of the population, it wasn't the case everywhere in Baltimore. I previously assumed that areas with more people with higher education would have a higher voter registration rate, since those two factors typically correlate and people with higher education tend to be in wealthier areas, but there are a few outliers. I was also surprised that zip codes in Southern Park Heights and Cedonia/Frankford had such a high voter registration rate. On the other hand, zip codes in areas like Dickeyville/Franklintown and Harbor East/Little Italy had a lower voter registration rate. In terms of incarceration, those findings followed my assumptions about different areas in Baltimore City, with lower incarceration rates in zip codes that are in Greater Roland Park/Poplar Hill and Cross-Country/Cheswolde and higher incarceration rates in zip codes that are in areas such as Midway/Coldstream, Sandtown-Winchester/Harlem Park and Madison/East End.
