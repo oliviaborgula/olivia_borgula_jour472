@@ -186,7 +186,7 @@ x2023_precinct_voters <- read_csv("data/tabula-2023_reg.csv")
 x2022_precinct_voters <- read_csv("data/tabula-2022_dec.csv")
 
 #voting data by voting precinct in baltimore city in 2021 
-x2021_precinct_voters <- read_csv("data/tabula-2021_dec.csv")
+x2021_precinct_voters <- read_csv("data/tabula-2021_reg.csv")
 ```
 
 
