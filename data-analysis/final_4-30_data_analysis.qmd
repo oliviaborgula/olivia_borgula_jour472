@@ -122,8 +122,18 @@ zip_demo_precinct <- inner_join(demo_precinct, precinct_addresses_x2020, by = "p
 reg_incarceration <- inner_join(zip_demo_precinct, incarceration_x2020, by = "zip") 
 ```
 
-Aggregate each zip code
-sum(total_population) / sum(total_reg)
+Aggregate each zip code,
+```{r}
+#Aggregate each zip code
+#sum(total_population) / sum(total_reg) for each zip code 
+```
+
+baltcity_income
+```{r}
+#income in baltimore city
+baltcity_income <- read_csv("data/baltcity_income.csv")%>%
+  clean_names()
+```
 
 **Q1: Which 10 communities in Baltimore had the least amount of registered voters in August 2020? Which 10 had the most?**
 ```{r}
@@ -134,6 +144,25 @@ reg_top_10 <- zip_demo_precinct%>%
   slice_max(pct_reg, n = 10)
 ```
 
-group by zip codes and average voting registration and 
-open baltimore crosswalk zip code 
-write at highly aggregated level of zip codes 
+**Q2: What was the rate of incarceration in the top 10 areas with the lowest voter turnout? What about in the top 10 areas with the highest voter turnout?**
+```{r}
+incarcerated_reg_bottom_10 <- reg_incarceration%>%
+  slice_min(pct_reg, n = 10)
+
+incarceration_reg_top_10 <- reg_incarceration%>%
+  slice_max(pct_reg, n = 10)
+```
+
+**Q3: How many people registered to vote in the August 2020 in the top 10 areas in Baltimore City with the highest median household income? What about in the 10 lowest areas?**
+```{r}
+
+```
+
+**Q4: Which race in Baltimore had the least amount of registered voters in August 2020 as a share of their voting precinct population numbers?**
+
+```{r}
+
+```
+
+**Most interesting I've learned so far**
+The most interesting finding I've learned so far was that areas such as 
