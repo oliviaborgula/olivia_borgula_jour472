@@ -36,7 +36,16 @@ The core datasets I will use (not including new datasets I create through joins)
 
 6. baltcity_income - data given in labs about median household income in Baltimore City CSAs from different years, including 2020. 
 
-7. x20204_precinct_voters - voter registration counts in 2024 by voting precinct in Baltimore City via the city's voting information page.
+7. x2024_precinct_voters - voter registration counts in 2024 by voting precinct in Baltimore City via the city's voting information page.
+https://boe.baltimorecity.gov/registration-figures
+
+8. x2023_precinct_voters - voter registration counts in 2023 by voting precinct in Baltimore City via the city's voting information page.
+https://boe.baltimorecity.gov/registration-figures
+
+9. x2022_precinct_voters - voter registration counts in 2022 by voting precinct in Baltimore City via the city's voting information page.
+https://boe.baltimorecity.gov/registration-figures
+
+10. x2021_precinct_voters - voter registration counts in 2021 by voting precinct in Baltimore City via the city's voting information page.
 https://boe.baltimorecity.gov/registration-figures
 
 I use all these datasets in some form for nearly every question. 
@@ -162,12 +171,21 @@ zip_csa <- zip_csa%>%
   rename(csa = csa2010, zip = zip2010)
 ```
 
-x2024_precinct_voters
+x2021 - x2024_precinct_voters datasets (4)
+note: I still need to clean 2022-2023 
 ```{r}
 #voting data by voting precinct in baltimore city in 2024 
 x2024_precinct_voters <- read_csv("data/tabula-2024-precinct-voter-counts.csv")
 #remove blank rows
 x2024_precinct_voters <- x2024_precinct_voters[complete.cases(x2024_precinct_voters), ]
+
+#voting data by voting precinct in baltimore city in 2023 
+x2023_precinct_voters <- read_csv("data/tabula-2023_reg.csv")
+
+#voting data by voting precinct in baltimore city in 2022 
+x2022_precinct_voters <- read_csv("data/tabula-2022_dec.csv")
+
+
 ```
 
 
