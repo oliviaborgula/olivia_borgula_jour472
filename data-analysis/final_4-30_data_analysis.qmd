@@ -11,7 +11,7 @@ Once I do an aggregate of all the zip codes, the rest of my code will change, so
 
 **INTRODUCTION** This data analysis project will examine how incarceration, wealth and race intersect and play a role in voter registration in Baltimore City — an especially newsworthy topic ahead of elections season this November. Specifically, I will ask these five questions to guide my findings:
 
-1. Which community in Baltimore had the least amount of registered voters in August 2020? Which had the most? 
+1. Which five zip codes in Baltimore had the least amount of registered voters in August 2020? Which had the most? 
 
 2. What was the rate of incarceration in the top 10 areas with the lowest voter turnout? What about in the top 10 areas with the highest voter turnout?
 
@@ -127,7 +127,7 @@ reg_incarceration <- inner_join(zip_demo_precinct, incarceration_x2020, by = "zi
 ```
 
 Aggregate each zip code
-for now, i did the calculations in excel. I am still working on writing code that will do this for me
+My data is precinct level, but incarceration data and median household income data is based on zip code. These calculations give me the average voter registration in each zip code, which I can then compare to incarceration and other data. I did this by first calculating the percent of registered voters in each voting precinct to the number of total people in each precinct, and then found the average of that figure for each zip code. For now, I did this by importing my data into excel and doing the calculation there, but I'm working to figure out a code that will do this for me in R, since my previous attempts failed.
 ```{r}
 #upload data for the aggregate/average of each zip code voter registration
 avg_zip <- read_csv("data/avg_zip.csv")
@@ -172,13 +172,13 @@ x2024_precinct_voters <- x2024_precinct_voters[complete.cases(x2024_precinct_vot
 ```
 
 
-**Q1: Which 10 communities in Baltimore had the least amount of registered voters in August 2020? Which 10 had the most?**
+**Q1: Which five zip codes in Baltimore had the least amount of registered voters in August 2020? Which 10 had the most?**
 ```{r}
-reg_bottom_10 <- zip_demo_precinct%>%
-  slice_min(pct_reg, n = 10)
+top_10_avg_zip <- avg_zip%>%
+  slice_max(avg_pct_reg)
 
-reg_top_10 <- zip_demo_precinct%>%
-  slice_max(pct_reg, n = 10)
+bottom_10_avg_zip <- avg_zip%>%
+  slice_min(avg_pct_reg)
 ```
 
 **Q2: What was the rate of incarceration in the top 10 areas with the lowest voter turnout? What about in the top 10 areas with the highest voter turnout?**
