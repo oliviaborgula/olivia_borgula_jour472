@@ -5,6 +5,10 @@ date: 04/30/2024
 format: html
 editor: visual
 ---
+
+**NOTE**
+Once I do an aggregate of all the zip codes, the rest of my code will change, so I'm focusing that for now. Once I do, it will not take very much time to answer all my questions. For now there's not much I've done to answer them. The biggest thing I'm working on right now is making sure my big table that I joined is accurate.
+
 **INTRODUCTION** This data analysis project will examine how incarceration, wealth and race intersect and play a role in voter registration in Baltimore City — an especially newsworthy topic ahead of elections season this November. Specifically, I will ask these five questions to guide my findings:
 
 1. Which community in Baltimore had the least amount of registered voters in August 2020? Which had the most? 
@@ -126,6 +130,8 @@ Aggregate each zip code,
 ```{r}
 #Aggregate each zip code
 #sum(total_population) / sum(total_reg) for each zip code 
+
+#still working on this - it will likely change the rest of my code
 ```
 
 baltcity_income
@@ -133,7 +139,26 @@ baltcity_income
 #income in baltimore city
 baltcity_income <- read_csv("data/baltcity_income.csv")%>%
   clean_names()
+
+baltcity_income <- baltcity_income%>%
+  rename(csa = neighborhood)
 ```
+
+zip_csa
+```{r}
+#table with information about zip code and csa
+zip_csa <- read_csv("data/csa_zip.csv")%>%
+  clean_names()
+
+#get rid of columns with NA
+zip_csa <- zip_csa%>%
+  select(where(~!any(is.na(.))))
+
+zip_csa <- zip_csa%>%
+  rename(csa = csa2010, zip = zip2010)
+```
+
+x2024_precinct_voters
 
 **Q1: Which 10 communities in Baltimore had the least amount of registered voters in August 2020? Which 10 had the most?**
 ```{r}
@@ -155,13 +180,19 @@ incarceration_reg_top_10 <- reg_incarceration%>%
 
 **Q3: How many people registered to vote in the August 2020 in the top 10 areas in Baltimore City with the highest median household income? What about in the 10 lowest areas?**
 ```{r}
+#join table with csa table
+csa_reg_incarceration <- inner_join(reg_incarceration, zip_csa, by = "zip")
 
+#join that table with median_income table
+#this isn't going to run as expected because I still need to fix a few discrepancies (Mt. Washington instead of Mount Washington, etc.)
+
+income_csa_reg_incarceration <- inner_join(csa_reg_incarceration, baltcity_income, by = "csa")
 ```
 
 **Q4: Which race in Baltimore had the least amount of registered voters in August 2020 as a share of their voting precinct population numbers?**
 
 ```{r}
-
+#
 ```
 
 **Most interesting I've learned so far**
