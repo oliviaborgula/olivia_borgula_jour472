@@ -51,12 +51,15 @@ pct_vote_csa
 This dataset has a row for all of Baltimore City, which is not one of the official 55 CSAs, so I will remove that row
 ```{r}
 #upload csv and clean names/rows
-pct_vote_csa <- read_csv("data/pct_vote_csa.csv")
+pct_vote_csa <- read_csv("data/pct_vote_csa_clean.csv")
 
 pct_vote_csa <- pct_vote_csa%>%
   clean_names()%>%
   rename(csa = community, pct_voters = x2020_data)%>%
   filter(csa != "Baltimore City")
+
+#rename row from "&" to "and" to match up with the rest of the voting data used later
+pct_vote_csa$csa <- gsub("&", "and", pct_vote_csa$csa)
 ``` 
 
 incarceration_x2020
@@ -333,3 +336,18 @@ voting_x2012_x2020 <- voting_x2012_x2020 %>%
 
 #Orangeville/East Highlandtown had the biggest change, with an almost 65% increase in voter turnout 
 ```
+
+I'm going to make one big dataset to visualize this 
+```{r}
+voting_all <- inner_join(voting_2010, voting_2012, by = "csa") %>%
+                 inner_join(voting_2014, by = "csa") %>%
+                 inner_join(voting_2016, by = "csa") %>%
+                 inner_join(voting_2018, by = "csa") %>%
+                 inner_join(pct_vote_csa, by = "csa")
+```
+
+```{r, results='asis'}
+cat('')
+```
+
+Now let's look at Baltimore City as a whole 
