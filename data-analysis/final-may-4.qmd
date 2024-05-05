@@ -15,6 +15,8 @@ This data analysis project will examine how different factors, such as incarcera
 
 3. How has voter turnout in Baltimore City changed from 2010 to 2020? Which CSA had the biggest difference between the 2012 and 2020 general election?
 
+4. In August 2020, which parts of the city had the most registered democrats? Which had the most republicans?
+
 **THE DATA** 
 Note: if you click on the Baltimore Neighborhood Indicators Alliance links, make sure the year is set to 2020 (Compare Years -> 2020 -> Update Your Selections) and the corresponding indicator on the left-hand side is clicked. It doesn't automatically apply these when I copy the link
 
@@ -31,6 +33,8 @@ Note: if you click on the Baltimore Neighborhood Indicators Alliance links, make
 6. voting_2012 through voting_2022 - data from the Baltimore City Board of Elections compiled by the Neighborhood Indicators Alliance that has the voter turnout rate for each Baltimore City community statistical area. https://bniajfi.org/indicators/Sustainability/voted/2020.I exported the data from the website as an excel sheet and then saved it in excel as a csv.
 
 7. trends_turnout - for this dataset I found it easiest to take screenshots from two websites and put them into Adobe Acrobat. For 1984 to 2008, I used this site: https://elections.maryland.gov/elections/presidential_elections/turnout/general_comparison.html, which has the Baltimore City voter turnout in each general election from 1984 to 2008. From 2012 to 2020, I used this site: https://bniajfi.org/indicators/Sustainability/voted/2020, which has the voter turnout in Baltimore City from 2012 to 2020. When I say "voter turnout" I mean percent of people of the voting age who voted in the election. For the second website you might have to click around as the settings I put might not save when I copy the URL. 
+
+8. precinct_voters_x2020 - I used Tabula to get a table from this PDF from the Baltimore City Board of Elections https://boe.baltimorecity.gov/registration-figures. This data shows voter registration from August 2020, the most recent dataset from 2020. I used this dataset because it had figures for the number of voters registered in each precinct (a more detailed way to show voting figures) and a breakdown of their political parties. This is a citywide registration number taken on August 27, 2020. It contains voting precinct number, number of democrats, number of republicans, and a handful of other political parties, including a column for other and total. 
 
 **NOTE**
 I decided to use Flourish for all my visualizations instead of R because there's much more flexibility for interactivity and styling. I also wasn't sure if I was supposed to note exactly where I took feedback, but I pretty much overhauled my entire project from Tuesday so hopefully it's clear. 
@@ -163,6 +167,18 @@ voting_2016 <- read_csv("data/voting_2016.csv")%>%
 trends_turnout
 ```{r}
 trends_turnout <- read_csv("data/trends_turnout.csv")
+```
+precinct_voters_x2020
+```{r}
+#upload csv 
+precinct_voters_x2020 <- read_csv("data/cleaned_precinct_x2020.csv")
+
+#remove rows with NAs and get rid of extra column copied from PDF
+precinct_voters_x2020 <- precinct_voters_x2020 %>%
+  filter(complete.cases(.))%>%
+  slice(-111)%>%
+  clean_names()%>%
+  select(precinct, dem, rep, total)
 ```
 
 **Q1: Which five Baltimore City community statistical areas had the lowest voter turnout percentage in the 2020 general election? Which five had the highest?** 
@@ -383,4 +399,22 @@ cat('<div class="flourish-embed flourish-chart" data-src="visualisation/17832645
 ```
 For this chart, I uploaded my trends_turnout csv to flourish. Looking at a wider spread of data shows that voter turnout has seen an overall decline between 1984 and 2020 in Baltimore City. 
 
+**Q3: In August 2020, which parts of the city had the most registered democrats? Which had the most republicans?**
+```{r}
+#add new column for percent of whole
+precinct_voters_x2020 <- precinct_voters_x2020%>%
+  mutate(pct_dem = (dem / total)*100)%>%
+  mutate(pct_rep = (rep / total)*100)
+```
 
+Voting precincts don't make much sense without a visualization. I uploaded the geojson for 2020 voting precincts on the same site I got the first geojson
+```{r, results='asis'}
+cat('<div class="flourish-embed flourish-map" data-src="visualisation/17834987"><script src="https://public.flourish.studio/resources/embed.js"></script></div>')
+```
+There were higher concentrations of registered democrats in east and west Baltimore City in August 2020 than in the north or south. 
+
+Let's look at republicans now 
+```{r, results='asis'}
+cat('<div class="flourish-embed flourish-map" data-src="visualisation/17835183"><script src="https://public.flourish.studio/resources/embed.js"></script></div>')
+```
+There were lower concentrations of registered republicans in east and west Baltimore City in August 2020 than in the north or south. 
