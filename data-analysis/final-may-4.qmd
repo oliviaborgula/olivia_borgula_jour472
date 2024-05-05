@@ -40,7 +40,6 @@ library(janitor)
 library(formattable)
 library(dplyr)
 library(rvest)
-library(sf)
 
 #turn off scientific notation
 options(scipen=999)
@@ -379,6 +378,6 @@ Let's draw even more conclusions by looking at Baltimore City as a whole
 ```{r, results='asis'}
 cat('<div class="flourish-embed flourish-chart" data-src="visualisation/17832645"><script src="https://public.flourish.studio/resources/embed.js"></script></div>')
 ```
-For this chart, I uploaded my trends_turnout csv to flourish. Looking at a wider spread of data shows that voter turnout has seen an overall decline between 1980 and 2020 in Baltimore City. 
+For this chart, I uploaded my trends_turnout csv to flourish. Looking at a wider spread of data shows that voter turnout has seen an overall decline between 1984 and 2020 in Baltimore City. 
 
 
