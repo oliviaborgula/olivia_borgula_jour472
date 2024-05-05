@@ -347,8 +347,5 @@ voting_all <- voting_all%>%
   rename(x)
 ```
 
-```{r, results='asis'}
-cat('')
-```
 
 Now let's look at Baltimore City as a whole 
