@@ -52,6 +52,9 @@ This dataset has a row for all of Baltimore City, which is not one of the offici
 ```{r}
 #upload csv and clean names/rows
 pct_vote_csas <- read_csv("data/pct_vote_csa_clean.csv")
+
+pct_vote_csas <- pct_vote_csas%>%
+  rename(csa = 1, pct_voters = 2)
 ``` 
 
 incarceration_x2020
