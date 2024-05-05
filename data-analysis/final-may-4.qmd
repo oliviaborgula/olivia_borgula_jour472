@@ -347,5 +347,3 @@ voting_all <- voting_all%>%
   rename(x)
 ```
 
-
-Now let's look at Baltimore City as a whole 
