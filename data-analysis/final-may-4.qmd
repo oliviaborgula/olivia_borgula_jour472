@@ -18,17 +18,19 @@ This data analysis project will examine how different factors, such as incarcera
 **THE DATA** 
 Note: if you click on the Baltimore Neighborhood Indicators Alliance links, make sure the year is set to 2020 (Compare Years -> 2020 -> Update Your Selections) and the corresponding indicator on the left-hand side is clicked. It doesn't automatically apply these when I copy the link
 
-1. pct_vote_csa_clean - data from the Baltimore City Board of Elections compiled by the Baltimore Neighborhood Indicators Alliance that has the percent of people over the age of 18 who voted in the 2020 general election in each Baltimore City community statistical area. https://bniajfi.org/indicators/Sustainability/voted/2020. I exported the data from the website as an excel sheet and then saved it as a csv. 
+1. pct_vote_csas - data from the Baltimore City Board of Elections compiled by the Baltimore Neighborhood Indicators Alliance that has the percent of people over the age of 18 who voted in the 2020 general election in each Baltimore City community statistical area. https://bniajfi.org/indicators/Sustainability/voted/2020. I exported the data from the website as an excel sheet and then saved it as a csv. 
 
-2. incarceration_x2020 - a data table scraped from a Prison Policy Initiative website with information about the incarceration rate in each Baltimore City community statistical areas in 2020. Rate per 100,000 is the number of imprisoned people divided by the total CSA population and then multiplied by 100,000. It allows ready comparison of the frequency of imprisonment between each CSA of different population sizes https://www.prisonpolicy.org/origin/md/2020/baltimore_csa.html
+2. incarceration_x2020 - a data table scraped from a Prison Policy Initiative website with information about the incarceration rate in each Baltimore City community statistical areas in 2020. It has the community statistical area, the total population, the census population (I used the total population here), the rate per 100,000 and the number in state prison. Rate per 100,000 is the number of imprisoned people divided by the total CSA population and then multiplied by 100,000. It allows ready comparison of the frequency of imprisonment between each CSA of different population sizes https://www.prisonpolicy.org/origin/md/2020/baltimore_csa.html. I webscraped this later. 
 
-3. biz - data from InfoUsa compiled by the Neighborhood Indicators Alliance that has the number of businesses per 1,000 residents by community statistical area. https://bniajfi.org/indicator/Workforce%20And%20Economic%20Development/?chkYears[]=2020. I exported the data from the website as an excel sheet and then saved it in excel as a csv. 
+3. biz - data from InfoUsa compiled by the Neighborhood Indicators Alliance that has the number of businesses per 1,000 residents in each Baltimore City community statistical area. https://bniajfi.org/indicator/Workforce%20And%20Economic%20Development/?chkYears[]=2020. I exported the data from the website as an excel sheet and then saved it in excel as a csv. 
 
 4. baltcity_income - data from the US Census Bureau compiled from the Neighborhood Indicators Alliance that has the median household income in each Baltimore City community statistical area. https://bniajfi.org/indicator/census%20demographics/. I exported the data from the website as an excel sheet and then saved it as a csv. 
 
-5. internet - data from US Census Bureau compiled by the Neighborhood Indicators Alliance that has the percent of households with no internet at home. https://bniajfi.org/indicators/Workforce%20and%20Economic%20Development/nohhint/2020. I exported the data from the website as an excel sheet and then saved it in excel as a csv.
+5. internet - data from US Census Bureau compiled by the Neighborhood Indicators Alliance that has the percent of households with no internet at home and community statistical area.  https://bniajfi.org/indicators/Workforce%20and%20Economic%20Development/nohhint/2020. I exported the data from the website as an excel sheet and then saved it in excel as a csv.
 
-6. voting_2012 through voting_2022 - data from the Baltimore City Board of Elections compiled by the Neighborhood Indicators Alliance that has the voter turnout rate for each Baltimore City statistical area
+6. voting_2012 through voting_2022 - data from the Baltimore City Board of Elections compiled by the Neighborhood Indicators Alliance that has the voter turnout rate for each Baltimore City community statistical area. https://bniajfi.org/indicators/Sustainability/voted/2020.I exported the data from the website as an excel sheet and then saved it in excel as a csv.
+
+7. trends_turnout - for this dataset I found it easiest to take screenshots from two websites and put them into Adobe Acrobat. For 1984 to 2008, I used this site: https://elections.maryland.gov/elections/presidential_elections/turnout/general_comparison.html, which has the Baltimore City voter turnout in each general election from 1984 to 2008. From 2012 to 2020, I used this site: https://bniajfi.org/indicators/Sustainability/voted/2020, which has the voter turnout in Baltimore City from 2012 to 2020. When I say "voter turnout" I mean percent of people of the voting age who voted in the election. For the second website you might have to click around as the settings I put might not save when I copy the URL. 
 
 **SET UP**
 ```{r}
@@ -49,12 +51,7 @@ pct_vote_csa
 This dataset has a row for all of Baltimore City, which is not one of the official 55 CSAs, so I will remove that row
 ```{r}
 #upload csv and clean names/rows
-pct_vote_csa <- read_csv("data/pct_vote_csa_clean.csv")
-
-pct_vote_csa <- pct_vote_csa%>%
-  clean_names()%>%
-  rename(csa = community, pct_voters = x2020_data)%>%
-  filter(csa != "Baltimore City")
+pct_vote_csas <- read_csv("data/pct_vote_csa_clean.csv")
 ``` 
 
 incarceration_x2020
@@ -101,63 +98,84 @@ internet <- internet%>%
   filter(csa != "Baltimore City")
 ```
 
-voting_2012 through voting_2020
-These datasets also has a row for all of Baltimore City, which is not one of the official 55 CSAs, so I will remove that row
+voting_2010 through voting_2020
+These datasets also have a row for all of Baltimore City, which is not one of the official 55 CSAs, so I will remove that row
+
+voting_2010
 ```{r}
 #voter turnout in the 2010 election
 voting_2010 <- read_csv("data/voting_2010.csv")%>%
   clean_names()%>%
   rename(csa = community, pct_voters = x2010_data)%>%
   filter(csa != "Baltimore City")
+```
 
+voting_2012
+```{r}
 #voter turnout in the 2012 election
 voting_2012 <- read_csv("data/voting_2012_clean.csv")%>%
   clean_names()%>%
   rename(csa = community, pct_voters = x2012_data)%>%
   filter(csa != "Baltimore City")
+```
 
+voting_2014
+```{r}
 #voter turnout in the 2014 election
 voting_2014 <- read_csv("data/voting_2014.csv")%>%
   clean_names()%>%
   rename(csa = community, pct_voters = x2014_data)%>%
   filter(csa != "Baltimore City")
+```
 
+voting_2016
+```{r}
 #voter turnout in the 2016 election
-voting_2016 <- read_csv("data/voting_2016.csv")%>%
-  clean_names()%>%
-  rename(csa = community, pct_voters = x2016_data)%>%
-  filter(csa != "Baltimore City")
-
-#voter turnout in the 2018 election
-voting_2018 <- read_csv("data/voting_2018.csv")%>%
-  clean_names()%>%
-  rename(csa = community, pct_voters = x2018_data)%>%
-  filter(csa != "Baltimore City")
-
-#voter turnout in the 2022 ele
 voting_2016 <- read_csv("data/voting_2016.csv")%>%
   clean_names()%>%
   rename(csa = community, pct_voters = x2016_data)%>%
   filter(csa != "Baltimore City")
 ```
 
+voting_2018
+```{r}
+#voter turnout in the 2018 election
+voting_2018 <- read_csv("data/voting_2018.csv")%>%
+  clean_names()%>%
+  rename(csa = community, pct_voters = x2018_data)%>%
+  filter(csa != "Baltimore City")
+```
+
+voting_2022
+```{r}
+#voter turnout in the 2022 election
+voting_2016 <- read_csv("data/voting_2016.csv")%>%
+  clean_names()%>%
+  rename(csa = community, pct_voters = x2016_data)%>%
+  filter(csa != "Baltimore City")
+```
+
+trends_turnout
+```{r}
+trends_turnout <- read_csv("data/trends_turnout.csv")
+```
 
 **Q1: Which five Baltimore City community statistical areas had the lowest voter turnout percentage in the 2020 general election? Which five had the highest?** 
 
 ```{r}
 #use slicemax/min to make new tables with top and bottom five csas by voter turnout
-pct_vote_csa%>%
+pct_vote_csas%>%
   slice_min(pct_voters, n = 5)
 #Southwest Baltimore: 41.1%, Madison/East End: 41.6%, Brooklyn/Curtis Bay/Hawkins Point: 42.7%, Sandtown-Winchester/Harlem Park: 44.1% and Poppleton/The Terraces/Hollins Market: 46.1%
 
-pct_vote_csa%>%
+pct_vote_csas%>%
   slice_max(pct_voters, n = 5)
 #Greater Roland Park/Poplar Hill: 80.1%, Mount Washington/Coldspring: 77%, South Baltimore: 75%, North Baltimore/Guilford/Homeland: 74.6% and Medfield/Hampden/Woodberry/Remington: 72.9%
 ```
 
 Let's visualize this! 
 I created a custom map in flourish by uploading a geojson file with the Baltimore City CSA boundaries, which I found through Open Baltimore. https://data.baltimorecity.gov/datasets/9c96ae20e6cc41258015c2fd288716c4/explore
-I then uploaded my csv for pct_vote_csa to fill in the data points. 
+I then uploaded my csv for pct_vote_csas to fill in the data points. 
 
 ```{r, results='asis'}
 cat('<div class="flourish-embed flourish-map" data-src="visualisation/17796037"><script src="https://public.flourish.studio/resources/embed.js"></script></div>')
@@ -171,8 +189,8 @@ Let's compare all these factors in the five CSAs with the highest and lowest vot
 
 I'll start with incarceration rate and voter turnout
 ```{r}
-#join incarceration_x2020 and pct_vote_csa datasets
-incarceration_voting <- inner_join(incarceration_x2020, pct_vote_csa, by = "csa")
+#join incarceration_x2020 and pct_vote_csas datasets
+incarceration_voting <- inner_join(incarceration_x2020, pct_vote_csas, by = "csa")
 
 incarceration_voting %>%
   slice_min(pct_voters, n = 5)
@@ -201,8 +219,8 @@ This scatterplot shows the negative relationship between incarceration rate and 
 
 Wealth and voter turnout rate
 ```{r}
-#join baltcity_income and pct_vote_csa 
-wealth_voting <- inner_join(pct_vote_csa, baltcity_income, by = "csa")
+#join baltcity_income and pct_vote_csas
+wealth_voting <- inner_join(pct_vote_csas, baltcity_income, by = "csa")
 
 wealth_voting %>%
   slice_min(pct_voters, n = 5)
@@ -231,8 +249,8 @@ This scatterplot shows the positive relationship between median household income
 
 Number of businesses per 1,000 people and voter turnout  
 ```{r}
-#join biz and pct_vote_csa dataset
-biz_voting <- inner_join(biz, pct_vote_csa, by = "csa")
+#join biz and pct_vote_csas dataset
+biz_voting <- inner_join(biz, pct_vote_csas, by = "csa")
 
 biz_voting %>%
   slice_min(pct_voters, n = 5)
@@ -250,8 +268,8 @@ There doesn't seem to be a significant correlation between number of businesses 
 
 Percent of households without internet and voter turnout 
 ```{r}
-#join internet and pct_vote_csa dataset
-internet_voting <- inner_join(internet, pct_vote_csa, by = "csa")
+#join internet and pct_vote_csas dataset
+internet_voting <- inner_join(internet, pct_vote_csas, by = "csa")
 
 internet_voting %>%
   slice_min(pct_voters, n = 5)
@@ -323,10 +341,10 @@ cc_internet
 Let's look at community statistical areas first 
 ```{r}
 #rename row from "&" to "and" to match up with the rest of the voting data used later
-pct_vote_csa$csa <- gsub("&", "and", pct_vote_csa$csa)
+pct_vote_csas$csa <- gsub("&", "and", pct_vote_csas$csa)
 
 #make one dataset for combined 2012 and 2020
-voting_x2012_x2020 <- inner_join(voting_2012, pct_vote_csa, by = "csa")
+voting_x2012_x2020 <- inner_join(voting_2012, pct_vote_csas, by = "csa")
 
 voting_x2012_x2020 <- voting_x2012_x2020 %>%
   rename(x2012_turnout = 2, x2020_turnout = 3) %>%
@@ -341,7 +359,7 @@ voting_all <- inner_join(voting_2010, voting_2012, by = "csa") %>%
                  inner_join(voting_2014, by = "csa") %>%
                  inner_join(voting_2016, by = "csa") %>%
                  inner_join(voting_2018, by = "csa") %>%
-                 inner_join(pct_vote_csa, by = "csa")
+                 inner_join(pct_vote_csas, by = "csa")
 
 voting_all <- voting_all%>%
   rename(x2010_turnout = 2, x2012_turnout = 3, x2014_turnout = 4, x2016_tunout = 5, x2018_turnout = 6, x2020_turnout = 7)
@@ -352,6 +370,11 @@ Press play!
 ```{r, results='asis'}
 cat('<div class="flourish-embed flourish-map" data-src="visualisation/17832534"><script src="https://public.flourish.studio/resources/embed.js"></script></div>')
 ```
-Gubernatorial elections tend to get less voter turnout than general elections, which is unsurprising as that is a well-documented phenomenon. But it seems that 2020 has the voter turnout out of the 10-year period, including past general elections. It also seems that the "Black Butterfly White L" phenomenon becomes more pronounced over time 
+Gubernatorial elections tend to get less voter turnout than general elections, which is unsurprising as that is a well-documented phenomenon. But it seems that 2020 has the highest voter turnout out of the 10-year period. It also seems that the "Black Butterfly White L" phenomenon becomes more pronounced over time 
 
+Let's draw even more conclusions by looking at Baltimore City as a whole
+```{r, results='asis'}
+cat('<div class="flourish-embed flourish-chart" data-src="visualisation/17832645"><script src="https://public.flourish.studio/resources/embed.js"></script></div>')
+```
+For this chart, I uploaded my trends_turnout csv to flourish. Looking at a wider spread of data shows that voter turnout has seen an overall decline between 1980 and 2020 in Baltimore City. 
 
