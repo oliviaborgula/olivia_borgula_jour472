@@ -335,15 +335,3 @@ voting_x2012_x2020 <- voting_x2012_x2020 %>%
 #Orangeville/East Highlandtown had the biggest change, with an almost 65% increase in voter turnout 
 ```
 
-I'm going to make one big dataset to visualize this 
-```{r}
-voting_all <- inner_join(voting_2010, voting_2012, by = "csa") %>%
-                 inner_join(voting_2014, by = "csa") %>%
-                 inner_join(voting_2016, by = "csa") %>%
-                 inner_join(voting_2018, by = "csa") %>%
-                 inner_join(pct_vote_csa, by = "csa")
-
-voting_all <- voting_all%>%
-  rename(x)
-```
-
