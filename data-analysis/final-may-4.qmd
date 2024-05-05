@@ -447,4 +447,4 @@ Let's look at republicans now
 ```{r, results='asis'}
 cat('<div class="flourish-embed flourish-map" data-src="visualisation/17835183"><script src="https://public.flourish.studio/resources/embed.js"></script></div>')
 ```
-There are not many republicans in Baltimore City. Those that are reside in the middle and more rural parts of the city 
+There are not many republicans in Baltimore City. Those that are reside in the middle and more rural parts of the city. Note: sometimes this graphic doesn't load right away on the page so you might have to reload and it should pop up.
