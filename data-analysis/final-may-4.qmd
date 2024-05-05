@@ -335,3 +335,23 @@ voting_x2012_x2020 <- voting_x2012_x2020 %>%
 #Orangeville/East Highlandtown had the biggest change, with an almost 65% increase in voter turnout 
 ```
 
+I'm going to make one big dataset to visualize this 
+```{r}
+voting_all <- inner_join(voting_2010, voting_2012, by = "csa") %>%
+                 inner_join(voting_2014, by = "csa") %>%
+                 inner_join(voting_2016, by = "csa") %>%
+                 inner_join(voting_2018, by = "csa") %>%
+                 inner_join(pct_vote_csa, by = "csa")
+
+voting_all <- voting_all%>%
+  rename(x2010_turnout = 2, x2012_turnout = 3, x2014_turnout = 4, x2016_tunout = 5, x2018_turnout = 6, x2020_turnout = 7)
+```
+
+This is easiest to see through visualizations
+Press play!
+```{r, results='asis'}
+cat('<div class="flourish-embed flourish-map" data-src="visualisation/17832534"><script src="https://public.flourish.studio/resources/embed.js"></script></div>')
+```
+Gubernatorial elections tend to get less voter turnout than general elections, which is unsurprising as that is a well-documented phenomenon. But it seems that 2020 has the voter turnout out of the 10-year period, including past general elections. It also seems that the "Black Butterfly White L" phenomenon becomes more pronounced over time 
+
+

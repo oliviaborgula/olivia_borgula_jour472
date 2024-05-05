@@ -75,3 +75,67 @@ x2020_precinct_voters <- x2020_precinct_voters[-111, ]%>%
   rename(total_reg = total)%>%
   clean_names()
 ```
+
+6. total_22 - data with the number of democratic, republican and total voters from the 2022 gubernatorial race by voting precinct. I used Tabula to extract the data from this website and then upload it as a CSV. https://boe.baltimorecity.gov/sites/default/files/2022-12-28%201306%20-%20PUBLISHED%20-%20On%20WELCOME,%20MAIN%20MENU,%20VOTER%20INFORMATION,%20VOTER%20REGISTRATION,%20REGISTRATION%20FIGURES%20Page%20-%202022-12-28%20-%20City%20Wide%20Precinct%20&%20Wards.pdf
+
+7. total_2018 - data with the number of democratic, republican and total voters from the 2018 gubernatorial race by voting precinct. I used Tabula to extract the data from this website and then upload it as a CSV. 
+https://boe.baltimorecity.gov/sites/default/files/congressional%20voter%20totals%20-%202018-2-27.pdf
+
+**Q**
+Find the number of democratic voters and republican voters in each voting precinct in 2022 and 2018 as a share of the total voters in each precinct. 
+
+2022
+```{r}
+total_22 <- total_22%>%
+  mutate(pct_dem = (dem / total)*100)%>%
+  mutate(pct_rep = (rep / total)*100)
+```
+
+2018
+```{r}
+total_2018 <- total_2018 %>%
+  mutate(dem = as.numeric(dem),  
+         rep = as.numeric(rep),  
+         total = as.numeric(total))   
+
+total_2018 <- total_2018 %>%
+  mutate(pct_dem = (dem / total) * 100,   
+         pct_rep = (rep / total) * 100)   
+
+```
+
+
+Voter precinct data doesn't make much sense without a visualization, but is more detailed than Baltimore City community statistical area. So let's visualize it.
+```{r}
+cat('')
+
+dem_gov_flour<- dem_gov %>%
+  select(election_district_precinct, sum)
+```
+
+
+total_22
+```{r}
+#upload data
+total_22 <- read_csv("data/total_22_clean.csv")%>%
+  clean_names
+
+#clean table
+total_22 <- total_22%>%
+  rename(precinct = 1)%>%
+  select(precinct, total, dem, rep)%>%
+  na.omit
+```
+
+total_2018
+```{r}
+#upload data
+total_2018 <- read_csv("data/total_2018_clean.csv")%>%
+  clean_names()
+
+#clean table
+total_2018 <- total_2018%>%
+  rename(precinct = 1)%>%
+  select(precinct, total, dem, rep)%>%
+  na.omit
+```
