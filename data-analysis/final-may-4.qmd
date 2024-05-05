@@ -13,9 +13,7 @@ This data analysis project will examine how different factors, such as incarcera
 
 2. Are there correlations between the Baltimore City 2020 general election voter turnout and factors including incarceration rate, business activity, wealth and internet access?
 
-3. How has voter turnout in Baltimore City changed from 2010 to 2020? Which CSA had the biggest difference? 
-
-5. In 2020, which Baltimore City voting precinct had the highest concentration of democrats? Which had the highest concentration of republicans? Is there any correlation between race and party affiliation? 
+3. How has voter turnout in Baltimore City changed from 2010 to 2020? Which CSA had the biggest difference between the 2012 and 2020 general election?
 
 **THE DATA** 
 Note: if you click on the Baltimore Neighborhood Indicators Alliance links, make sure the year is set to 2020 (Compare Years -> 2020 -> Update Your Selections) and the corresponding indicator on the left-hand side is clicked. It doesn't automatically apply these when I copy the link
@@ -57,9 +55,6 @@ pct_vote_csa <- pct_vote_csa%>%
   clean_names()%>%
   rename(csa = community, pct_voters = x2020_data)%>%
   filter(csa != "Baltimore City")
-
-#rename row from "&" to "and" to match up with the rest of the voting data used later
-pct_vote_csa$csa <- gsub("&", "and", pct_vote_csa$csa)
 ``` 
 
 incarceration_x2020
@@ -327,6 +322,9 @@ cc_internet
 
 Let's look at community statistical areas first 
 ```{r}
+#rename row from "&" to "and" to match up with the rest of the voting data used later
+pct_vote_csa$csa <- gsub("&", "and", pct_vote_csa$csa)
+
 #make one dataset for combined 2012 and 2020
 voting_x2012_x2020 <- inner_join(voting_2012, pct_vote_csa, by = "csa")
 
@@ -344,6 +342,9 @@ voting_all <- inner_join(voting_2010, voting_2012, by = "csa") %>%
                  inner_join(voting_2016, by = "csa") %>%
                  inner_join(voting_2018, by = "csa") %>%
                  inner_join(pct_vote_csa, by = "csa")
+
+voting_all <- voting_all%>%
+  rename(x)
 ```
 
 ```{r, results='asis'}
