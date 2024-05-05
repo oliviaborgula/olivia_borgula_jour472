@@ -108,7 +108,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li><p>Which five Baltimore City community statistical areas had the lowest voter turnout percentage in the 2020 general election? Which five had the highest?</p></li>
 <li><p>Are there correlations between the Baltimore City 2020 general election voter turnout and factors including incarceration rate, business activity, wealth and internet access?</p></li>
 <li><p>How has voter turnout in Baltimore City changed from 2010 to 2020? Which CSA had the biggest difference between the 2012 and 2020 general election?</p></li>
-<li><p>In August 2020, which parts of the city had the most registered democrats? Which had the most republicans?</p></li>
+<li><p>In August 2020, which parts of the city had the most registered democrats? Which had the most republicans? Is there any correlation to race?</p></li>
 </ol>
 <p><strong>THE DATA</strong> Note: if you click on the Baltimore Neighborhood Indicators Alliance links, make sure the year is set to 2020 (Compare Years -&gt; 2020 -&gt; Update Your Selections) and the corresponding indicator on the left-hand side is clicked. It doesn’t automatically apply these when I copy the link</p>
 <ol type="1">
@@ -119,7 +119,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li><p>internet - data from US Census Bureau compiled by the Neighborhood Indicators Alliance that has the percent of households with no internet at home and community statistical area. https://bniajfi.org/indicators/Workforce%20and%20Economic%20Development/nohhint/2020. I exported the data from the website as an excel sheet and then saved it in excel as a csv.</p></li>
 <li><p>voting_2012 through voting_2022 - data from the Baltimore City Board of Elections compiled by the Neighborhood Indicators Alliance that has the voter turnout rate for each Baltimore City community statistical area. https://bniajfi.org/indicators/Sustainability/voted/2020.I exported the data from the website as an excel sheet and then saved it in excel as a csv.</p></li>
 <li><p>trends_turnout - for this dataset I found it easiest to take screenshots from two websites and put them into Adobe Acrobat. For 1984 to 2008, I used this site: https://elections.maryland.gov/elections/presidential_elections/turnout/general_comparison.html, which has the Baltimore City voter turnout in each general election from 1984 to 2008. From 2012 to 2020, I used this site: https://bniajfi.org/indicators/Sustainability/voted/2020, which has the voter turnout in Baltimore City from 2012 to 2020. When I say “voter turnout” I mean percent of people of the voting age who voted in the election. For the second website you might have to click around as the settings I put might not save when I copy the URL.</p></li>
-<li><p>precinct_voters_x2020 - I used Tabula to get a table from this PDF from the Baltimore City Board of Elections https://boe.baltimorecity.gov/registration-figures. This data shows voter registration from August 2020, the most recent dataset from 2020. I used this dataset because it had figures for the number of voters registered in each precinct (a more detailed way to show voting figures) and a breakdown of their political parties. This is a citywide registration number taken on August 27, 2020. It contains voting precinct number, number of democrats, number of republicans, and a handful of other political parties, including a column for other and total.</p></li>
+<li><p>precinct_voters_x2020 - I used Tabula to get a table from this PDF from the Baltimore City Board of Elections https://boe.baltimorecity.gov/registration-figures. This data shows voter registration from August 2020, the most recent dataset from 2020. I used this dataset because it had figures for the number of voters registered in each precinct (a more detailed way to show voting figures) and a breakdown of their political parties. This is a citywide registration number taken on August 27, 2020. It contains voting precinct number (rows), number of democrats, number of republicans, and a handful of other political parties, including a column for other and total.</p></li>
+<li><p>demo_voting - I used Tabula to get a table from this PDF from the Maryland Department of Planning. https://planning.maryland.gov/Redistricting/Documents/2020data/GreenReport.pdf. A precinct represents a small area within the city, so although each precinct has one voting place within it, these counts are for the number of people in each precinct by population, not the number of voters. It has information for the congressional/legislatie district a voting precinct is in, the voting precinct number (also called voting district VTD), precinct name, 2020 census and total population, breakdowns by number of people with one race, white alone, black/african american alone, american indian and alaska native alone, asian alone, native hawaiian/pacific islander alone, some other race alone, 2+ races alone, hispanic/latino alone, and total person over 18. Because I’m comparing race to voter registration data, I’m going to use the figure for total people over 18 (the voting age). This dataset has rows for every voting precinct in every county in Maryland, including Baltimore City.</p></li>
 </ol>
 <p><strong>NOTE</strong> I decided to use Flourish for all my visualizations instead of R because there’s much more flexibility for interactivity and styling. I also wasn’t sure if I was supposed to note exactly where I took feedback, but I pretty much overhauled my entire project from Tuesday so hopefully it’s clear.</p>
 <p><strong>SET UP</strong></p>
@@ -386,11 +387,35 @@ dbl (9): Dem, Rep, grn, lib, wcp, bar, Una, others, total
 <span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">clean_names</span>()<span class="sc">%&gt;%</span></span>
 <span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(precinct, dem, rep, total)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<p>demo_voting</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="co">#voting by demographic 2020</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>demo_voting <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/demo_voting_x2020_finalll.csv"</span>, <span class="at">locale=</span><span class="fu">locale</span>(<span class="at">encoding=</span><span class="st">"latin1"</span>))<span class="sc">%&gt;%</span></span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>  clean_names</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>New names:
+Rows: 304 Columns: 17
+── Column specification
+──────────────────────────────────────────────────────── Delimiter: "," chr
+(3): LEG02 Precinct Name, Voting District (VTD), VTD Type dbl (2): ...1, Native
+Hawiian Other Pacific Islander Alone num (11): Census Population, Total
+Population, Adjusted One Race Alone, Adju... lgl (1): ...3
+ℹ Use `spec()` to retrieve the full column specification for this data. ℹ
+Specify the column types or set `show_col_types = FALSE` to quiet this message.
+• `` -&gt; `...1`
+• `` -&gt; `...3`</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="co">#delete top seven rows for worcester copied from the page before and column three filled with only N/As</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>demo_voting <span class="ot">&lt;-</span> demo_voting[<span class="sc">-</span><span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">7</span>), <span class="sc">-</span><span class="dv">3</span>]<span class="sc">%&gt;%</span></span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice</span>(<span class="sc">-</span><span class="dv">1</span>)<span class="sc">%&gt;%</span></span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">precinct =</span> voting_district_vtd, <span class="at">precinct_pop =</span> total_population, <span class="at">black_aa =</span> black_or_african_american_alone)<span class="sc">%&gt;%</span></span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(precinct, precinct_pop, black_aa)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 <p><strong>Q1: Which five Baltimore City community statistical areas had the lowest voter turnout percentage in the 2020 general election? Which five had the highest?</strong></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="co">#use slicemax/min to make new tables with top and bottom five csas by voter turnout</span></span>
-<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>pct_vote_csas<span class="sc">%&gt;%</span></span>
-<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_min</span>(pct_voters, <span class="at">n =</span> <span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="co">#use slicemax/min to make new tables with top and bottom five csas by voter turnout</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>pct_vote_csas<span class="sc">%&gt;%</span></span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_min</span>(pct_voters, <span class="at">n =</span> <span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 5 × 2
   csa                                   pct_voters
@@ -401,10 +426,10 @@ dbl (9): Dem, Rep, grn, lib, wcp, bar, Una, others, total
 4 Sandtown-Winchester/Harlem Park             44.1
 5 Poppleton/The Terraces/Hollins Market       46.1</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Southwest Baltimore: 41.1%, Madison/East End: 41.6%, Brooklyn/Curtis Bay/Hawkins Point: 42.7%, Sandtown-Winchester/Harlem Park: 44.1% and Poppleton/The Terraces/Hollins Market: 46.1%</span></span>
-<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>pct_vote_csas<span class="sc">%&gt;%</span></span>
-<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_max</span>(pct_voters, <span class="at">n =</span> <span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Southwest Baltimore: 41.1%, Madison/East End: 41.6%, Brooklyn/Curtis Bay/Hawkins Point: 42.7%, Sandtown-Winchester/Harlem Park: 44.1% and Poppleton/The Terraces/Hollins Market: 46.1%</span></span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>pct_vote_csas<span class="sc">%&gt;%</span></span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_max</span>(pct_voters, <span class="at">n =</span> <span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 5 × 2
   csa                                  pct_voters
@@ -415,10 +440,10 @@ dbl (9): Dem, Rep, grn, lib, wcp, bar, Una, others, total
 4 North Baltimore/Guilford/Homeland          74.6
 5 Medfield/Hampden/Woodberry/Remington       72.9</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Greater Roland Park/Poplar Hill: 80.1%, Mount Washington/Coldspring: 77%, South Baltimore: 75%, North Baltimore/Guilford/Homeland: 74.6% and Medfield/Hampden/Woodberry/Remington: 72.9%</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Greater Roland Park/Poplar Hill: 80.1%, Mount Washington/Coldspring: 77%, South Baltimore: 75%, North Baltimore/Guilford/Homeland: 74.6% and Medfield/Hampden/Woodberry/Remington: 72.9%</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Let’s visualize this! I created a custom map in flourish by uploading a geojson file with the Baltimore City CSA boundaries, which I found through Open Baltimore. https://data.baltimorecity.gov/datasets/9c96ae20e6cc41258015c2fd288716c4/explore I then uploaded my csv for pct_vote_csas to fill in the data points.</p>
-<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">'&lt;div class="flourish-embed flourish-map" data-src="visualisation/17796037"&gt;&lt;script src="https://public.flourish.studio/resources/embed.js"&gt;&lt;/script&gt;&lt;/div&gt;'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">'&lt;div class="flourish-embed flourish-map" data-src="visualisation/17796037"&gt;&lt;script src="https://public.flourish.studio/resources/embed.js"&gt;&lt;/script&gt;&lt;/div&gt;'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="flourish-embed flourish-map" data-src="visualisation/17796037">
 <script src="https://public.flourish.studio/resources/embed.js"></script>
 </div>
@@ -427,11 +452,11 @@ dbl (9): Dem, Rep, grn, lib, wcp, bar, Una, others, total
 <p>Let’s compare all these factors in the five CSAs with the highest and lowest voter turnout rates</p>
 <p>I’ll start with incarceration rate and voter turnout</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="co">#join incarceration_x2020 and pct_vote_csas datasets</span></span>
-<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>incarceration_voting <span class="ot">&lt;-</span> <span class="fu">inner_join</span>(incarceration_x2020, pct_vote_csas, <span class="at">by =</span> <span class="st">"csa"</span>)</span>
-<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>incarceration_voting <span class="sc">%&gt;%</span></span>
-<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_min</span>(pct_voters, <span class="at">n =</span> <span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="co">#join incarceration_x2020 and pct_vote_csas datasets</span></span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>incarceration_voting <span class="ot">&lt;-</span> <span class="fu">inner_join</span>(incarceration_x2020, pct_vote_csas, <span class="at">by =</span> <span class="st">"csa"</span>)</span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a>incarceration_voting <span class="sc">%&gt;%</span></span>
+<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_min</span>(pct_voters, <span class="at">n =</span> <span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 5 × 3
   csa                                   rate_per_x100000 pct_voters
@@ -442,8 +467,8 @@ dbl (9): Dem, Rep, grn, lib, wcp, bar, Una, others, total
 4 Sandtown-Winchester/Harlem Park       2,563                  44.1
 5 Poppleton/The Terraces/Hollins Market 1,623                  46.1</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>incarceration_voting <span class="sc">%&gt;%</span></span>
-<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_max</span>(pct_voters, <span class="at">n =</span> <span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>incarceration_voting <span class="sc">%&gt;%</span></span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_max</span>(pct_voters, <span class="at">n =</span> <span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 5 × 3
   csa                                  rate_per_x100000 pct_voters
@@ -454,31 +479,31 @@ dbl (9): Dem, Rep, grn, lib, wcp, bar, Una, others, total
 4 North Baltimore/Guilford/Homeland    93                     74.6
 5 Medfield/Hampden/Woodberry/Remington 225                    72.9</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Incarceration rate per 100,000 people in five areas of lowest voter turnout:</span></span>
-<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a><span class="co">#Southwest Baltimore: 2,223, Madison/East End: 2,528, Brooklyn/Curtis Bay/Hawkins Point: 1,204, Sandtown-Winchester/Harlem Park: 2,563 and Poppleton/The Terraces/Hollins Market: 1,623</span></span>
-<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a><span class="co">#Incarceration rate per 100,000 people in five areas of highest voter turnout:</span></span>
-<span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a><span class="co">#Greater Roland Park/Poplar Hill: 14, Mount Washington/Coldspring: 102, South Baltimore: 97, North Baltimore/Guilford/Homeland: 93 and Medfield/Hampden/Woodberry/Remington: 225</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Incarceration rate per 100,000 people in five areas of lowest voter turnout:</span></span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a><span class="co">#Southwest Baltimore: 2,223, Madison/East End: 2,528, Brooklyn/Curtis Bay/Hawkins Point: 1,204, Sandtown-Winchester/Harlem Park: 2,563 and Poppleton/The Terraces/Hollins Market: 1,623</span></span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a><span class="co">#Incarceration rate per 100,000 people in five areas of highest voter turnout:</span></span>
+<span id="cb50-5"><a href="#cb50-5" aria-hidden="true" tabindex="-1"></a><span class="co">#Greater Roland Park/Poplar Hill: 14, Mount Washington/Coldspring: 102, South Baltimore: 97, North Baltimore/Guilford/Homeland: 93 and Medfield/Hampden/Woodberry/Remington: 225</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Let’s visualize this!</p>
-<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">'&lt;div class="flourish-embed flourish-map" data-src="visualisation/17809409"&gt;&lt;script src="https://public.flourish.studio/resources/embed.js"&gt;&lt;/script&gt;&lt;/div&gt;'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">'&lt;div class="flourish-embed flourish-map" data-src="visualisation/17809409"&gt;&lt;script src="https://public.flourish.studio/resources/embed.js"&gt;&lt;/script&gt;&lt;/div&gt;'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="flourish-embed flourish-map" data-src="visualisation/17809409">
 <script src="https://public.flourish.studio/resources/embed.js"></script>
 </div>
 <p>This visualization shows that there is a correlation between incarceration rate and voter turnout. Looking at the map of voter turnout next to the map of incarceration rates, it’s clear that the two are generally inverses of on another, with areas in the north and middle of Baltimore having a low incarceration rate and high voter turnout and east and west Baltimore having a higher incarceration rate and low voter turnout.</p>
 <p>Another visualization. This time, a scatterplot</p>
-<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">'&lt;div class="flourish-embed flourish-scatter" data-src="visualisation/17795149"&gt;&lt;script src="https://public.flourish.studio/resources/embed.js"&gt;&lt;/script&gt;&lt;/div&gt;'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">'&lt;div class="flourish-embed flourish-scatter" data-src="visualisation/17795149"&gt;&lt;script src="https://public.flourish.studio/resources/embed.js"&gt;&lt;/script&gt;&lt;/div&gt;'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="flourish-embed flourish-scatter" data-src="visualisation/17795149">
 <script src="https://public.flourish.studio/resources/embed.js"></script>
 </div>
 <p>This scatterplot shows the negative relationship between incarceration rate and voter turnout. As the rate of incarceration per 100,000 people increases, the percent of registered voters decreases.</p>
 <p>Wealth and voter turnout rate</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="co">#join baltcity_income and pct_vote_csas</span></span>
-<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>wealth_voting <span class="ot">&lt;-</span> <span class="fu">inner_join</span>(pct_vote_csas, baltcity_income, <span class="at">by =</span> <span class="st">"csa"</span>)</span>
-<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a>wealth_voting <span class="sc">%&gt;%</span></span>
-<span id="cb50-5"><a href="#cb50-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_min</span>(pct_voters, <span class="at">n =</span> <span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="co">#join baltcity_income and pct_vote_csas</span></span>
+<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a>wealth_voting <span class="ot">&lt;-</span> <span class="fu">inner_join</span>(pct_vote_csas, baltcity_income, <span class="at">by =</span> <span class="st">"csa"</span>)</span>
+<span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb53-4"><a href="#cb53-4" aria-hidden="true" tabindex="-1"></a>wealth_voting <span class="sc">%&gt;%</span></span>
+<span id="cb53-5"><a href="#cb53-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_min</span>(pct_voters, <span class="at">n =</span> <span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 5 × 3
   csa                                   pct_voters median_income
@@ -489,8 +514,8 @@ dbl (9): Dem, Rep, grn, lib, wcp, bar, Una, others, total
 4 Sandtown-Winchester/Harlem Park             44.1        26690.
 5 Poppleton/The Terraces/Hollins Market       46.1        23374.</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>wealth_voting <span class="sc">%&gt;%</span></span>
-<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_max</span>(pct_voters, <span class="at">n =</span> <span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a>wealth_voting <span class="sc">%&gt;%</span></span>
+<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_max</span>(pct_voters, <span class="at">n =</span> <span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 5 × 3
   csa                                  pct_voters median_income
@@ -501,31 +526,31 @@ dbl (9): Dem, Rep, grn, lib, wcp, bar, Una, others, total
 4 North Baltimore/Guilford/Homeland          74.6       114247.
 5 Medfield/Hampden/Woodberry/Remington       72.9        72757.</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="co">#median household income in areas of lowest voter turnout (rounded to nearest dollar):</span></span>
-<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a><span class="co">#Southwest Baltimore: $29,768, Madison/East End: $37,303, Brooklyn/Curtis Bay/Hawkins Point: $32,598, Sandtown-Winchester/Harlem Park: $26,690 and Poppleton/The Terraces/Hollins Market: $23,374</span></span>
-<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb54-4"><a href="#cb54-4" aria-hidden="true" tabindex="-1"></a><span class="co">#median household income in areas of highest voter turnout:</span></span>
-<span id="cb54-5"><a href="#cb54-5" aria-hidden="true" tabindex="-1"></a><span class="co">#Greater Roland Park/Poplar Hill: $125,869, Mount Washington/Coldspring: 86,715, South Baltimore: $124,827, North Baltimore/Guilford/Homeland: $114,247 and Medfield/Hampden/Woodberry/Remington: $72,757</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="co">#median household income in areas of lowest voter turnout (rounded to nearest dollar):</span></span>
+<span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a><span class="co">#Southwest Baltimore: $29,768, Madison/East End: $37,303, Brooklyn/Curtis Bay/Hawkins Point: $32,598, Sandtown-Winchester/Harlem Park: $26,690 and Poppleton/The Terraces/Hollins Market: $23,374</span></span>
+<span id="cb57-3"><a href="#cb57-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-4"><a href="#cb57-4" aria-hidden="true" tabindex="-1"></a><span class="co">#median household income in areas of highest voter turnout:</span></span>
+<span id="cb57-5"><a href="#cb57-5" aria-hidden="true" tabindex="-1"></a><span class="co">#Greater Roland Park/Poplar Hill: $125,869, Mount Washington/Coldspring: 86,715, South Baltimore: $124,827, North Baltimore/Guilford/Homeland: $114,247 and Medfield/Hampden/Woodberry/Remington: $72,757</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Let’s visualize this one, too</p>
-<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">'&lt;div class="flourish-embed flourish-map" data-src="visualisation/17824036"&gt;&lt;script src="https://public.flourish.studio/resources/embed.js"&gt;&lt;/script&gt;&lt;/div&gt;'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">'&lt;div class="flourish-embed flourish-map" data-src="visualisation/17824036"&gt;&lt;script src="https://public.flourish.studio/resources/embed.js"&gt;&lt;/script&gt;&lt;/div&gt;'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="flourish-embed flourish-map" data-src="visualisation/17824036">
 <script src="https://public.flourish.studio/resources/embed.js"></script>
 </div>
 <p>Looking at this map shows that areas of higher median household income are concentrated in the middle of Baltimore City and in the northern areas. This is a similiar pattern to the voter turnout rate map.</p>
 <p>Another visualization</p>
-<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">'&lt;div class="flourish-embed flourish-scatter" data-src="visualisation/17824265"&gt;&lt;script src="https://public.flourish.studio/resources/embed.js"&gt;&lt;/script&gt;&lt;/div&gt;'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">'&lt;div class="flourish-embed flourish-scatter" data-src="visualisation/17824265"&gt;&lt;script src="https://public.flourish.studio/resources/embed.js"&gt;&lt;/script&gt;&lt;/div&gt;'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="flourish-embed flourish-scatter" data-src="visualisation/17824265">
 <script src="https://public.flourish.studio/resources/embed.js"></script>
 </div>
 <p>This scatterplot shows the positive relationship between median household income and voter turnout. As the median household income increases, the percent of registered voters decreases.</p>
 <p>Number of businesses per 1,000 people and voter turnout</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="co">#join biz and pct_vote_csas dataset</span></span>
-<span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a>biz_voting <span class="ot">&lt;-</span> <span class="fu">inner_join</span>(biz, pct_vote_csas, <span class="at">by =</span> <span class="st">"csa"</span>)</span>
-<span id="cb57-3"><a href="#cb57-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb57-4"><a href="#cb57-4" aria-hidden="true" tabindex="-1"></a>biz_voting <span class="sc">%&gt;%</span></span>
-<span id="cb57-5"><a href="#cb57-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_min</span>(pct_voters, <span class="at">n =</span> <span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="co">#join biz and pct_vote_csas dataset</span></span>
+<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a>biz_voting <span class="ot">&lt;-</span> <span class="fu">inner_join</span>(biz, pct_vote_csas, <span class="at">by =</span> <span class="st">"csa"</span>)</span>
+<span id="cb60-3"><a href="#cb60-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-4"><a href="#cb60-4" aria-hidden="true" tabindex="-1"></a>biz_voting <span class="sc">%&gt;%</span></span>
+<span id="cb60-5"><a href="#cb60-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_min</span>(pct_voters, <span class="at">n =</span> <span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 5 × 3
   csa                                   num_biz_x1000 pct_voters
@@ -536,8 +561,8 @@ dbl (9): Dem, Rep, grn, lib, wcp, bar, Una, others, total
 4 Sandtown-Winchester/Harlem Park                10.4       44.1
 5 Poppleton/The Terraces/Hollins Market          14.2       46.1</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a>biz_voting <span class="sc">%&gt;%</span></span>
-<span id="cb59-2"><a href="#cb59-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_max</span>(pct_voters, <span class="at">n =</span> <span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb62"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a>biz_voting <span class="sc">%&gt;%</span></span>
+<span id="cb62-2"><a href="#cb62-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_max</span>(pct_voters, <span class="at">n =</span> <span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 5 × 3
   csa                                  num_biz_x1000 pct_voters
@@ -548,20 +573,20 @@ dbl (9): Dem, Rep, grn, lib, wcp, bar, Una, others, total
 4 North Baltimore/Guilford/Homeland             16.3       74.6
 5 Medfield/Hampden/Woodberry/Remington          35.4       72.9</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb61"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a><span class="co">#number of businesses per 1,000 people in five areas of lowest voter turnout:</span></span>
-<span id="cb61-2"><a href="#cb61-2" aria-hidden="true" tabindex="-1"></a><span class="co">#Southwest Baltimore: 18.4, Madison/East End: 19.2, Brooklyn/Curtis Bay/Hawkins Point: 13.4, Sandtown-Winchester/Harlem Park: 10.4 and Poppleton/The Terraces/Hollins Market: 14.2</span></span>
-<span id="cb61-3"><a href="#cb61-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-4"><a href="#cb61-4" aria-hidden="true" tabindex="-1"></a><span class="co">#number of businesses per 1,000 people in five areas of highest voter turnout:</span></span>
-<span id="cb61-5"><a href="#cb61-5" aria-hidden="true" tabindex="-1"></a><span class="co">#Greater Roland Park/Poplar Hill: 33.5, Mount Washington/Coldspring: 31.4, South Baltimore: 21.9, North Baltimore/Guilford/Homeland: 16.3 and Medfield/Hampden/Woodberry/Remington: 35.4</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a><span class="co">#number of businesses per 1,000 people in five areas of lowest voter turnout:</span></span>
+<span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a><span class="co">#Southwest Baltimore: 18.4, Madison/East End: 19.2, Brooklyn/Curtis Bay/Hawkins Point: 13.4, Sandtown-Winchester/Harlem Park: 10.4 and Poppleton/The Terraces/Hollins Market: 14.2</span></span>
+<span id="cb64-3"><a href="#cb64-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-4"><a href="#cb64-4" aria-hidden="true" tabindex="-1"></a><span class="co">#number of businesses per 1,000 people in five areas of highest voter turnout:</span></span>
+<span id="cb64-5"><a href="#cb64-5" aria-hidden="true" tabindex="-1"></a><span class="co">#Greater Roland Park/Poplar Hill: 33.5, Mount Washington/Coldspring: 31.4, South Baltimore: 21.9, North Baltimore/Guilford/Homeland: 16.3 and Medfield/Hampden/Woodberry/Remington: 35.4</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>There doesn’t seem to be a significant correlation between number of businesses per 1,000 residents and voter turnout. While looking at just the top 5 top and bottom areas of high/low voter turnout seems like areas of lower voter turnout have less businesses, there are quite a few outliers, including Oldtown/Middle East, which was one of the lowest voter turnout areas, but had the second highest amount of businesses per 1,000 residents. This could be for a variety of reasons. For one, many of the areas that have high voter turnout are in wealthier, suburban areas with less concentration of businesses.</p>
 <p>Percent of households without internet and voter turnout</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb62"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a><span class="co">#join internet and pct_vote_csas dataset</span></span>
-<span id="cb62-2"><a href="#cb62-2" aria-hidden="true" tabindex="-1"></a>internet_voting <span class="ot">&lt;-</span> <span class="fu">inner_join</span>(internet, pct_vote_csas, <span class="at">by =</span> <span class="st">"csa"</span>)</span>
-<span id="cb62-3"><a href="#cb62-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb62-4"><a href="#cb62-4" aria-hidden="true" tabindex="-1"></a>internet_voting <span class="sc">%&gt;%</span></span>
-<span id="cb62-5"><a href="#cb62-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_min</span>(pct_voters, <span class="at">n =</span> <span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb65"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a><span class="co">#join internet and pct_vote_csas dataset</span></span>
+<span id="cb65-2"><a href="#cb65-2" aria-hidden="true" tabindex="-1"></a>internet_voting <span class="ot">&lt;-</span> <span class="fu">inner_join</span>(internet, pct_vote_csas, <span class="at">by =</span> <span class="st">"csa"</span>)</span>
+<span id="cb65-3"><a href="#cb65-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-4"><a href="#cb65-4" aria-hidden="true" tabindex="-1"></a>internet_voting <span class="sc">%&gt;%</span></span>
+<span id="cb65-5"><a href="#cb65-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_min</span>(pct_voters, <span class="at">n =</span> <span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 5 × 3
   csa                                   pct_no_internet pct_voters
@@ -572,8 +597,8 @@ dbl (9): Dem, Rep, grn, lib, wcp, bar, Una, others, total
 4 Sandtown-Winchester/Harlem Park                  38.6       44.1
 5 Poppleton/The Terraces/Hollins Market            25.1       46.1</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a>internet_voting <span class="sc">%&gt;%</span></span>
-<span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_max</span>(pct_voters, <span class="at">n =</span> <span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb67"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1" aria-hidden="true" tabindex="-1"></a>internet_voting <span class="sc">%&gt;%</span></span>
+<span id="cb67-2"><a href="#cb67-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_max</span>(pct_voters, <span class="at">n =</span> <span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 5 × 3
   csa                                  pct_no_internet pct_voters
@@ -584,14 +609,14 @@ dbl (9): Dem, Rep, grn, lib, wcp, bar, Una, others, total
 4 North Baltimore/Guilford/Homeland                6.1       74.6
 5 Medfield/Hampden/Woodberry/Remington             9.1       72.9</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb66"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Percentage of homes without internet access in the five areas of lowest voter turnout:</span></span>
-<span id="cb66-2"><a href="#cb66-2" aria-hidden="true" tabindex="-1"></a><span class="co">#Southwest Baltimore: 27.6%, Madison/East End: 16.7%, Brooklyn/Curtis Bay/Hawkins Point: 30.4%, Sandtown-Winchester/Harlem Park: 38.6% and Poppleton/The Terraces/Hollins Market: 25.1%</span></span>
-<span id="cb66-3"><a href="#cb66-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb66-4"><a href="#cb66-4" aria-hidden="true" tabindex="-1"></a><span class="co">#Percentage of homes without internet access in the five areas of highest voter turnout:</span></span>
-<span id="cb66-5"><a href="#cb66-5" aria-hidden="true" tabindex="-1"></a><span class="co">#Greater Roland Park/Poplar Hill: 3.4%, Mount Washington/Coldspring: 8.9%, South Baltimore: 3.5%, North Baltimore/Guilford/Homeland: 6.1% and Medfield/Hampden/Woodberry/Remington: 9.1%</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb69"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb69-1"><a href="#cb69-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Percentage of homes without internet access in the five areas of lowest voter turnout:</span></span>
+<span id="cb69-2"><a href="#cb69-2" aria-hidden="true" tabindex="-1"></a><span class="co">#Southwest Baltimore: 27.6%, Madison/East End: 16.7%, Brooklyn/Curtis Bay/Hawkins Point: 30.4%, Sandtown-Winchester/Harlem Park: 38.6% and Poppleton/The Terraces/Hollins Market: 25.1%</span></span>
+<span id="cb69-3"><a href="#cb69-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb69-4"><a href="#cb69-4" aria-hidden="true" tabindex="-1"></a><span class="co">#Percentage of homes without internet access in the five areas of highest voter turnout:</span></span>
+<span id="cb69-5"><a href="#cb69-5" aria-hidden="true" tabindex="-1"></a><span class="co">#Greater Roland Park/Poplar Hill: 3.4%, Mount Washington/Coldspring: 8.9%, South Baltimore: 3.5%, North Baltimore/Guilford/Homeland: 6.1% and Medfield/Hampden/Woodberry/Remington: 9.1%</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Let’s do another visualization</p>
-<div class="sourceCode cell-code" id="cb67"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">'&lt;div class="flourish-embed flourish-scatter" data-src="visualisation/17824515"&gt;&lt;script src="https://public.flourish.studio/resources/embed.js"&gt;&lt;/script&gt;&lt;/div&gt;'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb70"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">'&lt;div class="flourish-embed flourish-scatter" data-src="visualisation/17824515"&gt;&lt;script src="https://public.flourish.studio/resources/embed.js"&gt;&lt;/script&gt;&lt;/div&gt;'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="flourish-embed flourish-scatter" data-src="visualisation/17824515">
 <script src="https://public.flourish.studio/resources/embed.js"></script>
 </div>
@@ -600,107 +625,133 @@ dbl (9): Dem, Rep, grn, lib, wcp, bar, Una, others, total
 <p>This is not something I would put in an actual article since it’s a more complex concept for readers to digest, but it’s useful for checking my work and determining whether these factors are worth investigating at all.</p>
 <p>Correlation between incarceration rate and voter turnout.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a><span class="co">#convert all values to numeric for calculation</span></span>
-<span id="cb68-2"><a href="#cb68-2" aria-hidden="true" tabindex="-1"></a>incarceration_voting<span class="sc">$</span>rate_per_x100000 <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"[, ]"</span>, <span class="st">""</span>, incarceration_voting<span class="sc">$</span>rate_per_x100000)</span>
-<span id="cb68-3"><a href="#cb68-3" aria-hidden="true" tabindex="-1"></a>incarceration_voting<span class="sc">$</span>rate_per_x100000 <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(incarceration_voting<span class="sc">$</span>rate_per_x100000)</span>
-<span id="cb68-4"><a href="#cb68-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb68-5"><a href="#cb68-5" aria-hidden="true" tabindex="-1"></a><span class="co">#compute correlation coefficient</span></span>
-<span id="cb68-6"><a href="#cb68-6" aria-hidden="true" tabindex="-1"></a>cc_incarceration <span class="ot">&lt;-</span> <span class="fu">cor</span>(incarceration_voting<span class="sc">$</span>pct_voters, incarceration_voting<span class="sc">$</span>rate_per_x100000, <span class="at">method =</span> <span class="st">"pearson"</span>, <span class="at">use =</span> <span class="st">"complete.obs"</span>)</span>
-<span id="cb68-7"><a href="#cb68-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb68-8"><a href="#cb68-8" aria-hidden="true" tabindex="-1"></a>cc_incarceration</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb71"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a><span class="co">#convert all values to numeric for calculation</span></span>
+<span id="cb71-2"><a href="#cb71-2" aria-hidden="true" tabindex="-1"></a>incarceration_voting<span class="sc">$</span>rate_per_x100000 <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"[, ]"</span>, <span class="st">""</span>, incarceration_voting<span class="sc">$</span>rate_per_x100000)</span>
+<span id="cb71-3"><a href="#cb71-3" aria-hidden="true" tabindex="-1"></a>incarceration_voting<span class="sc">$</span>rate_per_x100000 <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(incarceration_voting<span class="sc">$</span>rate_per_x100000)</span>
+<span id="cb71-4"><a href="#cb71-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb71-5"><a href="#cb71-5" aria-hidden="true" tabindex="-1"></a><span class="co">#compute correlation coefficient</span></span>
+<span id="cb71-6"><a href="#cb71-6" aria-hidden="true" tabindex="-1"></a>cc_incarceration <span class="ot">&lt;-</span> <span class="fu">cor</span>(incarceration_voting<span class="sc">$</span>pct_voters, incarceration_voting<span class="sc">$</span>rate_per_x100000, <span class="at">method =</span> <span class="st">"pearson"</span>, <span class="at">use =</span> <span class="st">"complete.obs"</span>)</span>
+<span id="cb71-7"><a href="#cb71-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb71-8"><a href="#cb71-8" aria-hidden="true" tabindex="-1"></a>cc_incarceration</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] -0.8162851</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb70"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a><span class="co">#a correlation coefficient of -0.82 indicates a strong negative correlation, meaning areas of lower incarceration rates likely have higher voter turnout rates. </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb73"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb73-1"><a href="#cb73-1" aria-hidden="true" tabindex="-1"></a><span class="co">#a correlation coefficient of -0.82 indicates a strong negative correlation, meaning areas of lower incarceration rates likely have higher voter turnout rates. </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Correlation between number of businesses per 1000 residents and voter turnout</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb71"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a><span class="co">#compute correlation coefficient</span></span>
-<span id="cb71-2"><a href="#cb71-2" aria-hidden="true" tabindex="-1"></a>cc_biz <span class="ot">&lt;-</span> <span class="fu">cor</span>(biz_voting<span class="sc">$</span>pct_voters, biz_voting<span class="sc">$</span>num_biz_x1000, <span class="at">method =</span> <span class="st">"pearson"</span>, <span class="at">use =</span> <span class="st">"complete.obs"</span>)</span>
-<span id="cb71-3"><a href="#cb71-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb71-4"><a href="#cb71-4" aria-hidden="true" tabindex="-1"></a>cc_biz</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb74"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a><span class="co">#compute correlation coefficient</span></span>
+<span id="cb74-2"><a href="#cb74-2" aria-hidden="true" tabindex="-1"></a>cc_biz <span class="ot">&lt;-</span> <span class="fu">cor</span>(biz_voting<span class="sc">$</span>pct_voters, biz_voting<span class="sc">$</span>num_biz_x1000, <span class="at">method =</span> <span class="st">"pearson"</span>, <span class="at">use =</span> <span class="st">"complete.obs"</span>)</span>
+<span id="cb74-3"><a href="#cb74-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-4"><a href="#cb74-4" aria-hidden="true" tabindex="-1"></a>cc_biz</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] -0.02123877</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb73"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb73-1"><a href="#cb73-1" aria-hidden="true" tabindex="-1"></a><span class="co">#There is little to no correlation between the amount of businesses and voter turnout, as indicated by a correlation coefficient of -0.02</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb76"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb76-1"><a href="#cb76-1" aria-hidden="true" tabindex="-1"></a><span class="co">#There is little to no correlation between the amount of businesses and voter turnout, as indicated by a correlation coefficient of -0.02</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Correlation between median household income and voter turnout</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb74"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a>cc_wealth <span class="ot">&lt;-</span> <span class="fu">cor</span>(wealth_voting<span class="sc">$</span>pct_voters, wealth_voting<span class="sc">$</span>median_income, <span class="at">method =</span> <span class="st">"pearson"</span>, <span class="at">use =</span> <span class="st">"complete.obs"</span>)</span>
-<span id="cb74-2"><a href="#cb74-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb74-3"><a href="#cb74-3" aria-hidden="true" tabindex="-1"></a>cc_wealth</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb77"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb77-1"><a href="#cb77-1" aria-hidden="true" tabindex="-1"></a>cc_wealth <span class="ot">&lt;-</span> <span class="fu">cor</span>(wealth_voting<span class="sc">$</span>pct_voters, wealth_voting<span class="sc">$</span>median_income, <span class="at">method =</span> <span class="st">"pearson"</span>, <span class="at">use =</span> <span class="st">"complete.obs"</span>)</span>
+<span id="cb77-2"><a href="#cb77-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb77-3"><a href="#cb77-3" aria-hidden="true" tabindex="-1"></a>cc_wealth</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.814721</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb76"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb76-1"><a href="#cb76-1" aria-hidden="true" tabindex="-1"></a><span class="co">#A correlation coefficient of 0.81 indicates a strong positive correlation between voter turnout and median household income</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb79"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb79-1"><a href="#cb79-1" aria-hidden="true" tabindex="-1"></a><span class="co">#A correlation coefficient of 0.81 indicates a strong positive correlation between voter turnout and median household income</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Correlation between percentage of households without internet access and voter turnout</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb77"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb77-1"><a href="#cb77-1" aria-hidden="true" tabindex="-1"></a>cc_internet <span class="ot">&lt;-</span> <span class="fu">cor</span>(internet_voting<span class="sc">$</span>pct_voters, internet_voting<span class="sc">$</span>pct_no_internet, <span class="at">method =</span> <span class="st">"pearson"</span>, <span class="at">use =</span> <span class="st">"complete.obs"</span>)</span>
-<span id="cb77-2"><a href="#cb77-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb77-3"><a href="#cb77-3" aria-hidden="true" tabindex="-1"></a>cc_internet</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb80"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb80-1"><a href="#cb80-1" aria-hidden="true" tabindex="-1"></a>cc_internet <span class="ot">&lt;-</span> <span class="fu">cor</span>(internet_voting<span class="sc">$</span>pct_voters, internet_voting<span class="sc">$</span>pct_no_internet, <span class="at">method =</span> <span class="st">"pearson"</span>, <span class="at">use =</span> <span class="st">"complete.obs"</span>)</span>
+<span id="cb80-2"><a href="#cb80-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb80-3"><a href="#cb80-3" aria-hidden="true" tabindex="-1"></a>cc_internet</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] -0.7095833</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb79"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb79-1"><a href="#cb79-1" aria-hidden="true" tabindex="-1"></a><span class="co">#A correlation coefficient of -0.71 indicates a strong negative correlation between voter turnout and median household income. It's not as strong as the other two, but is still considered strong </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb82"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb82-1"><a href="#cb82-1" aria-hidden="true" tabindex="-1"></a><span class="co">#A correlation coefficient of -0.71 indicates a strong negative correlation between voter turnout and median household income. It's not as strong as the other two, but is still considered strong </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p><strong>Q3: How has voter turnout in Baltimore City changed from 2010 to 2020? Which CSA had the biggest difference between the 2012 and 2020 general election?</strong></p>
 <p>Let’s look at community statistical areas first</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb80"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb80-1"><a href="#cb80-1" aria-hidden="true" tabindex="-1"></a><span class="co">#rename row from "&amp;" to "and" to match up with the rest of the voting data used later</span></span>
-<span id="cb80-2"><a href="#cb80-2" aria-hidden="true" tabindex="-1"></a>pct_vote_csas<span class="sc">$</span>csa <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"&amp;"</span>, <span class="st">"and"</span>, pct_vote_csas<span class="sc">$</span>csa)</span>
-<span id="cb80-3"><a href="#cb80-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb80-4"><a href="#cb80-4" aria-hidden="true" tabindex="-1"></a><span class="co">#make one dataset for combined 2012 and 2020</span></span>
-<span id="cb80-5"><a href="#cb80-5" aria-hidden="true" tabindex="-1"></a>voting_x2012_x2020 <span class="ot">&lt;-</span> <span class="fu">inner_join</span>(voting_2012, pct_vote_csas, <span class="at">by =</span> <span class="st">"csa"</span>)</span>
-<span id="cb80-6"><a href="#cb80-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb80-7"><a href="#cb80-7" aria-hidden="true" tabindex="-1"></a>voting_x2012_x2020 <span class="ot">&lt;-</span> voting_x2012_x2020 <span class="sc">%&gt;%</span></span>
-<span id="cb80-8"><a href="#cb80-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">x2012_turnout =</span> <span class="dv">2</span>, <span class="at">x2020_turnout =</span> <span class="dv">3</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb80-9"><a href="#cb80-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">pct_change =</span> ((x2020_turnout <span class="sc">-</span> x2012_turnout) <span class="sc">/</span> x2012_turnout) <span class="sc">*</span> <span class="dv">100</span>)</span>
-<span id="cb80-10"><a href="#cb80-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb80-11"><a href="#cb80-11" aria-hidden="true" tabindex="-1"></a><span class="co">#Orangeville/East Highlandtown had the biggest change, with an almost 65% increase in voter turnout </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb83"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb83-1"><a href="#cb83-1" aria-hidden="true" tabindex="-1"></a><span class="co">#rename row from "&amp;" to "and" to match up with the rest of the voting data used later</span></span>
+<span id="cb83-2"><a href="#cb83-2" aria-hidden="true" tabindex="-1"></a>pct_vote_csas<span class="sc">$</span>csa <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"&amp;"</span>, <span class="st">"and"</span>, pct_vote_csas<span class="sc">$</span>csa)</span>
+<span id="cb83-3"><a href="#cb83-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb83-4"><a href="#cb83-4" aria-hidden="true" tabindex="-1"></a><span class="co">#make one dataset for combined 2012 and 2020</span></span>
+<span id="cb83-5"><a href="#cb83-5" aria-hidden="true" tabindex="-1"></a>voting_x2012_x2020 <span class="ot">&lt;-</span> <span class="fu">inner_join</span>(voting_2012, pct_vote_csas, <span class="at">by =</span> <span class="st">"csa"</span>)</span>
+<span id="cb83-6"><a href="#cb83-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb83-7"><a href="#cb83-7" aria-hidden="true" tabindex="-1"></a>voting_x2012_x2020 <span class="ot">&lt;-</span> voting_x2012_x2020 <span class="sc">%&gt;%</span></span>
+<span id="cb83-8"><a href="#cb83-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">x2012_turnout =</span> <span class="dv">2</span>, <span class="at">x2020_turnout =</span> <span class="dv">3</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb83-9"><a href="#cb83-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">pct_change =</span> ((x2020_turnout <span class="sc">-</span> x2012_turnout) <span class="sc">/</span> x2012_turnout) <span class="sc">*</span> <span class="dv">100</span>)</span>
+<span id="cb83-10"><a href="#cb83-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb83-11"><a href="#cb83-11" aria-hidden="true" tabindex="-1"></a><span class="co">#Orangeville/East Highlandtown had the biggest change, with an almost 65% increase in voter turnout </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>I’m going to make one big dataset to visualize this</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb81"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb81-1"><a href="#cb81-1" aria-hidden="true" tabindex="-1"></a>voting_all <span class="ot">&lt;-</span> <span class="fu">inner_join</span>(voting_2010, voting_2012, <span class="at">by =</span> <span class="st">"csa"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb81-2"><a href="#cb81-2" aria-hidden="true" tabindex="-1"></a>                 <span class="fu">inner_join</span>(voting_2014, <span class="at">by =</span> <span class="st">"csa"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb81-3"><a href="#cb81-3" aria-hidden="true" tabindex="-1"></a>                 <span class="fu">inner_join</span>(voting_2016, <span class="at">by =</span> <span class="st">"csa"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb81-4"><a href="#cb81-4" aria-hidden="true" tabindex="-1"></a>                 <span class="fu">inner_join</span>(voting_2018, <span class="at">by =</span> <span class="st">"csa"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb81-5"><a href="#cb81-5" aria-hidden="true" tabindex="-1"></a>                 <span class="fu">inner_join</span>(pct_vote_csas, <span class="at">by =</span> <span class="st">"csa"</span>)</span>
-<span id="cb81-6"><a href="#cb81-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb81-7"><a href="#cb81-7" aria-hidden="true" tabindex="-1"></a>voting_all <span class="ot">&lt;-</span> voting_all<span class="sc">%&gt;%</span></span>
-<span id="cb81-8"><a href="#cb81-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">x2010_turnout =</span> <span class="dv">2</span>, <span class="at">x2012_turnout =</span> <span class="dv">3</span>, <span class="at">x2014_turnout =</span> <span class="dv">4</span>, <span class="at">x2016_tunout =</span> <span class="dv">5</span>, <span class="at">x2018_turnout =</span> <span class="dv">6</span>, <span class="at">x2020_turnout =</span> <span class="dv">7</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb84"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb84-1"><a href="#cb84-1" aria-hidden="true" tabindex="-1"></a>voting_all <span class="ot">&lt;-</span> <span class="fu">inner_join</span>(voting_2010, voting_2012, <span class="at">by =</span> <span class="st">"csa"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb84-2"><a href="#cb84-2" aria-hidden="true" tabindex="-1"></a>                 <span class="fu">inner_join</span>(voting_2014, <span class="at">by =</span> <span class="st">"csa"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb84-3"><a href="#cb84-3" aria-hidden="true" tabindex="-1"></a>                 <span class="fu">inner_join</span>(voting_2016, <span class="at">by =</span> <span class="st">"csa"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb84-4"><a href="#cb84-4" aria-hidden="true" tabindex="-1"></a>                 <span class="fu">inner_join</span>(voting_2018, <span class="at">by =</span> <span class="st">"csa"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb84-5"><a href="#cb84-5" aria-hidden="true" tabindex="-1"></a>                 <span class="fu">inner_join</span>(pct_vote_csas, <span class="at">by =</span> <span class="st">"csa"</span>)</span>
+<span id="cb84-6"><a href="#cb84-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb84-7"><a href="#cb84-7" aria-hidden="true" tabindex="-1"></a>voting_all <span class="ot">&lt;-</span> voting_all<span class="sc">%&gt;%</span></span>
+<span id="cb84-8"><a href="#cb84-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">x2010_turnout =</span> <span class="dv">2</span>, <span class="at">x2012_turnout =</span> <span class="dv">3</span>, <span class="at">x2014_turnout =</span> <span class="dv">4</span>, <span class="at">x2016_tunout =</span> <span class="dv">5</span>, <span class="at">x2018_turnout =</span> <span class="dv">6</span>, <span class="at">x2020_turnout =</span> <span class="dv">7</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>This is easiest to see through visualizations Press play!</p>
-<div class="sourceCode cell-code" id="cb82"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb82-1"><a href="#cb82-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">'&lt;div class="flourish-embed flourish-map" data-src="visualisation/17832534"&gt;&lt;script src="https://public.flourish.studio/resources/embed.js"&gt;&lt;/script&gt;&lt;/div&gt;'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>This is easiest to see through visualizations. Press play to see change overtime between gubernational and general elections in the last 10 years</p>
+<div class="sourceCode cell-code" id="cb85"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb85-1"><a href="#cb85-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">'&lt;div class="flourish-embed flourish-map" data-src="visualisation/17832534"&gt;&lt;script src="https://public.flourish.studio/resources/embed.js"&gt;&lt;/script&gt;&lt;/div&gt;'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="flourish-embed flourish-map" data-src="visualisation/17832534">
 <script src="https://public.flourish.studio/resources/embed.js"></script>
 </div>
 <p>Gubernatorial elections tend to get less voter turnout than general elections, which is unsurprising as that is a well-documented phenomenon. But it seems that 2020 has the highest voter turnout out of the 10-year period. It also seems that the “Black Butterfly White L” phenomenon becomes more pronounced over time</p>
-<p>Let’s draw even more conclusions by looking at Baltimore City as a whole</p>
-<div class="sourceCode cell-code" id="cb83"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb83-1"><a href="#cb83-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">'&lt;div class="flourish-embed flourish-chart" data-src="visualisation/17832645"&gt;&lt;script src="https://public.flourish.studio/resources/embed.js"&gt;&lt;/script&gt;&lt;/div&gt;'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Let’s draw even more conclusions by looking at Baltimore City as a whole. For this I’m just going to compare general election turnouts.</p>
+<div class="sourceCode cell-code" id="cb86"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb86-1"><a href="#cb86-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">'&lt;div class="flourish-embed flourish-chart" data-src="visualisation/17832645"&gt;&lt;script src="https://public.flourish.studio/resources/embed.js"&gt;&lt;/script&gt;&lt;/div&gt;'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="flourish-embed flourish-chart" data-src="visualisation/17832645">
 <script src="https://public.flourish.studio/resources/embed.js"></script>
 </div>
 <p>For this chart, I uploaded my trends_turnout csv to flourish. Looking at a wider spread of data shows that voter turnout has seen an overall decline between 1984 and 2020 in Baltimore City.</p>
 <p><strong>Q3: In August 2020, which parts of the city had the most registered democrats? Which had the most republicans?</strong></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb84"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb84-1"><a href="#cb84-1" aria-hidden="true" tabindex="-1"></a><span class="co">#add new column for percent of whole</span></span>
-<span id="cb84-2"><a href="#cb84-2" aria-hidden="true" tabindex="-1"></a>precinct_voters_x2020 <span class="ot">&lt;-</span> precinct_voters_x2020<span class="sc">%&gt;%</span></span>
-<span id="cb84-3"><a href="#cb84-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">pct_dem =</span> (dem <span class="sc">/</span> total)<span class="sc">*</span><span class="dv">100</span>)<span class="sc">%&gt;%</span></span>
-<span id="cb84-4"><a href="#cb84-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">pct_rep =</span> (rep <span class="sc">/</span> total)<span class="sc">*</span><span class="dv">100</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb87"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb87-1"><a href="#cb87-1" aria-hidden="true" tabindex="-1"></a><span class="co">#add new column for percent of whole</span></span>
+<span id="cb87-2"><a href="#cb87-2" aria-hidden="true" tabindex="-1"></a>precinct_voters_x2020 <span class="ot">&lt;-</span> precinct_voters_x2020<span class="sc">%&gt;%</span></span>
+<span id="cb87-3"><a href="#cb87-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">pct_dem =</span> (dem <span class="sc">/</span> total)<span class="sc">*</span><span class="dv">100</span>)<span class="sc">%&gt;%</span></span>
+<span id="cb87-4"><a href="#cb87-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">pct_rep =</span> (rep <span class="sc">/</span> total)<span class="sc">*</span><span class="dv">100</span>)</span>
+<span id="cb87-5"><a href="#cb87-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb87-6"><a href="#cb87-6" aria-hidden="true" tabindex="-1"></a>precinct_voters_x2020<span class="sc">%&gt;%</span></span>
+<span id="cb87-7"><a href="#cb87-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_min</span>(pct_dem)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 6
+  precinct   dem   rep total pct_dem pct_rep
+  &lt;chr&gt;    &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;
+1 23-003    1030   412  1939    53.1    21.2</code></pre>
 </div>
-<p>Voting precincts don’t make much sense without a visualization. I uploaded the geojson for 2020 voting precincts on the same site I got the first geojson</p>
-<div class="sourceCode cell-code" id="cb85"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb85-1"><a href="#cb85-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">'&lt;div class="flourish-embed flourish-map" data-src="visualisation/17834987"&gt;&lt;script src="https://public.flourish.studio/resources/embed.js"&gt;&lt;/script&gt;&lt;/div&gt;'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb89"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb89-1"><a href="#cb89-1" aria-hidden="true" tabindex="-1"></a><span class="co">#the precinct with the lowest percent of democrats still had 53% in August 2020, which means the majority of the city are democrats</span></span>
+<span id="cb89-2"><a href="#cb89-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-3"><a href="#cb89-3" aria-hidden="true" tabindex="-1"></a>precinct_voters_x2020<span class="sc">%&gt;%</span></span>
+<span id="cb89-4"><a href="#cb89-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_max</span>(pct_rep)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 6
+  precinct   dem   rep total pct_dem pct_rep
+  &lt;chr&gt;    &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;
+1 26-013     411   183   773    53.2    23.7</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb91"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb91-1"><a href="#cb91-1" aria-hidden="true" tabindex="-1"></a><span class="co">#the precinct with the highest percent of republicans only had 23.7% in August 2020</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Let’s see if there’s a correlation with the amount of Black residents who are over the voting age of 18</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb92"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb92-1"><a href="#cb92-1" aria-hidden="true" tabindex="-1"></a><span class="co">#add a column for percent Black residents of whole population in precinct</span></span>
+<span id="cb92-2"><a href="#cb92-2" aria-hidden="true" tabindex="-1"></a>demo_voting <span class="ot">&lt;-</span> demo_voting<span class="sc">%&gt;%</span></span>
+<span id="cb92-3"><a href="#cb92-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">pct_black =</span> (black_aa <span class="sc">/</span> precinct_pop)<span class="sc">*</span><span class="dv">100</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Voting precincts don’t make much sense without a visualization. I uploaded the geojson for 2020 voting precincts on the Open Baltimore site I got the first geojson. This map has a toggle which allows users to switch from concentration of Black residents over the age of 18 by precinct and concentration of democrats</p>
+<div class="sourceCode cell-code" id="cb93"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb93-1"><a href="#cb93-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">'&lt;div class="flourish-embed flourish-map" data-src="visualisation/17834987"&gt;&lt;script src="https://public.flourish.studio/resources/embed.js"&gt;&lt;/script&gt;&lt;/div&gt;'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="flourish-embed flourish-map" data-src="visualisation/17834987">
 <script src="https://public.flourish.studio/resources/embed.js"></script>
 </div>
-<p>There were higher concentrations of registered democrats in east and west Baltimore City in August 2020 than in the north or south.</p>
+<p>There were higher concentrations of registered democrats in east and west Baltimore City in August 2020 than in the north or south. There was also a significantly higher concentration of Black residents over the age of 18 in east and west baltimore.</p>
 <p>Let’s look at republicans now</p>
-<div class="sourceCode cell-code" id="cb86"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb86-1"><a href="#cb86-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">'&lt;div class="flourish-embed flourish-map" data-src="visualisation/17835183"&gt;&lt;script src="https://public.flourish.studio/resources/embed.js"&gt;&lt;/script&gt;&lt;/div&gt;'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb94"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb94-1"><a href="#cb94-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">'&lt;div class="flourish-embed flourish-map" data-src="visualisation/17835183"&gt;&lt;script src="https://public.flourish.studio/resources/embed.js"&gt;&lt;/script&gt;&lt;/div&gt;'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="flourish-embed flourish-map" data-src="visualisation/17835183">
 <script src="https://public.flourish.studio/resources/embed.js"></script>
 </div>
-<p>There were lower concentrations of registered republicans in east and west Baltimore City in August 2020 than in the north or south.</p>
+<p>There are not many republicans in Baltimore City. Those that are reside in the middle and more rural parts of the city</p>
 
 </main>
 <!-- /main column -->

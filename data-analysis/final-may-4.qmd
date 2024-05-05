@@ -15,7 +15,7 @@ This data analysis project will examine how different factors, such as incarcera
 
 3. How has voter turnout in Baltimore City changed from 2010 to 2020? Which CSA had the biggest difference between the 2012 and 2020 general election?
 
-4. In August 2020, which parts of the city had the most registered democrats? Which had the most republicans?
+4. In August 2020, which parts of the city had the most registered democrats? Which had the most republicans? Is there any correlation to race? 
 
 **THE DATA** 
 Note: if you click on the Baltimore Neighborhood Indicators Alliance links, make sure the year is set to 2020 (Compare Years -> 2020 -> Update Your Selections) and the corresponding indicator on the left-hand side is clicked. It doesn't automatically apply these when I copy the link
@@ -34,7 +34,9 @@ Note: if you click on the Baltimore Neighborhood Indicators Alliance links, make
 
 7. trends_turnout - for this dataset I found it easiest to take screenshots from two websites and put them into Adobe Acrobat. For 1984 to 2008, I used this site: https://elections.maryland.gov/elections/presidential_elections/turnout/general_comparison.html, which has the Baltimore City voter turnout in each general election from 1984 to 2008. From 2012 to 2020, I used this site: https://bniajfi.org/indicators/Sustainability/voted/2020, which has the voter turnout in Baltimore City from 2012 to 2020. When I say "voter turnout" I mean percent of people of the voting age who voted in the election. For the second website you might have to click around as the settings I put might not save when I copy the URL. 
 
-8. precinct_voters_x2020 - I used Tabula to get a table from this PDF from the Baltimore City Board of Elections https://boe.baltimorecity.gov/registration-figures. This data shows voter registration from August 2020, the most recent dataset from 2020. I used this dataset because it had figures for the number of voters registered in each precinct (a more detailed way to show voting figures) and a breakdown of their political parties. This is a citywide registration number taken on August 27, 2020. It contains voting precinct number, number of democrats, number of republicans, and a handful of other political parties, including a column for other and total. 
+8. precinct_voters_x2020 - I used Tabula to get a table from this PDF from the Baltimore City Board of Elections https://boe.baltimorecity.gov/registration-figures. This data shows voter registration from August 2020, the most recent dataset from 2020. I used this dataset because it had figures for the number of voters registered in each precinct (a more detailed way to show voting figures) and a breakdown of their political parties. This is a citywide registration number taken on August 27, 2020. It contains voting precinct number (rows), number of democrats, number of republicans, and a handful of other political parties, including a column for other and total. 
+
+9. demo_voting - I used Tabula to get a table from this PDF from the Maryland Department of Planning. https://planning.maryland.gov/Redistricting/Documents/2020data/GreenReport.pdf. A precinct represents a small area within the city, so although each precinct has one voting place within it, these counts are for the number of people in each precinct by population, not the number of voters. It has information for the congressional/legislatie district a voting precinct is in, the voting precinct number (also called voting district VTD), precinct name, 2020 census and total population, breakdowns by number of people with one race, white alone, black/african american alone, american indian and alaska native alone, asian alone, native hawaiian/pacific islander alone, some other race alone, 2+ races alone, hispanic/latino alone, and total person over 18. Because I'm comparing race to voter registration data, I'm going to use the figure for total people over 18 (the voting age). This dataset has rows for every voting precinct in every county in Maryland, including Baltimore City.
 
 **NOTE**
 I decided to use Flourish for all my visualizations instead of R because there's much more flexibility for interactivity and styling. I also wasn't sure if I was supposed to note exactly where I took feedback, but I pretty much overhauled my entire project from Tuesday so hopefully it's clear. 
@@ -180,6 +182,18 @@ precinct_voters_x2020 <- precinct_voters_x2020 %>%
   clean_names()%>%
   select(precinct, dem, rep, total)
 ```
+demo_voting
+```{r}
+#voting by demographic 2020
+demo_voting <- read_csv("data/demo_voting_x2020_finalll.csv", locale=locale(encoding="latin1"))%>%
+  clean_names
+#delete top seven rows for worcester copied from the page before and column three filled with only N/As
+demo_voting <- demo_voting[-c(1:7), -3]%>%
+  slice(-1)%>%
+  rename(precinct = voting_district_vtd, precinct_pop = total_population, black_aa = black_or_african_american_alone)%>%
+  select(precinct, precinct_pop, black_aa)
+```
+
 
 **Q1: Which five Baltimore City community statistical areas had the lowest voter turnout percentage in the 2020 general election? Which five had the highest?** 
 
@@ -386,14 +400,13 @@ voting_all <- voting_all%>%
   rename(x2010_turnout = 2, x2012_turnout = 3, x2014_turnout = 4, x2016_tunout = 5, x2018_turnout = 6, x2020_turnout = 7)
 ```
 
-This is easiest to see through visualizations
-Press play!
+This is easiest to see through visualizations. Press play to see change overtime between gubernational and general elections in the last 10 years
 ```{r, results='asis'}
 cat('<div class="flourish-embed flourish-map" data-src="visualisation/17832534"><script src="https://public.flourish.studio/resources/embed.js"></script></div>')
 ```
 Gubernatorial elections tend to get less voter turnout than general elections, which is unsurprising as that is a well-documented phenomenon. But it seems that 2020 has the highest voter turnout out of the 10-year period. It also seems that the "Black Butterfly White L" phenomenon becomes more pronounced over time 
 
-Let's draw even more conclusions by looking at Baltimore City as a whole
+Let's draw even more conclusions by looking at Baltimore City as a whole. For this I'm just going to compare general election turnouts. 
 ```{r, results='asis'}
 cat('<div class="flourish-embed flourish-chart" data-src="visualisation/17832645"><script src="https://public.flourish.studio/resources/embed.js"></script></div>')
 ```
@@ -405,16 +418,33 @@ For this chart, I uploaded my trends_turnout csv to flourish. Looking at a wider
 precinct_voters_x2020 <- precinct_voters_x2020%>%
   mutate(pct_dem = (dem / total)*100)%>%
   mutate(pct_rep = (rep / total)*100)
+
+precinct_voters_x2020%>%
+  slice_min(pct_dem)
+
+#the precinct with the lowest percent of democrats still had 53% in August 2020, which means the majority of the city are democrats
+
+precinct_voters_x2020%>%
+  slice_max(pct_rep)
+
+#the precinct with the highest percent of republicans only had 23.7% in August 2020
 ```
 
-Voting precincts don't make much sense without a visualization. I uploaded the geojson for 2020 voting precincts on the same site I got the first geojson
+Let's see if there's a correlation with the amount of Black residents who are over the voting age of 18
+```{r}
+#add a column for percent Black residents of whole population in precinct
+demo_voting <- demo_voting%>%
+  mutate(pct_black = (black_aa / precinct_pop)*100)
+```
+
+Voting precincts don't make much sense without a visualization. I uploaded the geojson for 2020 voting precincts on the Open Baltimore site I got the first geojson. This map has a toggle which allows users to switch from concentration of Black residents over the age of 18 by precinct and concentration of democrats 
 ```{r, results='asis'}
 cat('<div class="flourish-embed flourish-map" data-src="visualisation/17834987"><script src="https://public.flourish.studio/resources/embed.js"></script></div>')
 ```
-There were higher concentrations of registered democrats in east and west Baltimore City in August 2020 than in the north or south. 
+There were higher concentrations of registered democrats in east and west Baltimore City in August 2020 than in the north or south. There was also a significantly higher concentration of Black residents over the age of 18 in east and west baltimore.
 
 Let's look at republicans now 
 ```{r, results='asis'}
 cat('<div class="flourish-embed flourish-map" data-src="visualisation/17835183"><script src="https://public.flourish.studio/resources/embed.js"></script></div>')
 ```
-There were lower concentrations of registered republicans in east and west Baltimore City in August 2020 than in the north or south. 
+There are not many republicans in Baltimore City. Those that are reside in the middle and more rural parts of the city 
