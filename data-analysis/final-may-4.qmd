@@ -439,7 +439,7 @@ demo_voting <- demo_voting%>%
 
 Voting precincts don't make much sense without a visualization. I uploaded the geojson for 2020 voting precincts on the Open Baltimore site I got the first geojson. This map has a toggle which allows users to switch from concentration of Black residents over the age of 18 by precinct and concentration of democrats 
 ```{r, results='asis'}
-cat('<div class="flourish-embed flourish-map" data-src="visualisation/17834987"><script src="https://public.flourish.studio/resources/embed.js"></script></div>')
+cat('<div class="flourish-embed flourish-map" data-src="visualisation/17835622"><script src="https://public.flourish.studio/resources/embed.js"></script></div>')
 ```
 There were higher concentrations of registered democrats in east and west Baltimore City in August 2020 than in the north or south. There was also a significantly higher concentration of Black residents over the age of 18 in east and west baltimore.
 
