@@ -32,6 +32,9 @@ Note: if you click on the Baltimore Neighborhood Indicators Alliance links, make
 
 7. trends_turnout - for this dataset I found it easiest to take screenshots from two websites and put them into Adobe Acrobat. For 1984 to 2008, I used this site: https://elections.maryland.gov/elections/presidential_elections/turnout/general_comparison.html, which has the Baltimore City voter turnout in each general election from 1984 to 2008. From 2012 to 2020, I used this site: https://bniajfi.org/indicators/Sustainability/voted/2020, which has the voter turnout in Baltimore City from 2012 to 2020. When I say "voter turnout" I mean percent of people of the voting age who voted in the election. For the second website you might have to click around as the settings I put might not save when I copy the URL. 
 
+**NOTE**
+I decided to use Flourish for all my visualizations instead of R because there's much more flexibility for interactivity and styling. I also wasn't sure if I was supposed to note exactly where I took feedback, but I pretty much overhauled my entire project from Tuesday so hopefully it's clear. 
+
 **SET UP**
 ```{r}
 #libraries and settings
