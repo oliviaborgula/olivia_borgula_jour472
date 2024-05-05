@@ -7,7 +7,7 @@ editor: visual
 ---
 
 **INTRODUCTION** 
-This data analysis project will examine how different factors, such as incarceration, wealth and race, play a role in Baltimore City's 2020 general election voter turnout. It will also examine how voter registration has changed from 2020 to 2024, an especially newsworthy topic ahead of election season this November. Specifically, I will ask these five questions to guide my findings:
+This data analysis project will examine how different factors, such as incarceration, wealth, internet access, business activity and race play a role in Baltimore City's 2020 general election voter turnout. It will also examine how voter turnout has changed in the last 10 years across gubernatorial and general elections as well as over longer periods of time and will compare political parties in the city. This is an especially newsworthy topic ahead of election season this November. I will ask these five questions to guide my findings:
 
 1. Which five Baltimore City community statistical areas had the lowest voter turnout percentage in the 2020 general election? Which five had the highest?
 
