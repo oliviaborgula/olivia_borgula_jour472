@@ -1,0 +1,42 @@
+---
+title: "Data Analysis Final Milestone 4"
+name: "Olivia Borgula"
+date: 05/04/2024
+format: html
+editor: visual
+---
+
+**INTRODUCTION** This data analysis project will examine how incarceration, wealth and race intersect and play a role in voter registration in Baltimore City — an especially newsworthy topic ahead of elections season this November. Specifically, I will ask these five questions to guide my findings:
+
+1. Which five Baltimore City community statistical areas had the lowest voter turnout percentage in the 2020 general election? Which five had the highest?
+
+2. Is there a correlation between factors such as incarceration rate, median household income, internet access and walkability score and voter turnout in 2020? Have any of these factors improved since then? 
+
+3. How has voter registration in Baltimore City changed from 2020 to 2024? 
+
+**THE DATA**
+
+1. pct_vote_csa_clean - data from the Baltimore City Board of Elections compiled by the Baltimore Neighborhood Indicators Alliance that has the percent of people over the age of 18 who voted in the 2020 general election in each Baltimore City community statistical area. https://bniajfi.org/indicators/Sustainability/voted/2020. I exported the data from the website as an excel sheet and then saved it as a csv. 
+
+**SET UP**
+```{r}
+#libraries and settings
+library(tidyverse)
+library(janitor)
+library(formattable)
+library(dplyr)
+library(rvest)
+library(sf)
+
+#turn off scientific notation
+options(scipen=999)
+```
+
+**UPLOAD DATA**
+
+```{r}
+pct_vote_csa <- read_csv("data/pct_vote_csa.csv")
+``` 
+
+
+**Q1: Which five Baltimore City community statistical areas had the lowest voter turnout percentage in the 2020 general election? Which five had the highest?**

@@ -1,0 +1,77 @@
+---
+title: "sillyness"
+format: html
+editor: visual
+---
+
+```{r, results='asis'}
+cat('<div class="flourish-embed flourish-map" data-src="visualisation/17809409"><script src="https://public.flourish.studio/resources/embed.js"></script></div>')
+```
+1. Which five Baltimore City community statistical areas had the lowest voter turnout percentage in the 2020 general election? Which five had the highest?
+
+2. Are there correlations between the Baltimore City 2020 general election voter turnout and factors including incarceration rate, business activity, wealth and internet access?
+
+3. In 2020, how many registered voters were democrats and how many were republicans? How does that compare to the rest of Maryland? 
+- sum of dem column, sum of republican column in precinct_voters
+- visualize
+- which csa has the highest concentration of dems/republicans? - spatial join -> add up total in each csa -> divide by population of csa
+- how does concentration of dems/republicans compare to race? 
+
+4. Which race had the least amount of registered voters as a proportion of their population in the 2020 general election?
+- ?
+
+5. How has voter registration in Baltimore City changed from 2020 to 2024? 
+- clean data -> percent of the city registered 
+
+```{r}
+#voting data by voting precinct in baltimore city in August 2020 
+x2020_precinct_voters <- read_csv("data/cleaned_precinct_x2020.csv")
+#remove blank rows
+x2020_precinct_voters <- x2020_precinct_voters[complete.cases(x2020_precinct_voters), ]
+
+x2020_precinct_voters <- x2020_precinct_voters[-111, ]%>%
+  rename(total_reg = total)
+```
+
+
+**In 2020, which Baltimore City voting precinct had the highest concentration of democrats? Which had the highest concentration of republicans? Is there any correlation between race and party affiliation?**
+
+For this question, I'm looking at voting precincts rather than community statistical areas. Voting precincts is a subdivision of an electoral district. Typically, each contains one polling place where everyone within that precinct goes to vote. Community statistical areas are clusters of recognizable neighborhoods that are more useful for comparing things such as wealth, internet access and incarceration, but for voting data, the most accurate is at the precinct-level. 
+
+Let's start with finding concentrations of democrats/republicans in voting precincts
+```{r}
+#create new column for percent of whole for dem/rep
+x2020_precinct_voters <- x2020_precinct_voters%>%
+  mutate(pct_dem = (dem / total_reg)*100)%>%
+  mutate(pct_rep = (rep / total_reg)*100)
+```
+This won't make much sense without a visualization:
+```{r}
+cat('')
+```
+
+x2020-x2024_precinct_voters
+```{r}
+#voting data by voting precinct in baltimore city in 2024 
+x2024_precinct_voters <- read_csv("data/tabula-2024-precinct-voter-counts.csv")
+#remove blank rows
+x2024_precinct_voters <- x2024_precinct_voters[complete.cases(x2024_precinct_voters), ]
+
+#voting data by voting precinct in baltimore city in 2023 
+x2023_precinct_voters <- read_csv("data/tabula-2023_reg.csv")
+
+#voting data by voting precinct in baltimore city in 2022 
+x2022_precinct_voters <- read_csv("data/tabula-2022_dec.csv")
+
+#voting data by voting precinct in baltimore city in 2021 
+x2021_precinct_voters <- read_csv("data/tabula-2021_reg.csv")
+
+#voting data by voting precinct in baltimore city in August 2020 
+x2020_precinct_voters <- read_csv("data/cleaned_precinct_x2020.csv")
+#remove blank rows
+x2020_precinct_voters <- x2020_precinct_voters[complete.cases(x2020_precinct_voters), ]
+
+x2020_precinct_voters <- x2020_precinct_voters[-111, ]%>%
+  rename(total_reg = total)%>%
+  clean_names()
+```

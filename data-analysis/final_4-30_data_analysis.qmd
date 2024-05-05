@@ -172,7 +172,7 @@ zip_csa <- zip_csa%>%
 ```
 
 x2021 - x2024_precinct_voters datasets (4)
-note: I still need to clean 2022-2023 
+note: I'm still working on cleaning 
 ```{r}
 #voting data by voting precinct in baltimore city in 2024 
 x2024_precinct_voters <- read_csv("data/tabula-2024-precinct-voter-counts.csv")
