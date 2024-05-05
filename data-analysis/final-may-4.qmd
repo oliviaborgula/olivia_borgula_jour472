@@ -40,6 +40,7 @@ Note: if you click on the Baltimore Neighborhood Indicators Alliance links, make
 
 **NOTE**
 I decided to use Flourish for all my visualizations instead of R because there's much more flexibility for interactivity and styling. I also wasn't sure if I was supposed to note exactly where I took feedback, but I pretty much overhauled my entire project from Tuesday so hopefully it's clear. 
+All the data is uploaded to Github on my end but there's been a few instances where the files unsave in my folder and I have to redownload them through icloud, but I don't think this will be an issue since I see that all the files are on Github.
 
 **SET UP**
 ```{r}
