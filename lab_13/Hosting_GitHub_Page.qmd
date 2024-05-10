@@ -133,6 +133,8 @@ In other words:
 *  Turn http://github.com/username/reponame/file_name.html  
 *  Into http://username.github.io/repo-folder-name/file_name.html
 
+https://github.com/oliviaborgula/olivia_borgula_jour472/blob/main/data-analysis/final-may-4.html
+https://oliviaborgula.github.io/olivia_borgula_jour472/final-may-4.html
     
 
 # REVEL IN YOUR NERD POWERS  
