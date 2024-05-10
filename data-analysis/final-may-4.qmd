@@ -513,14 +513,35 @@ cat('<div class="flourish-embed flourish-map" data-src="visualisation/17835183">
 There are not many Republicans in Baltimore City. Those that are reside in the middle and more rural parts of the city. Note: sometimes this graphic doesn't load right away on the page so you might have to reload and it should pop up.
 
 **FINAL MEMO**
-Baltimore City residents in areas of high incarceration were less likely to vote in the 2020 general election. As the rate of incarceration per 100,000 people increased in the area, voter turnout percentage decreased. 
+Baltimore City residents in areas of high incarceration were less likely to vote in the 2020 general election. As the rate of incarceration per 100,000 people increased, voter turnout percentage decreased. 
 
 Areas of low internet access saw a similar pattern. In Southwest Baltimore, which had the lowest voter turnout in the 2020 general election, almost 28% of households did not have internet access. But in the Greater Roland Park and Poplar Hill area, which had the highest voter turnout percentage, only about 3% of households did not have internet. 
 
-Median household income, on the other hand, was positively correlated with voter turnout. Wealthier areas had a significantly higher voter turnout percentage. Of the 16 areas with less than 50% of their voting-age population casting their ballots, only one had a median household income of more than $42,000.
+Median household income, on the other hand, had a positive relationship to voter turnout. Wealthier areas had a significantly higher voter turnout percentage. Of the 16 areas with less than 50% of their voting-age population casting their ballots, only one had a median household income of more than $42,000.
 
-As a whole, voter turnout in the city has significantly decreased since 2008, dropping from 68% to 58% in that time. 2020 saw the first rise in the decade-long period, with most election turnout numbers remaining below the Maryland average. In 2020, areas that had the most democratic-registered voters were also the areas with the highest concentration of Black residents and the lowest voter turnouts. 
+Overall voter turnout in the city has significantly decreased since 2008, dropping from 68% to 58% in that time. 2020 saw the first rise in the decade-long period, with most election turnout numbers remaining below the Maryland average. In 2020, areas that had the most democratic-registered voters were also the areas with the highest concentration of Black residents and the lowest voter turnouts. 
 
-This is especially significant ahead of the 2024 election. I could write multiple stories based on this data. I could write on about how incarceration plays a role in voter turnout. I would ask people about whether going through the criminal justice system discourages them from voting in the future and how low voter turnout impacts policy initiatives for incarcerated people. 
+These findings are especially significant ahead of the 2024 general election. I could write multiple long-form stories based on the data, one of which could be exploring why people may be less inclined to vote in areas of higher incarceration. I would supplement my incarceration and voter turnout figures by interviewing people who have been incarcerated, have family members who are incarcerated and social justice activists.  
 
-For a story about internet access and voting, I would examine how basic internet access can expand people’s access to voting and voter education, and how increasing internet access could shift peoples’ attitudes about the importance of casting their ballot on election day.
+Other stories have analyzed voter turnout in Baltimore City, but nothing I came across in my research delved into the intersection between factors such as incarceration rate and percent of households without internet. 
+
+I could write similar long-form stories about voter turnout and internet access as well as voter turnout and median household income. I can infer that having greater internet access increases accessibility to voting education and political knowledge, which could encourage a higher voter turnout rate, but I would confirm these assumptions by talking with experts in sociology and social justice. 
+
+Zooming out on these findings, I could also incorporate my data about general voter turnout decline in Baltimore City since 2008 into another story. I could investigate what activism has been done to increase voter turnout since 2008 and where their shortcomings might lie. 
+
+I could interview Baltimore City residents from a variety of neighborhoods — especially those who have voted in every election including ones before 2008 — about whether they’ve noticed this decline and what might be the cause. I would also ask these people if they planned to vote in the 2024 election, and would also seek out people who haven’t voted and whether this election will change their mind. 
+
+I might also point to the general correlation between lower voter turnout in East and West Baltimore and the higher concentration of democrats in those areas. For this, I could interview lawmakers and Democrat candidates vying for local seats whether they’ve tried to increase voter turnout in these areas. 
+
+While voter turnout stories and articles drawing a correlation between voter turnout and other factors aren’t new, my data localizes a wider phenomenon to Baltimore City. By speaking with residents and capturing their stories, I will bring a local perspective to sweeping trends. 
+
+Strengths of this data is that I have information on a community statistical level and a precinct level. This gives me two sets of data with different levels of detail so I can draw more specific conclusions about voter turnout data. A con of this data is that the most recent voter turnout data for a general election is in 2020, which is still four years old. 
+
+I would ensure this data is accurate by crosschecking my data with other sources. For instance, I could check the data I got from the Baltimore Neighborhood Alliance with PDFs from the Maryland Board of Elections. These have the same data, but in different formats, which would ensure accuracy in my data. I could also refer to local community leaders and ask whether my general findings align with what they’ve noticed in their community. 
+
+I’ve also already calculated correlation coefficients for some of my findings, but I could also use more statistical tests, such as a p-test or t-test. While these findings don’t call out specific public or private figures, I could reach out to the city Board of Elections to verify the decline in voter turnout. 
+
+My next steps are to talk to people. I would bring the stories to life by centering them around Baltimore City residents. How has incarceration impacted their outlook on voting? How has it affected the people around them? How would internet access allow their family to more easily see where and how to vote? How have people seen their communities shift away from voting in general elections, and why? 
+
+I would aim to answer these questions through reporting to tell individual stories that are backed up by data analysis. 
+
