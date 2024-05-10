@@ -1,5 +1,5 @@
 ---
-title: "Data Analysis Project Milestone 4"
+title: "Data Analysis Project"
 name: "Olivia Borgula"
 date: "05/04/2024"
 format: html
