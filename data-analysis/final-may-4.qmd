@@ -5,84 +5,66 @@ date: "05/04/2024"
 format: html
 editor: visual
 ---
----
-#title: "Data Analysis Project Final Project"
-#name: "Olivia Borgula"
-#date: "05/04/2024"
-#format: pdf
-#editor: visual
----
 
-HTML <a href="https://oliviaborgula.github.io/olivia_borgula_jour472/data-analysis/final-may-4.html" target="_blank" style="color: black;">link</a> for reference
+This data analysis project examines how different factors — including incarceration, wealth, internet access, business activity and race — impacted Baltimore City's 2020 general election voter turnout.
 
-**INTRODUCTION** 
-This data analysis project will examine how different factors, such as incarceration, wealth, internet access, business activity and race play a role in Baltimore City's 2020 general election voter turnout. It will also examine how voter turnout has changed in the last 10 years across gubernatorial and general elections as well as over longer periods of time and will compare political parties in the city. This is an especially newsworthy topic ahead of election season this November. I will ask these five questions to guide my findings:
+It explores how voter turnout has changed in the last 10 years across midterm and general elections and compares political party voting patterns in the city.
 
-1. Which five Baltimore City community statistical areas had the lowest voter turnout percentage in the 2020 general election? Which five had the highest?
+**Findings**
 
-2. Are there correlations between the Baltimore City 2020 general election voter turnout and factors including incarceration rate, business activity, wealth and internet access?
+-   Baltimore City residents in areas of high incarceration were less likely to vote in the 2020 general election. As the rate of incarceration per 100,000 people increased, voter turnout percentage decreased.
 
-3. How has voter turnout in Baltimore City changed from 2010 to 2020? Which CSA had the biggest difference between the 2012 and 2020 general election?
+-   Areas of low internet access saw a similar pattern. In Southwest Baltimore, which had the lowest voter turnout in the 2020 general election, almost 28% of households did not have internet access. But in the Greater Roland Park and Poplar Hill area, which had the highest voter turnout percentage, only about 3% of households did not have internet.
 
-4. In August 2020, which parts of the city had the most registered Democrats? Which had the most Republicans? Is there any correlation to race? 
+-   Median household income, on the other hand, had a positive relationship to voter turnout. Wealthier areas had a significantly higher voter turnout percentage. Of the 16 areas with less than 50% of their voting-age population casting their ballots, only one had a median household income of more than \$42,000.
 
-**THE DATA** 
-Note: if you click on the Baltimore Neighborhood Indicators Alliance links, make sure the year is set to 2020 (Compare Years -> 2020 -> Update Your Selections) and the corresponding indicator on the left-hand side is clicked. It doesn't automatically apply these when I copy the link
+-   Overall voter turnout in the city has significantly decreased since 2008, dropping from 68% to 58% in that time. 2020 saw the first rise in the decade-long period, with most election turnout numbers remaining below the Maryland average. In 2020, areas that had the most democratic-registered voters were also the areas with the highest concentration of Black residents and the lowest voter turnouts.
 
-1. pct_vote_csas - <a href="https://bniajfi.org/indicators/Sustainability/voted/2020" target="_blank" style="color: black;">data</a> from the Baltimore City Board of Elections compiled by the Baltimore Neighborhood Indicators Alliance that has the percent of people over the age of 18 who voted in the 2020 general election in each Baltimore City community statistical area. I exported the data from the website as an excel sheet and then saved it as a csv. 
+Data comes from the following places:
 
-2. incarceration_x2020 - A <a href="https://bniajfi.org/indicator/census%20demographics/" target="_blank" style="color: black;"> data table</a> scraped from a Prison Policy Initiative website with information about the incarceration rate in each Baltimore City community statistical areas in 2020. It has the community statistical area, the total population, the census population (I used the total population here), the rate per 100,000 and the number in state prison. Rate per 100,000 is the number of imprisoned people divided by the total CSA population and then multiplied by 100,000. It allows ready comparison of the frequency of imprisonment between each CSA of different population sizes. I webscrape this later. 
+-   <a href="https://bniajfi.org/indicator/census%20demographics/" target="_blank" style="color: black;"> Prison Policy Initiative table</a> web scraped from the organization's website with information about the incarceration rate in each Baltimore City community statistical areas in 2020. Its figure indicating the rate per 100,000 people allows comparison imprisonment levels between each CSA of different population sizes.
 
-3. biz - <a href="https://bniajfi.org/indicator/Workforce%20And%20Economic%20Development/?chkYears[]=2020" target="_blank" style="color: black;"> data </a> from InfoUsa compiled by the Neighborhood Indicators Alliance that has the number of businesses per 1,000 residents in each Baltimore City community statistical area. I exported the data from the website as an excel sheet and then saved it in excel as a csv. 
+-   I used Tabula to get a table from <a href = "https://boe.baltimorecity.gov/registration-figures" target="_blank" style="color: black;"> this PDF </a> from the Baltimore City Board of Elections to show voter registration numbers by political party in each voting precinct in Maryland.
 
-4. baltcity_income - <a href="https://bniajfi.org/indicator/census%20demographics/" target="_blank" style="color: black;"> data </a> from the US Census Bureau compiled from the Neighborhood Indicators Alliance that has the median household income in each Baltimore City community statistical area. I exported the data from the website as an excel sheet and then saved it as a csv. 
+-   I used Tabula to get a table from <a href = "https://planning.maryland.gov/Redistricting/Documents/2020data/GreenReport.pdf" target="_blank" style="color: black;">this PDF</a> from the Maryland Department of Planning with a demographic breakdown of Maryland voting precinct populations in the 2020 general election.
 
-5. internet - <a href="https://bniajfi.org/indicators/Workforce%20and%20Economic%20Development/nohhint/2020" target="_blank" style="color: black;"> data </a> from the US Census Bureau compiled by the Neighborhood Indicators Alliance that has the percent of households with no internet at home and community statistical area. I exported the data from the website as an excel sheet and then saved it in excel as a csv.
+-   <a href="https://bniajfi.org/indicators/Sustainability/voted/2020" target="_blank" style="color: black;">Baltimore City Board of Elections data</a> compiled by the Baltimore Neighborhood Indicators Alliance. It indicates the percent of people over the age of 18 who voted in the 2020 general election in each Baltimore City community statistical area.
 
-6. voting_2012 through voting_2022 - <a href= "https://bniajfi.org/indicators/Sustainability/voted/2020" target="_blank" style="color: black;"> data </a> from the Baltimore City Board of Elections compiled by the Neighborhood Indicators Alliance that has the voter turnout rate for each Baltimore City community statistical area. I exported the data from the website as an excel sheet and then saved it in excel as a csv.
+-   <a href="https://bniajfi.org/indicator/Workforce%20And%20Economic%20Development/?chkYears[]=2020" target="_blank" style="color: black;"> InfoUSa data </a> compiled by the Neighborhood Indicators Alliance that has the number of businesses per 1,000 residents in each Baltimore City community statistical area.
 
-7. trends_turnout - for this dataset I found it easiest to take screenshots from two websites and put them into Adobe Acrobat. For 1984 to 2008, I used <a href= "https://elections.maryland.gov/elections/presidential_elections/turnout/general_comparison.html" target="_blank" style="color: black;"> this site </a>, which has the Baltimore City voter turnout in each general election from 1984 to 2008. From 2012 to 2020, I used <a href= "https://bniajfi.org/indicators/Sustainability/voted/2020" target="_blank" style="color: black;"> this site </a>, which has the voter turnout in Baltimore City from 2012 to 2020. When I say "voter turnout" I mean percent of people of the voting age who voted in the election. For the second website you might have to click around as the settings I put might not save when I copy the URL. 
+-   <a href="https://bniajfi.org/indicator/census%20demographics/" target="_blank" style="color: black;"> US Census Bureau data </a> with the median household income in each Baltimore City community statistical area.
 
-8. maryland_voting - I downloaded this dataset from the <a href= "https://www.census.gov/data/tables/time-series/demo/voting-and-registration/voting-historical-time-series.html" target="_blank" style="color: black;"> U.S. Census Bureau website</a> (table A-5a) and then downloaded it as a CSV. It three tables within the dataset, with rows for every state and then columns for each year from 2020 to 1972 that contain the voting rate for each corresponding state. 
+-   <a href="https://bniajfi.org/indicators/Workforce%20and%20Economic%20Development/nohhint/2020" target="_blank" style="color: black;"> US Census Bureau data </a> with the percent of households with no internet at home by community statistical area.
 
-9. precinct_voters_x2020 - I used Tabula to get a table from <a href = "https://boe.baltimorecity.gov/registration-figures" target="_blank" style="color: black;"> this PDF </a> from the Baltimore City Board of Elections. This data shows voter registration from August 2020, the most recent dataset from 2020. I used this dataset because it had figures for the number of voters registered in each precinct (a more detailed way to show voting figures) and a breakdown of their political parties. This is a citywide registration number taken on August 27, 2020. It contains voting precinct number (rows), number of Democrats, number of Republicans, and a handful of other political parties, including a column for other and total. 
+-   <a href= "https://bniajfi.org/indicators/Sustainability/voted/2020" target="_blank" style="color: black;"> Baltimore City Board of Elections data </a> that has the voter turnout rate for each Baltimore City community statistical area.
 
-10. demo_voting - I used Tabula to get a table from <a href = "https://planning.maryland.gov/Redistricting/Documents/2020data/GreenReport.pdf" target="_blank" style="color: black;">this PDF</a> from the Maryland Department of Planning. A precinct represents a small area within the city, so although each precinct has one voting place within it, these counts are for the number of people in each precinct by population, not the number of voters. It has information for the congressional/legislatie district a voting precinct is in, the voting precinct number (also called voting district VTD), precinct name, 2020 census and total population, breakdowns by number of people with one race, white alone, black/african american alone, american indian and alaska native alone, asian alone, native hawaiian/pacific islander alone, some other race alone, 2+ races alone, hispanic/latino alone, and total person over 18. Because I'm comparing race to voter registration data, I'm going to use the figure for total people over 18 (the voting age). This dataset has rows for every voting precinct in every county in Maryland, including Baltimore City.
+-   To compare voting turnout over time, I web scraped data from <a href= "https://elections.maryland.gov/elections/presidential_elections/turnout/general_comparison.html" target="_blank" style="color: black;"> this site </a>, which has the Baltimore City voter turnout in each general election from 1984 to 2008. And from 2012 to 2020, I used <a href= "https://bniajfi.org/indicators/Sustainability/voted/2020" target="_blank" style="color: black;"> this site </a>, which has the voter turnout in Baltimore City from 2012 to 2020.
 
-**NOTE**
-I decided to use Flourish for all my visualizations instead of R because there's much more flexibility for interactivity and styling. I also wasn't sure if I was supposed to note exactly where I took feedback, but I pretty much overhauled my entire project from Tuesday so hopefully it's clear. 
-All the data is uploaded to Github on my end but there's been a few instances where the files unsave in my folder and I have to redownload them through icloud, but I don't think this will be an issue since I see that all the files are on Github.
-
-**SET UP**
-```{r message=FALSE, warning=FALSE}
+```{r include=FALSE}
 #libraries and settings
 library(tidyverse)
 library(janitor)
 library(formattable)
 library(dplyr)
 library(rvest)
+library(rmarkdown)
+library(knitr)
 
 #turn off scientific notation
 options(scipen=999)
 ```
 
-**UPLOAD DATA**
-pct_vote_csas
-This dataset has a row for all of Baltimore City, which is not one of the official 55 CSAs, so I will remove that row. This dataset also has a value listed with "and" instead of "&" so I will update that so it joins correctly with other datasets
-```{r message=FALSE, warning=FALSE}
+```{r include=FALSE}
 #upload csv and clean names/rows
 pct_vote_csas <- read_csv("data/pct_vote_csa_clean.csv")
 
 pct_vote_csas <- pct_vote_csas%>%
   rename(csa = 1, pct_voters = 2)
 
-pct_vote_csas$csa[43] <- "Westport/Mount Winans/Lakeland"
+pct_vote_csas$csa[43] <- "Westport/Mount Winans/Lakeland" 
+```
 
-
-``` 
-
-incarceration_x2020
-```{r message=FALSE, warning=FALSE}
+```{r}
 #webscrape data table from prison policy initiative website 
 incarceration_x2020 <- "https://www.prisonpolicy.org/origin/md/2020/baltimore_csa.html"
 incarceration_x2020 <- incarceration_x2020 %>% 
@@ -94,18 +76,14 @@ incarceration_x2020 <- incarceration_x2020[[1]]%>%
   select(csa, rate_per_x100000)
 ```
 
-baltcity_income
-This dataset also has a row for all of Baltimore City, which is not one of the official 55 CSAs, so I will remove that row
-```{r message=FALSE, warning=FALSE}
+```{r include=FALSE}
 baltcity_income <- read_csv("data/baltcity_income.csv")%>%
   clean_names()%>%
   rename(csa = community, median_income = x2020_data)%>%
   filter(csa != "Baltimore City")
 ```
 
-biz
-This dataset also has a row for all of Baltimore City, which is not one of the official 55 CSAs, so I will remove that row
-```{r message=FALSE, warning=FALSE}
+```{r include=FALSE}
 biz <- read_csv("data/smallbiz_csa.csv")
 
 biz <- biz%>%
@@ -114,9 +92,7 @@ biz <- biz%>%
   filter(csa != "Baltimore City")
 ```
 
-internet
-This dataset also has a row for all of Baltimore City, which is not one of the official 55 CSAs, so I will remove that row
-```{r message=FALSE, warning=FALSE}
+```{r include=FALSE}
 internet <- read_csv("data/internet.csv")
 
 internet <- internet%>%
@@ -125,11 +101,7 @@ internet <- internet%>%
   filter(csa != "Baltimore City")
 ```
 
-voting_2010 through voting_2020
-These datasets also have a row for all of Baltimore City, which is not one of the official 55 CSAs, so I will remove that row
-
-voting_2010
-```{r message=FALSE, warning=FALSE}
+```{r include=FALSE}
 #voter turnout in the 2010 election
 voting_2010 <- read_csv("data/voting_2010.csv")%>%
   clean_names()%>%
@@ -137,8 +109,7 @@ voting_2010 <- read_csv("data/voting_2010.csv")%>%
   filter(csa != "Baltimore City")
 ```
 
-voting_2012
-```{r message=FALSE, warning=FALSE}
+```{r include=FALSE}
 #voter turnout in the 2012 election
 voting_2012 <- read_csv("data/voting_2012_clean.csv")%>%
   clean_names()%>%
@@ -146,8 +117,7 @@ voting_2012 <- read_csv("data/voting_2012_clean.csv")%>%
   filter(csa != "Baltimore City")
 ```
 
-voting_2014
-```{r message=FALSE, warning=FALSE}
+```{r include=FALSE}
 #voter turnout in the 2014 election
 voting_2014 <- read_csv("data/voting_2014.csv")%>%
   clean_names()%>%
@@ -155,8 +125,7 @@ voting_2014 <- read_csv("data/voting_2014.csv")%>%
   filter(csa != "Baltimore City")
 ```
 
-voting_2016
-```{r message=FALSE, warning=FALSE}
+```{r include=FALSE}
 #voter turnout in the 2016 election
 voting_2016 <- read_csv("data/voting_2016.csv")%>%
   clean_names()%>%
@@ -164,8 +133,7 @@ voting_2016 <- read_csv("data/voting_2016.csv")%>%
   filter(csa != "Baltimore City")
 ```
 
-voting_2018
-```{r message=FALSE, warning=FALSE}
+```{r include=FALSE}
 #voter turnout in the 2018 election
 voting_2018 <- read_csv("data/voting_2018.csv")%>%
   clean_names()%>%
@@ -173,8 +141,7 @@ voting_2018 <- read_csv("data/voting_2018.csv")%>%
   filter(csa != "Baltimore City")
 ```
 
-voting_2022
-```{r message=FALSE, warning=FALSE}
+```{r include=FALSE}
 #voter turnout in the 2022 election
 voting_2016 <- read_csv("data/voting_2016.csv")%>%
   clean_names()%>%
@@ -182,17 +149,14 @@ voting_2016 <- read_csv("data/voting_2016.csv")%>%
   filter(csa != "Baltimore City")
 ```
 
-trends_turnout
-```{r message=FALSE, warning=FALSE}
+```{r include=FALSE}
 trends_turnout <- read_csv("data/trends_turnout.csv")
 
 trends_turnout <- trends_turnout%>%
   rename(pct_turnout = 2)
 ```
 
-maryland_voting
-This one needs a lot of cleaning. It gives me three tables in one dataset with one for elections from 2020 to 2004, one for elections from 2000 to 1984 and one from elections from 1980 to 1972. Because Maryland only has a breakdown of Baltimore City data from 1984 on, I'll just be using the first two tables. I'm going to seperate the two tables and then rejoin them. Note: these tables will have 51 ones because it includes a separete count for Washington, DC. 
-```{r message=FALSE, warning=FALSE}
+```{r include=FALSE}
 #upload data
 maryland_voting <- read_csv("data/maryland_voter_turnout_historic.csv")
 
@@ -225,8 +189,7 @@ maryland_cleanest_voting <- t(maryland_voting_clean)
 colnames(maryland_cleanest_voting) <- c("pct_turnout")
 ```
 
-precinct_voters_x2020
-```{r message=FALSE, warning=FALSE}
+```{r include=FALSE}
 #upload csv 
 precinct_voters_x2020 <- read_csv("data/cleaned_precinct_x2020.csv")
 
@@ -237,8 +200,8 @@ precinct_voters_x2020 <- precinct_voters_x2020 %>%
   clean_names()%>%
   select(precinct, dem, rep, total)
 ```
-demo_voting
-```{r message=FALSE, warning=FALSE}
+
+```{r include=FALSE}
 #voting by demographic 2020
 demo_voting <- read_csv("data/demo_voting_x2020_finalll.csv", locale=locale(encoding="latin1"))%>%
   clean_names
@@ -249,39 +212,41 @@ demo_voting <- demo_voting[-c(1:7), -3]%>%
   select(precinct, precinct_pop, black_aa)
 ```
 
+**Q1: Which five Baltimore City community statistical areas had the lowest voter turnout percentage in the 2020 general election? Which five had the highest?**
 
-**Q1: Which five Baltimore City community statistical areas had the lowest voter turnout percentage in the 2020 general election? Which five had the highest?** 
+Lowest voter turnout percent
 
-Lowest voter turnout percent 
 ```{r}
 #use slicemax/min to make new tables with top and bottom five csas by voter turnout
 pct_vote_csas%>%
   slice_min(pct_voters, n = 5)
-#Southwest Baltimore: 41.1%, Madison/East End: 41.6%, Brooklyn/Curtis Bay/Hawkins Point: 42.7%, Sandtown-Winchester/Harlem Park: 44.1% and Poppleton/The Terraces/Hollins Market: 46.1%
+
+paged_table(pct_vote_csas)
 ```
 
 Highest voter turnout percent
+
 ```{r}
 pct_vote_csas%>%
   slice_max(pct_voters, n = 5)
-#Greater Roland Park/Poplar Hill: 80.1%, Mount Washington/Coldspring: 77%, South Baltimore: 75%, North Baltimore/Guilford/Homeland: 74.6% and Medfield/Hampden/Woodberry/Remington: 72.9%
+
+paged_table(pct_vote_csas)
 ```
 
-Let's visualize this! 
-I created a custom map in flourish by uploading a geojson file with the Baltimore City CSA boundaries, which I found through <a href = "https://data.baltimorecity.gov/datasets/9c96ae20e6cc41258015c2fd288716c4/explore" target="_blank" style="color: black;"> Open Baltimore </a>.
-I then uploaded my csv for pct_vote_csas to fill in the data points. 
+I created a custom map in flourish by uploading a GeoJSON file with the Baltimore City CSA boundaries, which I found through <a href = "https://data.baltimorecity.gov/datasets/9c96ae20e6cc41258015c2fd288716c4/explore" target="_blank" style="color: black;"> Open Baltimore </a>
 
 ```{r, results='asis'}
 cat('<div class="flourish-embed flourish-map" data-src="visualisation/17796037"><script src="https://public.flourish.studio/resources/embed.js"></script></div>')
 ```
 
-Looking at this visualization, it's clear the areas with the highest voter turnout are in the middle areas of Baltimore, especially in the Inner Harbor area stretching north to Homeland and Guilford, with east and west Baltimore showing significantly less voter turnout. Sixteen CSAs had a voter turnout of less than 50%, and they were all concentrated in similar areas. 
+It's clear the areas with the highest voter turnout are in the middle areas of Baltimore, especially in the Inner Harbor area stretching north to Homeland and Guilford, with East and West Baltimore showing significantly less voter turnout. Sixteen CSAs had a voter turnout of less than 50%, and were all concentrated in similar areas.
 
 **Q2: Are there correlations between the Baltimore City 2020 general election voter turnout and factors including incarceration rate, business activity, wealth, internet access and race?**
 
 Let's compare all these factors in the five CSAs with the highest and lowest voter turnout rates
 
 I'll start with incarceration rate and voter turnout
+
 ```{r}
 #join incarceration_x2020 and pct_vote_csas datasets
 incarceration_voting <- inner_join(incarceration_x2020, pct_vote_csas, by = "csa")
@@ -291,31 +256,26 @@ incarceration_voting %>%
 
 incarceration_voting %>%
   slice_max(pct_voters, n = 5)
-
-#Incarceration rate per 100,000 people in five areas of lowest voter turnout:
-#Southwest Baltimore: 2,223, Madison/East End: 2,528, Brooklyn/Curtis Bay/Hawkins Point: 1,204, Sandtown-Winchester/Harlem Park: 2,563 and Poppleton/The Terraces/Hollins Market: 1,623
-
-#Incarceration rate per 100,000 people in five areas of highest voter turnout:
-#Greater Roland Park/Poplar Hill: 14, Mount Washington/Coldspring: 102, South Baltimore: 97, North Baltimore/Guilford/Homeland: 93 and Medfield/Hampden/Woodberry/Remington: 225
 ```
 
-Let's visualize this!
 ```{r, results='asis'}
-cat('<div class="flourish-embed flourish-map" data-src="visualisation/17809409"><script src="https://public.flourish.studio/resources/embed.js"></script></div>')
+cat('<div class="flourish-embed flourish-map" data-src="visualisation/17809409">
+      <script src="https://public.flourish.studio/resources/embed.js"></script>
+    </div>')
 ```
-This visualization shows that there is a correlation between incarceration rate and voter turnout. Looking at the map of voter turnout next to the map of incarceration rates, it's clear that the two are generally inverses of on another, with areas in the north and middle of Baltimore having a low incarceration rate and high voter turnout and east and west Baltimore having a higher incarceration rate and low voter turnout.  
 
-Another visualization. This time, a scatterplot
+This visualization shows there is a correlation between incarceration rate and voter turnout. Looking at the map of voter turnout next to the map of incarceration rates, it's clear that the two are generally inverses of on another, with areas in North and Central Baltimore having a low incarceration rate and high voter turnout and East and West Baltimore having a higher incarceration rate and low voter turnout.
+
 ```{r, results='asis'}
 cat('<div class="flourish-embed flourish-scatter" data-src="visualisation/17795149"><script src="https://public.flourish.studio/resources/embed.js"></script></div>')
 ```
-This scatterplot shows the negative relationship between incarceration rate and voter turnout. As the rate of incarceration per 100,000 people increases, the percent of registered voters decreases. 
 
-Just to be really sure, let's compute some correlation coefficients. Values close to 1 or -1 indicate a strong positive or negative correlation, while values closer to zero indicate a weak correlation. 
+There is a negative relationship between incarceration rate and voter turnout. As the rate of incarceration per 100,000 people increases, the percent of registered voters decreases.
 
-This is not something I would put in an actual article since it's a more complex concept for readers to digest, but it's useful for checking my work and determining whether these factors are worth investigating at all.
+Just to be really sure, let's compute some correlation coefficients. Values close to 1 or -1 indicate a strong positive or negative correlation, while values closer to zero indicate a weak correlation.
 
 Correlation between incarceration rate and voter turnout.
+
 ```{r}
 #convert all values to numeric for calculation
 incarceration_voting$rate_per_x100000 <- gsub("[, ]", "", incarceration_voting$rate_per_x100000)
@@ -326,109 +286,115 @@ cc_incarceration <- cor(incarceration_voting$pct_voters, incarceration_voting$ra
 
 cc_incarceration
 ```
+
 A correlation coefficient of -0.82 indicates a strong negative correlation, meaning areas of lower incarceration rates likely have higher voter turnout rates.
 
-Now let's look at wealth and voter turnout
 ```{r}
 #join baltcity_income and pct_vote_csas
 wealth_voting <- inner_join(pct_vote_csas, baltcity_income, by = "csa")
 
-wealth_voting %>%
+wealth_voting_min <- wealth_voting%>%
   slice_min(pct_voters, n = 5)
 
-wealth_voting %>%
+wealth_voting_max <- wealth_voting%>%
   slice_max(pct_voters, n = 5)
 
-#median household income in areas of lowest voter turnout (rounded to nearest dollar):
-#Southwest Baltimore: $29,768, Madison/East End: $37,303, Brooklyn/Curtis Bay/Hawkins Point: $32,598, Sandtown-Winchester/Harlem Park: $26,690 and Poppleton/The Terraces/Hollins Market: $23,374
+paged_table(wealth_voting_min)
 
-#median household income in areas of highest voter turnout:
-#Greater Roland Park/Poplar Hill: $125,869, Mount Washington/Coldspring: 86,715, South Baltimore: $124,827, North Baltimore/Guilford/Homeland: $114,247 and Medfield/Hampden/Woodberry/Remington: $72,757
+paged_table(wealth_voting_max)
 ```
 
-Let's visualize this one, too
 ```{r, results='asis'}
-cat('<div class="flourish-embed flourish-map" data-src="visualisation/17824036"><script src="https://public.flourish.studio/resources/embed.js"></script></div>')
+cat('<div class="flourish-embed flourish-map" data-src="visualisation/17824036">
+      <script src="https://public.flourish.studio/resources/embed.js"></script>
+    </div>')
 ```
-Looking at this map shows that areas of higher median household income are concentrated in the middle of Baltimore City and in the northern areas. This is a similiar pattern to the voter turnout rate map.
 
-Another visualization
+Areas of higher median household income are concentrated in the middle of Baltimore City and in the northern areas. This is a similar pattern to the voter turnout rate map.
+
 ```{r, results='asis'}
 cat('<div class="flourish-embed flourish-scatter" data-src="visualisation/17824265"><script src="https://public.flourish.studio/resources/embed.js"></script></div>')
 ```
-This scatterplot shows the positive relationship between median household income and voter turnout. As the median household income increases, the percent of registered voters decreases.
 
-Let's also calculate the correlation coefficient between median household income and voter turnout 
+There is a positive relationship between median household income and voter turnout. As the median household income increases, the percent of registered voters decreases.
+
+Let's also calculate the correlation coefficient between median household income and voter turnout
+
 ```{r}
 cc_wealth <- cor(wealth_voting$pct_voters, wealth_voting$median_income, method = "pearson", use = "complete.obs")
 
 cc_wealth
 ```
-A correlation coefficient of 0.81 indicates a strong positive correlation between voter turnout and median household income. 
 
-Number of businesses per 1,000 people and voter turnout  
+A correlation coefficient of 0.81 indicates a strong positive correlation between voter turnout and median household income.
+
+Number of businesses per 1,000 people and voter turnout
+
 ```{r}
 #join biz and pct_vote_csas dataset
 biz_voting <- inner_join(biz, pct_vote_csas, by = "csa")
 
-biz_voting %>%
+biz_voting_min <- biz_voting %>%
   slice_min(pct_voters, n = 5)
 
-biz_voting %>%
+biz_voting_max <- biz_voting%>%
   slice_max(pct_voters, n = 5)
 
-#number of businesses per 1,000 people in five areas of lowest voter turnout:
-#Southwest Baltimore: 18.4, Madison/East End: 19.2, Brooklyn/Curtis Bay/Hawkins Point: 13.4, Sandtown-Winchester/Harlem Park: 10.4 and Poppleton/The Terraces/Hollins Market: 14.2
+paged_table(biz_voting_min)
 
-#number of businesses per 1,000 people in five areas of highest voter turnout:
-#Greater Roland Park/Poplar Hill: 33.5, Mount Washington/Coldspring: 31.4, South Baltimore: 21.9, North Baltimore/Guilford/Homeland: 16.3 and Medfield/Hampden/Woodberry/Remington: 35.4
+paged_table(biz_voting_max)
 ```
-There doesn't seem to be a significant correlation between number of businesses per 1,000 residents and voter turnout. While looking at just the top 5 top and bottom areas of high/low voter turnout seems like areas of lower voter turnout have less businesses, there are quite a few outliers, including Oldtown/Middle East, which was one of the lowest voter turnout areas, but had the second highest amount of businesses per 1,000 residents. This could be for a variety of reasons. For one, many of the areas that have high voter turnout are in wealthier, suburban areas with less concentration of businesses. 
 
-Correlation between number of businesses per 1000 residents and voter turnout 
+There doesn't seem to be a significant correlation between number of businesses per 1,000 residents and voter turnout. There are quite a few outliers, including Oldtown/Middle East, which was one of the lowest voter turnout areas, but had the second highest amount of businesses per 1,000 residents. This could be for a variety of reasons. For one, many of the areas that have high voter turnout are in wealthier, suburban areas with less concentration of businesses.
+
+Correlation between number of businesses per 1,000 residents and voter turnout
+
 ```{r}
 #compute correlation coefficient
 cc_biz <- cor(biz_voting$pct_voters, biz_voting$num_biz_x1000, method = "pearson", use = "complete.obs")
 
 cc_biz
 ```
-There is little to no correlation between the amount of businesses and voter turnout, as indicated by a correlation coefficient of -0.02
 
-Percent of households without internet and voter turnout 
+There is little to no correlation between the amount of businesses and voter turnout, as indicated by a correlation coefficient of -0.02.
+
+Percent of households without internet and voter turnout
+
 ```{r}
 #join internet and pct_vote_csas dataset
 internet_voting <- inner_join(internet, pct_vote_csas, by = "csa")
 
-internet_voting %>%
+internet_voting_min <- internet_voting %>%
   slice_min(pct_voters, n = 5)
 
-internet_voting %>%
+internet_voting_max <- internet_voting %>%
   slice_max(pct_voters, n = 5)
 
-#Percentage of homes without internet access in the five areas of lowest voter turnout:
-#Southwest Baltimore: 27.6%, Madison/East End: 16.7%, Brooklyn/Curtis Bay/Hawkins Point: 30.4%, Sandtown-Winchester/Harlem Park: 38.6% and Poppleton/The Terraces/Hollins Market: 25.1%
+paged_table(internet_voting_max)
 
-#Percentage of homes without internet access in the five areas of highest voter turnout:
-#Greater Roland Park/Poplar Hill: 3.4%, Mount Washington/Coldspring: 8.9%, South Baltimore: 3.5%, North Baltimore/Guilford/Homeland: 6.1% and Medfield/Hampden/Woodberry/Remington: 9.1%
+paged_table(internet_voting_min)
 ```
 
-Let's do another visualization
 ```{r, results='asis'}
 cat('<div class="flourish-embed flourish-scatter" data-src="visualisation/17824515"><script src="https://public.flourish.studio/resources/embed.js"></script></div>')
 ```
-This scatterplot shows the negative relationship between percent of households without internet access and voter turnout. As the percent of households without internet increases, the percent of registered voters decreases.
+
+There is a negative relationship between percent of households without internet access and voter turnout. As the percent of households without internet increases, the percent of registered voters decreases.
 
 Correlation between percent of households without internet access and voter turnout
+
 ```{r}
 cc_internet <- cor(internet_voting$pct_voters, internet_voting$pct_no_internet, method = "pearson", use = "complete.obs")
 
 cc_internet
 ```
-A correlation coefficient of -0.71 indicates a strong negative correlation between voter turnout and median household income. It's not as strong as the other two, but is still considered strong 
+
+A correlation coefficient of -0.71 indicates a strong negative correlation between voter turnout and median household income
 
 **Q3: How has voter turnout in Baltimore City changed from 2010 to 2020? Which CSA had the biggest difference between the 2012 and 2020 general election?**
 
-Let's look at community statistical areas first 
+Let's look at community statistical areas first
+
 ```{r}
 #rename row from "&" to "and" to match up with the rest of the voting data used later
 pct_vote_csas$csa <- gsub("&", "and", pct_vote_csas$csa)
@@ -440,15 +406,19 @@ voting_x2012_x2020 <- voting_x2012_x2020 %>%
   rename(x2012_turnout = 2, x2020_turnout = 3) %>%
   mutate(pct_change = ((x2020_turnout - x2012_turnout) / x2012_turnout) * 100)
 
-voting_x2012_x2020%>%
+voting_x2012_x2020_max <- voting_x2012_x2020 %>%
   slice_max(pct_change)
 
-voting_x2012_x2020%>%
+voting_x2012_x2020_min <- voting_x2012_x2020 %>%
   slice_min(pct_change)
 ```
-Orangeville/East Highlandtown had the biggest change, with an almost 65% increase in voter turnout, going from 31.5% in 2012 to 51.9% in 2020. Clifton-Berea had the largest decrease in voter turnout, decreasing from 57.5% in 2012 to 46.4% in 2020. 
 
-Let's now look at how voter turnout in community statistical areas has changed over time. To do this, I'll first make a combined dataset and then visualize it in Flourish. 
+Orangeville/East Highlandtown had the biggest change, with an almost 65% increase in voter turnout.
+
+Clifton-Berea had the largest decrease in voter turnout, dropping from 57.5% in 2012 to 46.4% in 2020.
+
+Let's now look at how voter turnout in community statistical areas has changed over time. To do this, I'll first make a combined dataset and then visualize it in Flourish.
+
 ```{r message=FALSE, warning=FALSE}
 voting_all <- inner_join(voting_2010, voting_2012, by = "csa") %>%
                  inner_join(voting_2014, by = "csa") %>%
@@ -460,88 +430,67 @@ voting_all <- voting_all%>%
   rename(x2010_turnout = 2, x2012_turnout = 3, x2014_turnout = 4, x2016_tunout = 5, x2018_turnout = 6, x2020_turnout = 7)
 ```
 
-Press play to see change overtime between gubernational and general elections in the last 10 years 
+Press play to see change overtime between gubernational and general elections in the last 10 years
+
 ```{r, results='asis'}
 cat('<div class="flourish-embed flourish-map" data-src="visualisation/17832534"><script src="https://public.flourish.studio/resources/embed.js"></script></div>')
 ```
-Gubernatorial elections tend to get less voter turnout than general elections, which is unsurprising as that is a <a href="https://www.baltimoresun.com/2022/12/22/only-half-of-marylands-voters-cast-ballots-in-2022-a-historically-low-number-for-a-midterm-election/" target="_blank" style="color: black;">well-documented phenomenon</a>. But it seems that 2020 has the highest voter turnout out of the 10-year period. It also seems that the "Black Butterfly White L" phenomenon becomes more pronounced over time 
 
-Let's get a deeper understanding of voter turnout by looking at Baltimore City as a whole and comparing it to the state of Maryland. I'm also going to look at a wider range of years and focus on general election turnout because it's such a wide spread of data. 
+Gubernatorial elections tend to get less voter turnout than general elections, which is unsurprising as that is a <a href="https://www.baltimoresun.com/2022/12/22/only-half-of-marylands-voters-cast-ballots-in-2022-a-historically-low-number-for-a-midterm-election/" target="_blank" style="color: black;">well-documented phenomenon</a>. But it seems that 2020 has the highest voter turnout out of the 10-year period. It also seems that the "Black Butterfly White L" phenomenon becomes more pronounced over time
+
+Let's get a deeper understanding of voter turnout by looking at Baltimore City as a whole and comparing it to the state of Maryland. I'm also going to look at a wider range of years and focus on general election turnout because it's such a wide spread of data.
+
 ```{r, results='asis'}
 cat('<div class="flourish-embed flourish-chart" data-src="visualisation/17832645"><script src="https://public.flourish.studio/resources/embed.js"></script></div>')
 ```
-For this chart, I uploaded my trends_turnout csv to Flourish. Looking at a wider spread of data shows that while voter turnout was highest in 2020 over the past 12 years, voter turnout significantly decreased in the 2008 through 2023 period. 68% the city's voting-age population voted in the 2008 general election compared to 58.8% in 2020's general election. 
 
-**Q4: In August 2020, which parts of the city had the most registered Democrats? Which had the most Republicans?**
-Community statistical areas are great for data analysis because they're more recognizable to readers, but precinct-level data makes for a more detailed analysis. Because I'm only looking at voting data, I'm going to look at precinct results. While each voting precinct has an address with a voting location, the precinct is an area, so it would be inaccurate to assign each to a community statistical area or neighborhood because there would be some precincts that are partially in one and partially in another. That's why maps are especially helpful when working with this data. 
+Looking at a wider spread of data shows that while voter turnout was highest in 2020 over the past 12 years, voter turnout significantly decreased in the 2008 through 2023 period. 68% the city's voting-age population voted in the 2008 general election compared to 58.8% in 2020's general election.
 
-But I will still say what neighborhoods are in an area covered by multiple precincts to further contexualize the numbers. For instance, a cluster of precincts in north Baltimore are in the general North Baltimore/Guilford/Homeland area. 
+**Q4: In August 2020, which parts of the city had the most registered Democrats? Which had the most Republicans?** Community statistical areas are great for data analysis because they're more recognizable to readers, but precinct-level data leads to more detailed results. While each voting precinct has an address with a voting location, the precinct is an area, so it would be inaccurate to assign each to a community statistical area or neighborhood because there would be some precincts that are partially in one and partially in another. That's why maps are especially helpful when working with this data
+
 ```{r}
 #add new column for percent of whole
 precinct_voters_x2020 <- precinct_voters_x2020%>%
   mutate(pct_dem = (dem / total)*100)%>%
   mutate(pct_rep = (rep / total)*100)
 
-precinct_voters_x2020%>%
+precinct_voters_x2020_min <- precinct_voters_x2020%>%
   slice_min(pct_dem)
 
-#the precinct with the lowest percent of Democrats still had 53% in August 2020, which means the majority of the city are Democrats
-
-precinct_voters_x2020%>%
+precinct_voters_x2020_max <- precinct_voters_x2020%>%
   slice_max(pct_rep)
 
-#the precinct with the highest percent of Republicans only had 23.7% in August 2020
+paged_table(precinct_voters_x2020_min)
+
+paged_table(precinct_voters_x2020_max)
 ```
 
+The precinct with the lowest percent of Democrats still had 53% in August 2020, which means the majority of the city are Democrats.
+
+The precinct with the highest percent of Republicans only had 23.7% in August 2020
+
 Let's see if there's a correlation with the amount of Black residents who are over the voting age of 18
+
 ```{r message=FALSE, warning=FALSE}
 #add a column for percent Black residents of whole population in precinct
 demo_voting <- demo_voting%>%
   mutate(pct_black = (black_aa / precinct_pop)*100)
 ```
 
-Voting precincts don't make much sense without a visualization. I uploaded the geojson for 2020 voting precincts on the Open Baltimore site I got the first geojson. This map has a toggle which allows users to switch from concentration of Black residents over the age of 18 by precinct and concentration of Democrats 
-```{r, results='asis'}
-cat('<div class="flourish-embed flourish-map" data-src="visualisation/17835622"><script src="https://public.flourish.studio/resources/embed.js"></script></div>')
-```
-There were higher concentrations of registered Democrats in East and West Baltimore City in August 2020 than in the North or South The clusters of precincts with the highest concentration of Democrats are in neighborhoods such as Upton/Druid Heights, Oldtown/Middle East and Westport/Mount Winans/Lakeland. There was also a significantly higher concentration of Black residents over the age of 18 in the same East and West Baltimore Areas. 
+Voting precincts don't make much sense without a visualization. I uploaded the geojson for 2020 voting precincts on the Open Baltimore site I got the first geojson. This map has a toggle which allows users to switch from concentration of Black residents over the age of 18 by precinct and concentration of Democrats
 
-Let's look at Republicans now 
+```{r, results='asis'}
+cat('<div class="flourish-embed flourish-scatter" data-src="visualisation/17824265" style="width: 100%; height: 600px;">
+      <script src="https://public.flourish.studio/resources/embed.js"></script>
+    </div>')
+```
+
+There were higher concentrations of registered Democrats in East and West Baltimore City in August 2020 than in the North or South. The clusters of precincts with the highest concentration of Democrats are in neighborhoods such as Upton/Druid Heights, Oldtown/Middle East and Westport/Mount Winans/Lakeland. There was also a significantly higher concentration of Black residents over the age of 18 in the same East and West Baltimore Areas.
+
+Let's look at Republicans now
+
 ```{r, results='asis'}
 cat('<div class="flourish-embed flourish-map" data-src="visualisation/17835183"><script src="https://public.flourish.studio/resources/embed.js"></script></div>')
 ```
+
 There are not many Republicans in Baltimore City. Those that are reside in the middle and more rural parts of the city. Note: sometimes this graphic doesn't load right away on the page so you might have to reload and it should pop up.
-
-**FINAL MEMO**
-Baltimore City residents in areas of high incarceration were less likely to vote in the 2020 general election. As the rate of incarceration per 100,000 people increased, voter turnout percentage decreased. 
-
-Areas of low internet access saw a similar pattern. In Southwest Baltimore, which had the lowest voter turnout in the 2020 general election, almost 28% of households did not have internet access. But in the Greater Roland Park and Poplar Hill area, which had the highest voter turnout percentage, only about 3% of households did not have internet. 
-
-Median household income, on the other hand, had a positive relationship to voter turnout. Wealthier areas had a significantly higher voter turnout percentage. Of the 16 areas with less than 50% of their voting-age population casting their ballots, only one had a median household income of more than $42,000.
-
-Overall voter turnout in the city has significantly decreased since 2008, dropping from 68% to 58% in that time. 2020 saw the first rise in the decade-long period, with most election turnout numbers remaining below the Maryland average. In 2020, areas that had the most democratic-registered voters were also the areas with the highest concentration of Black residents and the lowest voter turnouts. 
-
-These findings are especially significant ahead of the 2024 general election. I could write multiple long-form stories based on the data, one of which could be exploring why people may be less inclined to vote in areas of higher incarceration. I would supplement my incarceration and voter turnout figures by interviewing people who have been incarcerated, have family members who are incarcerated and social justice activists.  
-
-Other stories have analyzed voter turnout in Baltimore City, but nothing I came across in my research delved into the intersection between factors such as incarceration rate and percent of households without internet. 
-
-I could write similar long-form stories about voter turnout and internet access as well as voter turnout and median household income. I can infer that having greater internet access increases accessibility to voting education and political knowledge, which could encourage a higher voter turnout rate, but I would confirm these assumptions by talking with experts in sociology and social justice. 
-
-Zooming out on these findings, I could also incorporate my data about general voter turnout decline in Baltimore City since 2008 into another story. I could investigate what activism has been done to increase voter turnout since 2008 and where their shortcomings might lie. 
-
-I could interview Baltimore City residents from a variety of neighborhoods — especially those who have voted in every election including ones before 2008 — about whether they’ve noticed this decline and what might be the cause. I would also ask these people if they planned to vote in the 2024 election, and would also seek out people who haven’t voted and whether this election will change their mind. 
-
-I might also point to the general correlation between lower voter turnout in East and West Baltimore and the higher concentration of democrats in those areas. For this, I could interview lawmakers and Democrat candidates vying for local seats whether they’ve tried to increase voter turnout in these areas. 
-
-While voter turnout stories and articles drawing a correlation between voter turnout and other factors aren’t new, my data localizes a wider phenomenon to Baltimore City. By speaking with residents and capturing their stories, I will bring a local perspective to sweeping trends. 
-
-Strengths of this data is that I have information on a community statistical level and a precinct level. This gives me two sets of data with different levels of detail so I can draw more specific conclusions about voter turnout data. A con of this data is that the most recent voter turnout data for a general election is in 2020, which is still four years old. 
-
-I would ensure this data is accurate by crosschecking my data with other sources. For instance, I could check the data I got from the Baltimore Neighborhood Alliance with PDFs from the Maryland Board of Elections. These have the same data, but in different formats, which would ensure accuracy in my data. I could also refer to local community leaders and ask whether my general findings align with what they’ve noticed in their community. 
-
-I’ve also already calculated correlation coefficients for some of my findings, but I could also use more statistical tests, such as a p-test or t-test. While these findings don’t call out specific public or private figures, I could reach out to the city Board of Elections to verify the decline in voter turnout. 
-
-My next steps are to talk to people. I would bring the stories to life by centering them around Baltimore City residents. How has incarceration impacted their outlook on voting? How has it affected the people around them? How would internet access allow their family to more easily see where and how to vote? How have people seen their communities shift away from voting in general elections, and why? 
-
-I would aim to answer these questions through reporting to tell individual stories that are backed up by data analysis. 
-
